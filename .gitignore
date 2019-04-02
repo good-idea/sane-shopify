@@ -1,0 +1,6 @@
+# config stuff
+.vscode
+
+# build
+node_modules
+lib

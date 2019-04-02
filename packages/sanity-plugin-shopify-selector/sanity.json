@@ -1,0 +1,24 @@
+{
+	"paths": {
+		"source": "./src",
+		"compiled": "./lib"
+	},
+	"parts": [
+		{
+			"name": "part:@sanity/form-builder/input/shopifySelector",
+			"description": "A shopify item selector for Sanity"
+		},
+		{
+			"implements": "part:@sanity/form-builder/input/shopifySelector",
+			"path": "index.js"
+		},
+		{
+			"name": "part:@sanity/form-builder/input/shopifySelector/schema",
+			"description": "A shopify item selector for Sanity"
+		},
+		{
+			"implements": "part:@sanity/form-builder/input/shopifySelector/schema",
+			"path": "schema.js"
+		}
+	]
+}

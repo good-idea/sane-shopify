@@ -1,0 +1,28 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./lib",
+		"jsx": "react",
+		"lib": ["dom"],
+		"baseUrl": ".",
+		"paths": {
+			"part:@sanity/form-builder/patch-event": [
+				"./node_modules/@sanity/form-builder/lib/PatchEvent.js"
+			],
+			"part:@sanity/base/client": ["./node_modules/@sanity/base/lib/client"],
+			"part:@sanity/components/buttons/default": [
+				"./node_modules/@sanity/components/lib/buttons/DefaultButton.js"
+			],
+			"part:@sanity/components/fieldsets/default": [
+				"./node_modules/@sanity/components/lib/fieldsets/DefaultFieldset.js"
+			],
+			"part:@sanity/components/formfields/default": [
+				"./node_modules/@sanity/components/lib/formfields/DefaultFormField.js"
+			],
+			"part:@sanity/components/textinputs/default": [
+				"./node_modules/@sanity/components/lib/textinputs/DefaultTextInput.js"
+			]
+		}
+	},
+	"include": ["./src"]
+}
