@@ -5,11 +5,11 @@ import PatchEvent, {
 	setIfMissing,
 } from 'part:@sanity/form-builder/patch-event'
 import { FaTrashAlt } from 'react-icons/fa'
-import { Secrets } from '../utils/secrets'
+import { Secrets } from './types'
 import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
-import { ShopifyClient, createClient } from '../utils/request'
-import { SanityInputProps } from '../types'
+import { ShopifyClient, createClient } from './ClientContext/shopifyClient'
+import { SanityInputProps } from './types'
 import { SelectedItem } from './SelectedItem'
 
 interface Props extends SanityInputProps {

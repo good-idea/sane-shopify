@@ -1,21 +1,13 @@
 import * as React from 'react'
 import { uniqueId } from 'lodash'
-import {
-	Secrets,
-	SecretUtils,
-	saveSecrets,
-	testSecrets,
-} from '../utils/secrets'
 
 import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
+import { ClientContextValue } from './ClientContext'
 
-interface Props extends SecretUtils {
-	secrets: Secrets
-	updateSecrets: (Secrets) => void
-}
+interface Props extends ClientContextValue {}
 
 interface State {
 	storefrontName: string
@@ -78,14 +70,14 @@ export class Setup extends React.Component<Props, State> {
 	}
 
 	updateCredentials = async () => {
-		const { updateSecrets } = this.props
+		const { saveSecrets } = this.props
 		const { storefrontName, storefrontApiKey } = this.state
-		const r = await saveSecrets({ storefrontName, storefrontApiKey })
-		updateSecrets({ storefrontName, storefrontApiKey })
+		await saveSecrets({ storefrontName, storefrontApiKey })
 	}
 
 	handleSubmit = async () => {
-		this.setState({ loading: true })
+		await this.setState({ loading: true })
+		const { testSecrets } = this.props
 		const { storefrontName, storefrontApiKey } = this.state
 		const { valid, message } = await testSecrets({
 			storefrontName,

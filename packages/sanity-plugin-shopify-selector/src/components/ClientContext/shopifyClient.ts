@@ -1,4 +1,4 @@
-import { Secrets } from './secrets'
+import { Secrets } from '../types'
 
 const getErrorMessage = (r: Response): string => {
 	switch (r.status) {
@@ -13,7 +13,7 @@ const getErrorMessage = (r: Response): string => {
 }
 
 export interface ShopifyClient {
-	request: <ResponseType>(query: string) => Promise<ResponseType>
+	query: <ResponseType>(query: string) => Promise<ResponseType>
 }
 
 export const createClient = (secrets: Secrets): ShopifyClient => {
@@ -24,7 +24,7 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 		'X-Shopify-Storefront-Access-Token': storefrontApiKey,
 	}
 
-	const request = async <ResponseType>(query: string): Promise<ResponseType> =>
+	const query = async <ResponseType>(query: string): Promise<ResponseType> =>
 		fetch(url, {
 			headers,
 			method: 'POST',
@@ -36,6 +36,6 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 		})
 
 	return {
-		request,
+		query,
 	}
 }
