@@ -1,5 +1,17 @@
 import { Secrets } from '../types'
 
+interface ShopifyResult<Response> {
+	data: {
+		shop: Response
+	}
+}
+
+export interface ShopifyClient {
+	query: <ResponseType>(query: string) => Promise<ShopifyResult<ResponseType>>
+}
+
+export interface ShopifyItem {}
+
 const getErrorMessage = (r: Response): string => {
 	switch (r.status) {
 		case 401:
@@ -12,10 +24,6 @@ const getErrorMessage = (r: Response): string => {
 	}
 }
 
-export interface ShopifyClient {
-	query: <ResponseType>(query: string) => Promise<ResponseType>
-}
-
 export const createClient = (secrets: Secrets): ShopifyClient => {
 	const { storefrontName, storefrontApiKey } = secrets
 	const url = `https://${storefrontName}.myshopify.com/api/graphql`
@@ -24,7 +32,9 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 		'X-Shopify-Storefront-Access-Token': storefrontApiKey,
 	}
 
-	const query = async <ResponseType>(query: string): Promise<ResponseType> =>
+	const query = async <ResponseType>(
+		query: string,
+	): Promise<ShopifyResult<ResponseType>> =>
 		fetch(url, {
 			headers,
 			method: 'POST',

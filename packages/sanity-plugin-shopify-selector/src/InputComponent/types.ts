@@ -23,8 +23,21 @@ export interface ClientContextValue extends SecretUtils {
 }
 
 /**
+ * Shopify Types
+ */
+
+export interface Product {}
+
+export interface Collection {}
+
+/**
  * Sanity Types
  */
+
+export interface ShopifySelectorInputOptions {
+	collections: boolean
+	products: boolean
+}
 
 interface FieldType {
 	jsonType: string
@@ -34,7 +47,7 @@ interface FieldType {
 	readOnly: boolean
 	type: FieldType
 	validation: (arg0: any) => any
-	options: any
+	options: ShopifySelectorInputOptions
 }
 
 interface Field {

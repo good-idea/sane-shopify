@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Main } from './components/Main'
+import InputComponent from './InputComponent'
 
 export default {
 	title: 'Shopify Item',
@@ -42,7 +42,7 @@ export default {
 			readOnly: true,
 		},
 	],
-	inputComponent: Main,
+	inputComponent: InputComponent,
 
 	preview: {
 		select: {

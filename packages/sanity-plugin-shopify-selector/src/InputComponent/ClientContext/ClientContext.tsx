@@ -66,7 +66,6 @@ export class ClientProvider extends React.Component<
 	async componentDidMount() {
 		const secrets = await this.fetchSecrets()
 		const { valid } = await testSecrets(secrets)
-		console.log(secrets, valid)
 		if (valid) {
 			this.client = createClient(secrets)
 			this.setState({ valid: true, ready: true, secrets })

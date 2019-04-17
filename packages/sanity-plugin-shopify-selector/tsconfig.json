@@ -21,6 +21,9 @@
 			],
 			"part:@sanity/components/textinputs/default": [
 				"./node_modules/@sanity/components/lib/textinputs/DefaultTextInput.js"
+			],
+			"part:@sanity/components/dialogs/default": [
+				"./node_modules/@sanity/components/lib/dialogs/DefaultDialog.js"
 			]
 		}
 	},
