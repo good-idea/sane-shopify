@@ -1,10 +1,6 @@
 import { Secrets, Paginated } from '../types'
 import { path, last, lensPath, set } from 'ramda'
 
-interface ShopifyResult<Response> {
-	data: Response
-}
-
 interface Variables {
 	[key: string]: string | number | boolean | Variables
 }
@@ -13,12 +9,12 @@ export interface ShopifyClient {
 	query: <ResponseType>(
 		query: string,
 		variables?: Variables,
-	) => Promise<ShopifyResult<ResponseType>>
+	) => Promise<ResponseType>
 	queryAll: <ResponseType>(
 		query: string,
 		pagePath: string[],
 		variables?: Variables,
-	) => Promise<ShopifyResult<ResponseType>>
+	) => Promise<ResponseType>
 }
 
 export interface ShopifyItem {}
@@ -51,7 +47,7 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 	const query = async <ResponseType>(
 		queryString: string,
 		variables?: Variables,
-	): Promise<ShopifyResult<ResponseType>> =>
+	): Promise<ResponseType> =>
 		fetch(url, {
 			headers,
 			method: 'POST',
@@ -66,8 +62,7 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 		queryString: string,
 		pagePath: string[],
 		variables: Variables = {},
-		prevResult?: ResponseType,
-	): Promise<ShopifyResult<ResponseType>> => {
+	): Promise<ResponseType> => {
 		const paginatedVariables = {
 			...variables,
 			first: variables.first || 200,
@@ -83,16 +78,11 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 				queryString,
 				pagePath,
 				nextVariables,
-				page,
 			)
 			const nextPage: Paginated<any> = path(pagePath, nextResponse)
 			const combined = combinePages(page, nextPage)
 			const pageLens = lensPath(pagePath)
-			const fullResponse: ShopifyResult<ResponseType> = set(
-				pageLens,
-				combined,
-				nextResponse,
-			)
+			const fullResponse: ResponseType = set(pageLens, combined, nextResponse)
 			return fullResponse
 		}
 

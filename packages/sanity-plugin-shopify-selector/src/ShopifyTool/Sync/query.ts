@@ -1,3 +1,5 @@
+import { Paginated, Product, Collection } from '../../types'
+
 export const productsQuery = /* GraphQL */ `
 	query ProductsQuery($first: Int!, $after: String) {
 		products(first: $first, after: $after) {
@@ -17,6 +19,12 @@ export const productsQuery = /* GraphQL */ `
 	}
 `
 
+export interface ProductsQueryResult {
+	data: {
+		products: Paginated<Product>
+	}
+}
+
 export const collectionsQuery = /* GraphQL */ `
 	query CollectionsQuery($first: Int!, $after: String) {
 		collections(first: $first, after: $after) {
@@ -35,3 +43,9 @@ export const collectionsQuery = /* GraphQL */ `
 		}
 	}
 `
+
+export interface CollectionsQueryResult {
+	data: {
+		collections: Paginated<Collection>
+	}
+}

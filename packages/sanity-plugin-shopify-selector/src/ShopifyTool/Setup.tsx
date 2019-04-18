@@ -126,7 +126,7 @@ export class SetupBase extends React.Component<Props, State> {
 					<Fieldset
 						legend="Unlink Shopify"
 						level={2}
-						description="Unlinking your Shopify account will not remove any data in Sanity."
+						description="Unlinking your Shopify account will not remove any data in Sanity. But, it may cause syncing issues if you add new credentials later. Be sure to back up your content before unlinking."
 					>
 						<Button
 							color="danger"

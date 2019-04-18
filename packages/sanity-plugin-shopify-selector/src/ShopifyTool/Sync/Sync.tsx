@@ -1,15 +1,24 @@
 import * as React from 'react'
+import { path } from 'ramda'
 import { ShopifyClient, Provider } from '../../Provider'
 import { Product, Collection } from '../../types'
-import { productsQuery, collectionsQuery } from './query'
+import {
+	productsQuery,
+	ProductsQueryResult,
+	collectionsQuery,
+	CollectionsQueryResult,
+} from './query'
 
 const sanityClient = require('part:@sanity/base/client')
 
 interface State {
 	loading: boolean
+	products: Product[]
+	collections: Collection[]
 }
 
-export interface SyncRenderProps extends State {
+export interface SyncRenderProps {
+	loading: boolean
 	run: () => Promise<void>
 }
 
@@ -18,17 +27,28 @@ interface Props {
 	children?: ((props: SyncRenderProps) => React.ReactNode) | React.ReactNode
 }
 
+const productsPath = ['data', 'products']
+const collectionsPath = ['data', 'collections']
+
 class SyncBase extends React.Component<Props, State> {
 	state = {
 		loading: false,
+		products: [],
+		collections: [],
 	}
 
 	run = async () => {
 		console.log(this.props)
 		await this.setState({ loading: true })
 		const { client } = this.props
-		const things = await client.queryAll(productsQuery, ['data', 'products'])
-		console.log(things)
+		const [productsResult, collectionsResult] = await Promise.all([
+			client.queryAll<ProductsQueryResult>(productsQuery, ['data', 'products']),
+			client.queryAll<CollectionsQueryResult>(collectionsQuery, [
+				'data',
+				'collections',
+			]),
+		])
+		console.log(productsResult.data.products)
 		this.setState({ loading: false })
 	}
 
