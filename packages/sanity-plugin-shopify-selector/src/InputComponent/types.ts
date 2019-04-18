@@ -1,5 +1,5 @@
-import { testSecrets } from './ClientContext/utils'
-import { ShopifyClient } from './ClientContext/shopifyClient'
+import { testSecrets } from '../Provider/utils'
+import { ShopifyClient } from '../Provider/shopifyClient'
 
 /**
  * Client Context

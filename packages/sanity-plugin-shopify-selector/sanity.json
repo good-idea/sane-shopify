@@ -5,6 +5,10 @@
 	},
 	"parts": [
 		{
+			"implements": "part:@sanity/base/tool",
+			"path": "./lib/index.js"
+		},
+		{
 			"name": "part:@sanity/form-builder/input/shopifySelector",
 			"description": "A shopify item selector for Sanity"
 		},

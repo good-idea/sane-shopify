@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { ShopifyClient, ShopifyItem } from './ClientContext/shopifyClient'
+import { ShopifyClient, ShopifyItem } from '../Provider/shopifyClient'
 import { ShopifySelectorInputOptions, Product, Collection } from './types'
-import { buildQuery, QueryResult } from './queries'
+import { buildQuery, QueryResult } from '../queries'
 import { ItemCard } from './ItemCard'
 
 interface ItemSelectorProps {

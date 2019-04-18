@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Setup } from './Setup'
 import { ShopifyInput } from './ShopifyInput'
-import { ClientProvider, ClientConsumer } from './ClientContext'
+import { Provider } from '../Provider'
 import { Secrets, SanityInputProps, ClientContextValue } from './types'
 
 interface InputProps extends ClientContextValue {
@@ -17,7 +17,7 @@ interface State {
 export class MainBase extends React.Component<InputProps, State> {
 	render() {
 		const { secrets, ready, valid, client, inputProps } = this.props
-
+		console.log(this.props)
 		if (!ready) return null
 		if (
 			!valid ||
@@ -31,7 +31,7 @@ export class MainBase extends React.Component<InputProps, State> {
 
 /* Pass the secrets in as props so we can inject for testing */
 export const Main = (props: SanityInputProps) => (
-	<ClientProvider>
+	<Provider>
 		{contextProps => <MainBase {...contextProps} inputProps={props} />}
-	</ClientProvider>
+	</Provider>
 )

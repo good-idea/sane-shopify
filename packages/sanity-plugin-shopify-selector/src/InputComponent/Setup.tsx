@@ -5,7 +5,7 @@ import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
-import { ClientContextValue } from './ClientContext'
+import { ClientContextValue } from '../Provider'
 
 interface Props extends ClientContextValue {}
 

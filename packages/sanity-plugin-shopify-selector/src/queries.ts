@@ -1,8 +1,14 @@
-import { ShopifySelectorInputOptions, Product, Collection } from './types'
+import {
+	ShopifySelectorInputOptions,
+	Product,
+	Collection,
+} from './InputComponent/types'
 
 export interface QueryResult {
-	products?: Product[]
-	collections?: Collection[]
+	shop: {
+		products?: Product[]
+		collections?: Collection[]
+	}
 }
 
 const productsFragment = /* GraphQL */ `

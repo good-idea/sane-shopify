@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ShopifyClient } from './ClientContext/shopifyClient'
+import { ShopifyClient } from '../Provider/shopifyClient'
 
 interface Props {
 	id: string

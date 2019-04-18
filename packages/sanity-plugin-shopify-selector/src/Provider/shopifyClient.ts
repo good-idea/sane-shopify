@@ -1,9 +1,7 @@
-import { Secrets } from '../types'
+import { Secrets } from '../InputComponent/types'
 
 interface ShopifyResult<Response> {
-	data: {
-		shop: Response
-	}
+	data: Response
 }
 
 export interface ShopifyClient {

@@ -1,4 +1,4 @@
-import { Secrets } from '../types'
+import { Secrets } from '../InputComponent/types'
 import { createClient } from './shopifyClient'
 
 /**
@@ -13,7 +13,11 @@ const testQuery = /* GraphQL */ `
 	}
 `
 
-interface TestData {}
+interface TestData {
+	shop: {
+		name: string
+	}
+}
 
 export const testSecrets = async (
 	secrets?: Secrets,
@@ -29,7 +33,7 @@ export const testSecrets = async (
 	if (!storefrontApiKey.length)
 		return { valid: false, message: 'You must provide a Storefront API Key' }
 	const response = await createClient(secrets)
-		.query(testQuery)
+		.query<TestData>(testQuery)
 		.then(({ data }) => ({
 			valid: true,
 			message: `🎉 Successfully connected to ${

@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { createClient, ShopifyClient } from './shopifyClient'
 import { testSecrets } from './utils'
-import { Secrets } from '../types'
+import { Secrets } from '../InputComponent/types'
+import { Sync } from './Sync'
 
 const sanityClient = require('part:@sanity/base/client')
 
@@ -51,7 +52,7 @@ interface ClientContextState {
 	ready: boolean
 }
 
-export class ClientProvider extends React.Component<
+export class Provider extends React.Component<
 	ClientContextProps,
 	ClientContextState
 > {
