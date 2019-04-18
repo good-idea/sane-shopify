@@ -1,7 +1,7 @@
 import * as React from 'react'
 import DefaultDialog from 'part:@sanity/components/dialogs/default'
 import ItemSelector from './ItemSelector'
-import { ShopifySelectorInputOptions } from './types'
+import { ShopifySelectorInputOptions } from '../types'
 import { ShopifyClient, ShopifyItem } from '../Provider/shopifyClient'
 
 interface SelectorDialogProps {

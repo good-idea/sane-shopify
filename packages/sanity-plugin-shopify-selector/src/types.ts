@@ -1,5 +1,5 @@
-import { testSecrets } from '../Provider/utils'
-import { ShopifyClient } from '../Provider/shopifyClient'
+import { testSecrets } from './Provider/utils'
+import { ShopifyClient } from './Provider/shopifyClient'
 
 /**
  * Client Context
@@ -20,6 +20,25 @@ export interface ClientContextValue extends SecretUtils {
 	valid: boolean
 	ready: boolean
 	client: ShopifyClient
+}
+
+/**
+ * GraphQL
+ */
+
+interface Edge<T> {
+	cursor: string | number
+	node: T
+}
+
+export interface PageInfo {
+	hasNextPage: boolean
+	hasPrevPage: boolean
+}
+
+export interface Paginated<T> {
+	pageInfo: PageInfo
+	edges: Edge<T>[]
 }
 
 /**

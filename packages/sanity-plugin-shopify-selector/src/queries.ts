@@ -1,8 +1,4 @@
-import {
-	ShopifySelectorInputOptions,
-	Product,
-	Collection,
-} from './InputComponent/types'
+import { ShopifySelectorInputOptions, Product, Collection } from './types'
 
 export interface QueryResult {
 	shop: {

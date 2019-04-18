@@ -8,7 +8,7 @@ import { FaTrashAlt } from 'react-icons/fa'
 import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import { ShopifyClient, ShopifyItem } from '../Provider/shopifyClient'
-import { SanityInputProps } from './types'
+import { SanityInputProps } from '../types'
 import { SelectorDialog } from './SelectorDialog'
 import { SelectedItem } from './SelectedItem'
 

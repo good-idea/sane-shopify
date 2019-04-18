@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { ShopifyTool } from './ShopifyTool'
 import { ShopifyIcon } from './ShopifyIcon'
 

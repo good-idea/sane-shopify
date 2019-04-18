@@ -1,4 +1,4 @@
-import { Secrets } from '../InputComponent/types'
+import { Secrets } from '../types'
 import { createClient } from './shopifyClient'
 
 /**

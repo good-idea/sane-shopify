@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Setup } from './Setup'
 import { ShopifyInput } from './ShopifyInput'
 import { Provider } from '../Provider'
-import { Secrets, SanityInputProps, ClientContextValue } from './types'
+import { Secrets, SanityInputProps, ClientContextValue } from '../types'
 
 interface InputProps extends ClientContextValue {
 	inputProps: SanityInputProps
@@ -17,7 +17,6 @@ interface State {
 export class MainBase extends React.Component<InputProps, State> {
 	render() {
 		const { secrets, ready, valid, client, inputProps } = this.props
-		console.log(this.props)
 		if (!ready) return null
 		if (
 			!valid ||

@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { createClient, ShopifyClient } from './shopifyClient'
 import { testSecrets } from './utils'
-import { Secrets } from '../InputComponent/types'
-import { Sync } from './Sync'
+import { Secrets } from '../types'
+import { Sync } from '../ShopifyTool/Sync'
 
 const sanityClient = require('part:@sanity/base/client')
 
@@ -94,15 +94,30 @@ export class Provider extends React.Component<
 			_type: KEYS_TYPE,
 			...secrets,
 		}
-		await sanityClient.createOrReplace(doc)
+		await sanityClient.createIfNotExists(doc)
+		await sanityClient
+			.patch(KEYS_ID)
+			.set({ ...secrets })
+			.commit()
 		await this.setState({ secrets })
+		return true
+	}
+
+	clearSecrets = async (): Promise<boolean> => {
+		await sanityClient
+			.patch(KEYS_ID)
+			.set({
+				...emptySecrets,
+			})
+			.commit()
+		await this.setState({ valid: false })
 		return true
 	}
 
 	render() {
 		const { children } = this.props
 		const { secrets, valid, ready } = this.state
-		const { saveSecrets, client } = this
+		const { saveSecrets, clearSecrets, client } = this
 
 		const value = {
 			secrets: secrets || emptySecrets,
@@ -110,6 +125,7 @@ export class Provider extends React.Component<
 			ready,
 			saveSecrets,
 			testSecrets,
+			clearSecrets,
 			client,
 		}
 
