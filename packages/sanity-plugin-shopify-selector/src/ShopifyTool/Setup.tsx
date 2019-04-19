@@ -23,17 +23,6 @@ const wrapperStyles = {
 	border: '1px solid #ccc',
 }
 
-const warningWrapperStyles = {
-	...wrapperStyles,
-	border: '1px solid #e68987',
-	backgroundColor: '#fbebed',
-}
-
-const errorStyles = {
-	color: 'red',
-	fontStyle: 'italic',
-}
-
 const buttonWrapperStyles = {
 	display: 'flex',
 	justifyContent: 'center',
@@ -73,17 +62,11 @@ export class SetupBase extends React.Component<Props, State> {
 		})
 	}
 
-	updateCredentials = async () => {
-		const { saveSecrets } = this.props
-		const { storefrontName, storefrontApiKey } = this.state
-		await saveSecrets({ storefrontName, storefrontApiKey })
-	}
-
 	handleSubmit = async () => {
 		await this.setState({ loading: true })
-		const { testSecrets } = this.props
+		const { testSecrets, saveSecrets } = this.props
 		const { storefrontName, storefrontApiKey } = this.state
-		const { valid, message } = await testSecrets({
+		const { valid, data, message } = await testSecrets({
 			storefrontName,
 			storefrontApiKey,
 		})
@@ -95,17 +78,19 @@ export class SetupBase extends React.Component<Props, State> {
 			})
 			return
 		}
-		this.setState({
+		await saveSecrets({ storefrontName, storefrontApiKey })
+		await this.setState({
 			loading: false,
 			error: false,
 			success: true,
 			message,
 		})
-		setTimeout(this.updateCredentials, 2000)
 	}
 
 	handleUnlink = async () => {
 		await this.setState({ loading: true })
+		this.props.clearSecrets()
+		await this.setState({ loading: false })
 	}
 
 	render() {
@@ -122,12 +107,13 @@ export class SetupBase extends React.Component<Props, State> {
 
 		if (this.props.valid) {
 			return (
-				<div style={warningWrapperStyles}>
-					<Fieldset
-						legend="Unlink Shopify"
-						level={2}
-						description="Unlinking your Shopify account will not remove any data in Sanity. But, it may cause syncing issues if you add new credentials later. Be sure to back up your content before unlinking."
-					>
+				<div style={wrapperStyles}>
+					<Fieldset legend="Connected to Shopify" level={1} description="">
+						<p>
+							Unlinking your Shopify account will not remove any data in Sanity.
+							But, it may cause syncing issues if you add new credentials later.
+							Be sure to back up your content before unlinking.
+						</p>
 						<Button
 							color="danger"
 							disabled={loading}

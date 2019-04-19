@@ -33,6 +33,7 @@ export const ClientConsumer = ClientContext.Consumer
 interface SecretUtils {
 	saveSecrets: (Secrets) => Promise<boolean>
 	testSecrets: typeof testSecrets
+	clearSecrets: () => Promise<void>
 }
 
 export interface ClientContextValue extends SecretUtils {

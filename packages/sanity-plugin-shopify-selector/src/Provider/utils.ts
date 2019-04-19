@@ -14,14 +14,20 @@ const testQuery = /* GraphQL */ `
 `
 
 interface TestData {
-	shop: {
-		name: string
+	data: {
+		shop: {
+			name: string
+		}
 	}
 }
 
-export const testSecrets = async (
-	secrets?: Secrets,
-): Promise<{ valid: boolean; message?: string; data?: TestData }> => {
+interface TestResponse {
+	valid: boolean
+	data?: TestData
+	message?: string
+}
+
+export const testSecrets = async (secrets?: Secrets): Promise<TestResponse> => {
 	if (!secrets)
 		return {
 			valid: false,
@@ -34,11 +40,8 @@ export const testSecrets = async (
 		return { valid: false, message: 'You must provide a Storefront API Key' }
 	const response = await createClient(secrets)
 		.query<TestData>(testQuery)
-		.then(({ data }) => ({
+		.then(data => ({
 			valid: true,
-			message: `🎉 Successfully connected to ${
-				data.shop.name
-			}. Saving your credentials to Sanity..`,
 			data,
 		}))
 		.catch(e => ({
