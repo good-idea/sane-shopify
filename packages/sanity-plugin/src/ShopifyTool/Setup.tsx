@@ -17,12 +17,6 @@ interface State {
 	success: boolean
 }
 
-const wrapperStyles = {
-	padding: '15px',
-	borderRadius: '5px',
-	border: '1px solid #ccc',
-}
-
 const buttonWrapperStyles = {
 	display: 'flex',
 	justifyContent: 'center',
@@ -104,85 +98,83 @@ export class SetupBase extends React.Component<Props, State> {
 		} = this.state
 
 		if (!this.props.ready) return null
-
 		if (this.props.valid) {
 			return (
-				<div style={wrapperStyles}>
-					<Fieldset legend="Connected to Shopify" level={1} description="">
-						<p>
+				<Fieldset legend="Account Setup" level={1} description="">
+					<p>
+						Connected to shopify storefront{' '}
+						<strong>{this.props.secrets.storefrontName}</strong>
+					</p>
+
+					<Button color="danger" disabled={loading} onClick={this.handleUnlink}>
+						Unlink
+					</Button>
+					<h5>
+						<em>
 							Unlinking your Shopify account will not remove any data in Sanity.
 							But, it may cause syncing issues if you add new credentials later.
 							Be sure to back up your content before unlinking.
-						</p>
-						<Button
-							color="danger"
-							disabled={loading}
-							onClick={this.handleUnlink}
-						>
-							Unlink
-						</Button>
-					</Fieldset>
-				</div>
+						</em>
+					</h5>
+				</Fieldset>
 			)
 		}
 
 		return (
-			<div style={wrapperStyles}>
-				<Fieldset
-					legend="Setup"
-					level={1}
-					description="You need to provide your Shopify info before you can use this
+			<Fieldset
+				legend="Account Setup"
+				level={1}
+				description="You need to provide your Shopify info before you can use this
 					field. These credentials will be stored safely in a hidden document only available to editors."
-				>
-					{message ? (
-						<p style={error ? { color: 'red' } : {}}>{message}</p>
-					) : null}
-					{!success && (
-						<React.Fragment>
-							<FormField
-								label="Storefront Name"
-								description="This is the first part of your shopify url, i.e. 'my-store.myshopify.com'"
-								labelFor={this.urlInputId}
-								level={0}
-							>
-								<TextInput
-									id={this.urlInputId}
-									onChange={this.handleInputChange('storefrontName')}
-									type="text"
-									disabled={success || loading}
-									value={storefrontName}
-								/>
-							</FormField>
-							<FormField
-								description="In the 'App' section of your shopify settings, create a new private app with the Storefront API enabled."
-								label="Storefront API Key"
-								labelFor={this.keyInputId}
-								level={0}
-							>
-								<TextInput
-									id={this.keyInputId}
-									disabled={success || loading}
-									onChange={this.handleInputChange('storefrontApiKey')}
-									value={storefrontApiKey}
-									type="password"
-								/>
-							</FormField>
-						</React.Fragment>
-					)}
-					<div style={buttonWrapperStyles}>
-						<Button
-							loading={success || loading}
-							disabled={success}
-							color="primary"
-							kind="default"
-							onClick={this.handleSubmit}
-							style={buttonStyles}
+			>
+				{message ? (
+					<p style={error ? { color: 'red' } : {}}>{message}</p>
+				) : null}
+				{!success && (
+					<React.Fragment>
+						<FormField
+							label="Storefront Name"
+							description="This is the first part of your shopify url, i.e. 'my-store.myshopify.com'"
+							labelFor={this.urlInputId}
+							level={0}
 						>
-							Save Credentials
-						</Button>
-					</div>
-				</Fieldset>
-			</div>
+							<TextInput
+								id={this.urlInputId}
+								onChange={this.handleInputChange('storefrontName')}
+								type="text"
+								disabled={success || loading}
+								value={storefrontName}
+							/>
+						</FormField>
+						<FormField
+							description="In the 'App' section of your shopify settings, create a new private app with the Storefront API enabled."
+							label="Storefront API Key"
+							labelFor={this.keyInputId}
+							level={0}
+						>
+							<TextInput
+								id={this.keyInputId}
+								disabled={success || loading}
+								onChange={this.handleInputChange('storefrontApiKey')}
+								value={storefrontApiKey}
+								type="password"
+							/>
+						</FormField>
+					</React.Fragment>
+				)}
+				<div style={buttonWrapperStyles}>
+					<Button
+						loading={success || loading}
+						disabled={success}
+						color="primary"
+						kind="default"
+						onClick={this.handleSubmit}
+						style={buttonStyles}
+					>
+						Save Credentials
+					</Button>
+				</div>
+			</Fieldset>
 		)
 	}
 }

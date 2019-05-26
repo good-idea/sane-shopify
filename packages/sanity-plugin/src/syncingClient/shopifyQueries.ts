@@ -1,4 +1,21 @@
-import { Paginated, Product, Collection } from '../../types'
+import { Paginated, Product, Collection } from '../types'
+
+export const PRODUCT_QUERY = /* GraphQL */ `
+	query ProductQuery($handle: String!) {
+		productByHandle(handle: $handle) {
+			id
+			handle
+			title
+			description
+		}
+	}
+`
+
+export interface ProductQueryResult {
+	data: {
+		productByHandle: Product
+	}
+}
 
 export const productsQuery = /* GraphQL */ `
 	query ProductsQuery($first: Int!, $after: String) {
@@ -13,6 +30,18 @@ export const productsQuery = /* GraphQL */ `
 					id
 					handle
 					title
+					description
+					__typename
+					images(first: 1) {
+						edges {
+							node {
+								id
+								altText
+								originalSrc
+								transformedSrc(maxWidth: 100)
+							}
+						}
+					}
 				}
 			}
 		}
@@ -38,6 +67,14 @@ export const collectionsQuery = /* GraphQL */ `
 					id
 					handle
 					title
+					description
+					__typename
+					image {
+						id
+						altText
+						originalSrc
+						transformedSrc(maxWidth: 100)
+					}
 				}
 			}
 		}

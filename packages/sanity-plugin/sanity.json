@@ -1,12 +1,11 @@
 {
 	"paths": {
 		"source": "./src",
-		"compiled": "./lib"
-	},
+		"compiled": "./dist"},
 	"parts": [
 		{
 			"implements": "part:@sanity/base/tool",
-			"path": "./lib/index.js"
+			"path": "./dist/index.js"
 		},
 		{
 			"name": "part:@sanity/form-builder/input/shopifySelector",

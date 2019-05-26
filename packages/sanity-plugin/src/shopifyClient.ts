@@ -1,4 +1,4 @@
-import { Secrets, Paginated } from '../types'
+import { Secrets, Paginated } from './types'
 import { path, last, lensPath, set } from 'ramda'
 
 interface Variables {
@@ -10,11 +10,11 @@ export interface ShopifyClient {
 		query: string,
 		variables?: Variables,
 	) => Promise<ResponseType>
-	queryAll: <ResponseType>(
-		query: string,
-		pagePath: string[],
-		variables?: Variables,
-	) => Promise<ResponseType>
+	// queryAll: <ResponseType>(
+	// 	query: string,
+	// 	pagePath: string[],
+	// 	variables?: Variables,
+	// ) => Promise<ResponseType>
 }
 
 export interface ShopifyItem {}
@@ -58,39 +58,40 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
 			return json
 		})
 
-	const queryAll = async <ResponseType>(
-		queryString: string,
-		pagePath: string[],
-		variables: Variables = {},
-	): Promise<ResponseType> => {
-		const paginatedVariables = {
-			...variables,
-			first: variables.first || 200,
-		}
-		const response = await query<ResponseType>(queryString, paginatedVariables)
-		const page: Paginated<any> = path(pagePath, response)
-		if (page.pageInfo.hasNextPage) {
-			const nextVariables = {
-				...variables,
-				after: last(page.edges).cursor,
-			}
-			const nextResponse = await queryAll<ResponseType>(
-				queryString,
-				pagePath,
-				nextVariables,
-			)
-			const nextPage: Paginated<any> = path(pagePath, nextResponse)
-			const combined = combinePages(page, nextPage)
-			const pageLens = lensPath(pagePath)
-			const fullResponse: ResponseType = set(pageLens, combined, nextResponse)
-			return fullResponse
-		}
+	// const queryAll = async <ResponseType>(
+	// 	queryString: string,
+	// 	pagePath: string[],
+	// 	variables: Variables = {},
+	// ): Promise<ResponseType> => {
+	// 	const paginatedVariables = {
+	// 		...variables,
+	// 		first: variables.first || 25,
+	// 	}
+	// 	console.log('fetching page')
+	// 	const r,esponse = await query<ResponseType>(queryString, paginatedVariables)
+	// 	const page: Paginated<any> = path(pagePath, response)
+	// 	// if (page.pageInfo.hasNextPage) {
+	// 	// 	const nextVariables = {
+	// 	// 		...variables,
+	// 	// 		after: last(page.edges).cursor,
+	// 	// 	}
+	// 	// 	const nextResponse = await queryAll<ResponseType>(
+	// 	// 		queryString,
+	// 	// 		pagePath,
+	// 	// 		nextVariables,
+	// 	// 	)
+	// 	// 	const nextPage: Paginated<any> = path(pagePath, nextResponse)
+	// 	// 	const combined = combinePages(page, nextPage)
+	// 	// 	const pageLens = lensPath(pagePath)
+	// 	// 	const fullResponse: ResponseType = set(pageLens, combined, nextResponse)
+	// 	// 	return fullResponse
+	// 	// }
 
-		return response
-	}
+	// 	return response
+	// }
 
 	return {
 		query,
-		queryAll,
+		// queryAll,
 	}
 }

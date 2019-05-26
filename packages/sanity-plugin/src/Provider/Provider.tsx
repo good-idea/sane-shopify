@@ -1,10 +1,12 @@
 import * as React from 'react'
-import { createClient, ShopifyClient } from './shopifyClient'
+import { createClient, ShopifyClient } from '../shopifyClient'
 import { testSecrets } from './utils'
 import { Secrets } from '../types'
 import { Sync } from '../ShopifyTool/Sync'
 
 const sanityClient = require('part:@sanity/base/client')
+
+export type SanityClient = typeof sanityClient
 
 /**
  * Constants & Defaults
@@ -33,14 +35,15 @@ export const ClientConsumer = ClientContext.Consumer
 interface SecretUtils {
 	saveSecrets: (Secrets) => Promise<boolean>
 	testSecrets: typeof testSecrets
-	clearSecrets: () => Promise<void>
+	clearSecrets: () => Promise<boolean>
 }
 
 export interface ClientContextValue extends SecretUtils {
 	secrets: Secrets
 	valid: boolean
 	ready: boolean
-	client: ShopifyClient
+	shopifyClient: ShopifyClient
+	sanityClient: SanityClient
 }
 
 interface ClientContextProps {
@@ -63,13 +66,15 @@ export class Provider extends React.Component<
 		ready: false,
 	}
 
-	client?: ShopifyClient = undefined
+	shopifyClient?: ShopifyClient = undefined
+
+	sanityClient: SanityClient = sanityClient
 
 	async componentDidMount() {
 		const secrets = await this.fetchSecrets()
 		const { valid } = await testSecrets(secrets)
 		if (valid) {
-			this.client = createClient(secrets)
+			this.shopifyClient = createClient(secrets)
 			this.setState({ valid: true, ready: true, secrets })
 		} else {
 			this.setState({ valid: false, ready: true, secrets: emptySecrets })
@@ -118,7 +123,7 @@ export class Provider extends React.Component<
 	render() {
 		const { children } = this.props
 		const { secrets, valid, ready } = this.state
-		const { saveSecrets, clearSecrets, client } = this
+		const { saveSecrets, clearSecrets, shopifyClient, sanityClient } = this
 
 		const value = {
 			secrets: secrets || emptySecrets,
@@ -127,7 +132,8 @@ export class Provider extends React.Component<
 			saveSecrets,
 			testSecrets,
 			clearSecrets,
-			client,
+			shopifyClient,
+			sanityClient,
 		}
 
 		return (

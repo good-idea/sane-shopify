@@ -1,22 +1,17 @@
 {
-	"name": "sanity-plugin-shopify-selector",
+	"name": "@sane-shopify/sanity-plugin",
 	"version": "0.0.0",
 	"description": "A Sanity.io field for selecting products & collections from a Shopify storefront",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "ISC",
-	"main": "lib/index.js",
+	"keywords": [
+		"sanity",
+		"shopify"
+	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/good-idea/sane-shopify.git"
-	},
-	"scripts": {
-		"test": "echo \"Error: run tests from root\" && exit 1",
-		"build": "rimraf ./lib && npm run build:types && npm run build:js",
-		"build:types": "tsc --emitDeclarationOnly",
-		"build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline --copy-files",
-		"clean": "rimraf ./lib",
-		"dev": "npm run clean && babel src --watch --out-dir lib --extensions \".ts,.tsx\" --source-maps inline --copy-files"
 	},
 	"directories": {
 		"lib": "lib",
@@ -25,6 +20,15 @@
 	"files": [
 		"lib"
 	],
+	"main": "lib/index.js",
+	"scripts": {
+		"test": "echo \"Error: run tests from root\" && exit 1",
+		"build": "npm run clean && npm run build:types && npm run build:js",
+		"build:types": "tsc --emitDeclarationOnly",
+		"build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline --copy-files",
+		"clean": "rimraf ./dist",
+		"dev": "npm run clean && babel src --watch --out-dir dist --extensions \".ts,.tsx\" --source-maps inline --copy-files"
+	},
 	"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
@@ -53,6 +57,8 @@
 		"rimraf": "^2.6.3"
 	},
 	"dependencies": {
+		"@sane-shopify/sync-utils": "0.0.0",
+		"@sane-shopify/types": "^0.0.0",
 		"lodash": "^4.17.11",
 		"ramda": "^0.26.1",
 		"react-icons": "^3.6.1"

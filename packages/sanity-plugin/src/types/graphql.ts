@@ -3,7 +3,7 @@
  */
 
 interface Edge<T> {
-	cursor: string | number
+	cursor: string
 	node: T
 }
 

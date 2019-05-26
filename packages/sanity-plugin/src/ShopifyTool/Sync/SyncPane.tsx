@@ -5,10 +5,22 @@ import Fieldset from 'part:@sanity/components/fieldsets/default'
 
 interface Props extends SyncRenderProps {}
 
-const SyncPaneBase = ({ loading, run }: Props) => {
+const SyncPaneBase = ({
+	ready,
+	valid,
+	loading,
+	productsSynced,
+	run,
+}: Props) => {
 	const handleSyncButton = () => run()
+	if (!valid) return null
+	if (!ready) return 'Loading...'
+
 	return (
 		<Fieldset legend="Sync" level={1}>
+			{productsSynced.length ? (
+				<p>synced {productsSynced.length} products</p>
+			) : null}
 			<Button loading={loading} color="primary" onClick={handleSyncButton}>
 				Sync from Shopify
 			</Button>
