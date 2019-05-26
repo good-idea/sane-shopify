@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { groupBy } from 'ramda'
-import Bottleneck from 'bottleneck'
 import { SanityClient, Provider, ClientContextValue } from '../../Provider'
 import { ShopifyClient } from '../../shopifyClient'
 import { Product, Collection } from '../../types'
@@ -19,10 +18,6 @@ import {
 
 import * as utils from './utils'
 
-const limiter = new Bottleneck({
-	maxConcurrent: 5,
-})
-
 interface SanityProduct extends Product {
 	_id: string
 	shopifyId: number
@@ -35,6 +30,7 @@ interface SanityCollection extends Collection {
 
 interface State {
 	loading: boolean
+	totalProducts: any[]
 	productsSynced: any[]
 	products: Product[]
 	collections: Collection[]
@@ -53,6 +49,7 @@ interface State {
 export interface SyncRenderProps {
 	valid: boolean
 	loading: boolean
+	totalProducts: any[]
 	productsSynced: any[]
 	ready: boolean
 	run: () => Promise<void>
@@ -70,6 +67,7 @@ const collectionsPath = ['data', 'collections']
 class SyncBase extends React.Component<Props, State> {
 	state = {
 		loading: false,
+		totalProducts: [],
 		productsSynced: [],
 		products: [],
 		collections: [],
@@ -131,64 +129,26 @@ class SyncBase extends React.Component<Props, State> {
 
 	run = async () => {
 		await this.syncingClient.syncProducts({
+			onFetchedItems: nodes => {
+				this.setState(prevState => ({
+					totalProducts: [...prevState.totalProducts, ...nodes],
+				}))
+			},
 			onProgress: product => {
+				console.log(product)
 				this.setState(prevState => ({
 					productsSynced: [...prevState.productsSynced, product],
 				}))
 			},
 		})
-		// await this.setState({ loading: true })
-		// const { shopifyClient, sanityClient } = this.props
-		// const [
-		// 	productsResult,
-		// 	collectionsResult,
-		// 	sanityProducts,
-		// 	sanityCollections,
-		// ] = await Promise.all([
-		// 	shopifyClient.queryAll<ProductsQueryResult>(productsQuery, productsPath),
-		// 	shopifyClient.queryAll<CollectionsQueryResult>(
-		// 		collectionsQuery,
-		// 		collectionsPath,
-		// 	),
-		// 	sanityClient.fetch('*[_type == "shopifyProduct"]'),
-		// 	sanityClient.fetch('*[_type == "shopifyCollection"]'),
-		// ])
-		// const products = productsResult.data.products.edges.map(e => e.node)
-		// const collections = collectionsResult.data.collections.edges.map(
-		// 	e => e.node,
-		// )
-		// await this.setState({
-		// 	products,
-		// 	collections,
-		// 	sanityProducts,
-		// 	sanityCollections,
-		// })
-		// const productResults = organizeResults<Product, SanityProduct>(
-		// 	products,
-		// 	sanityProducts,
-		// )
-		// console.log(productResults)
-		// console.log(this.state)
-		// products.forEach(product =>
-		// 	limiter.schedule(() => this.syncProduct(product)),
-		// )
-		// // collections.forEach(collection =>
-		// 	limiter.schedule(() => this.syncCollection(collection)),
-		// )
-		// console.log(collections)
-		// await limit([
-		// 	...products.map(product => () => this.syncProduct(product)),
-		// 	...collections.map(collection => () => this.syncCollection(collection)),
-		// ])
-
-		// this.setState({ loading: false })
 	}
 
 	render() {
 		const { children, ready, valid } = this.props
-		const { loading, productsSynced } = this.state
+		const { loading, totalProducts, productsSynced } = this.state
 		const renderProps = {
 			productsSynced,
+			totalProducts,
 			loading,
 			valid,
 			ready,

@@ -1,5 +1,6 @@
 import { ShopifyClient } from '../shopifyClient'
 import { Observable, from, empty, of, iif, interval } from 'rxjs'
+import { isMatch } from 'lodash'
 import {
 	map,
 	mergeMap,
@@ -10,9 +11,9 @@ import {
 	take,
 } from 'rxjs/operators'
 import {
-	productsQuery,
-	collectionsQuery,
+	PRODUCTS_QUERY,
 	ProductsQueryResult,
+	COLLECTIONS_QUERY,
 	CollectionsQueryResult,
 	PRODUCT_QUERY,
 	ProductQueryResult,
@@ -30,6 +31,7 @@ interface SyncingClient {
 }
 
 interface SubscriptionCallbacks<NodeType> {
+	onFetchedItems?: (nodes: NodeType[]) => void
 	onProgress?: (node: NodeType) => void
 	onError?: (err: Error) => void
 	onComplete?: () => void
@@ -46,13 +48,16 @@ export const createSyncingClient = (
 
 	const fetchAll = <T extends ProductsQueryResult | CollectionsQueryResult>(
 		type: 'products' | 'collections',
+		onFetchedItems?: (nodes: any[]) => void,
 	) => {
+		const query = type === 'products' ? PRODUCTS_QUERY :COLLECTIONS_QUERY 
 		const fetchPage = (after?: string) =>
-			from(shopifyClient.query<T>(productsQuery, { first: 25, after })).pipe(
+			from(shopifyClient.query<T>(query, { first: 25, after })).pipe(
 				map(response => {
 					const [nodes, { pageInfo, lastCursor }] = unwindEdges(
 						response.data[type],
 					)
+					if (onFetchedItems) onFetchedItems(nodes)
 					return {
 						nodes,
 						next: pageInfo.hasNextPage ? () => fetchPage(lastCursor) : empty,
@@ -87,18 +92,24 @@ export const createSyncingClient = (
 	}
 
 	const updateSanityProduct = (doc: any, item: Product) => {
-		const newDoc = {
-			title: item.title,
+		const { title, handle } = item
+		const update = {
 			slug: {
 				current: item.handle,
 			},
+			__sourceInfo: {
+				title,
+				handle,
+			},
 		}
-		return from(
-			sanityClient
-				.patch(doc._id)
-				.set(newDoc)
-				.commit(),
-		)
+		return isMatch(doc, update)
+			? of(doc).pipe(map(doc => ({ operation: 'skip', doc })))
+			: from(
+					sanityClient
+						.patch(doc._id)
+						.set(update)
+						.commit(),
+			  ).pipe(map(doc => ({ operation: 'updated', doc })))
 	}
 
 	const syncProduct = (product: Product) => {
@@ -119,13 +130,17 @@ export const createSyncingClient = (
 	}
 
 	const syncProducts = ({
+		onFetchedItems,
 		onProgress,
 		onError,
 		onComplete,
 	}: SubscriptionCallbacks<Product> = {}) =>
 		new Promise(resolve => {
-			const products$ = fetchAll('products')
-				.pipe(mergeMap((node: Product) => syncProduct(node), undefined, 35))
+			const products$ = fetchAll('products', onFetchedItems)
+				.pipe(
+					mergeMap((node: Product) => syncProduct(node), undefined, 25),
+					// take(22), // Uncomment for debugging
+				)
 				.subscribe(
 					product => onProgress && onProgress(product),
 					error => onError && onError(error),

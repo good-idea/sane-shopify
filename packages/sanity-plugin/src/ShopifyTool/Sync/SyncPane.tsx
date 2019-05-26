@@ -9,6 +9,7 @@ const SyncPaneBase = ({
 	ready,
 	valid,
 	loading,
+	totalProducts,
 	productsSynced,
 	run,
 }: Props) => {
@@ -19,7 +20,9 @@ const SyncPaneBase = ({
 	return (
 		<Fieldset legend="Sync" level={1}>
 			{productsSynced.length ? (
-				<p>synced {productsSynced.length} products</p>
+				<p>
+					synced {productsSynced.length}/{totalProducts.length} products
+				</p>
 			) : null}
 			<Button loading={loading} color="primary" onClick={handleSyncButton}>
 				Sync from Shopify

@@ -1,17 +1,23 @@
 {
- "name": "root",
- "private": true,
- "devDependencies": {
-  "@commitlint/cli": "^7.5.2",
-  "@commitlint/config-conventional": "^7.5.0",
-  "@types/node": "^11.13.11",
-  "husky": "^1.3.1",
-  "lerna": "^3.13.1",
-  "typescript": "^3.4.5"
- },
- "husky": {
-  "hooks": {
-   "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-  }
- }
+	"name": "root",
+	"private": true,
+	"scripts": {
+		"dependencies:check": "lerna exec -- ncu",
+		"dependencies:update": "lerna exec -- ncu -u",
+		"types:update": "lerna exec -- typesync"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^7.5.2",
+		"@commitlint/config-conventional": "^7.5.0",
+		"@types/node": "^11.13.11",
+		"husky": "^1.3.1",
+		"lerna": "^3.13.1",
+		"npm-check-updates": "^3.1.9",
+		"typescript": "^3.4.5"
+	},
+	"husky": {
+		"hooks": {
+			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+		}
+	}
 }

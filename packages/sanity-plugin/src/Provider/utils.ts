@@ -1,5 +1,5 @@
 import { Secrets } from '../types'
-import { createClient } from './shopifyClient'
+import { createClient } from '../shopifyClient'
 
 /**
  * Utilities

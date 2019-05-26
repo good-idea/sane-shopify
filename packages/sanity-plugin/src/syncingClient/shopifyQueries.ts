@@ -17,7 +17,7 @@ export interface ProductQueryResult {
 	}
 }
 
-export const productsQuery = /* GraphQL */ `
+export const PRODUCTS_QUERY = /* GraphQL */ `
 	query ProductsQuery($first: Int!, $after: String) {
 		products(first: $first, after: $after) {
 			pageInfo {
@@ -54,7 +54,7 @@ export interface ProductsQueryResult {
 	}
 }
 
-export const collectionsQuery = /* GraphQL */ `
+export const COLLECTIONS_QUERY = /* GraphQL */ `
 	query CollectionsQuery($first: Int!, $after: String) {
 		collections(first: $first, after: $after) {
 			pageInfo {
