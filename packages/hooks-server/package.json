@@ -1,0 +1,33 @@
+{
+	"name": "@sane-shopify/hooks-server",
+	"version": "0.0.0",
+	"description": "Keeps Sanity dataset in sync via shopify hooks",
+	"author": "Joseph Thomas <joseph@good-idea.studio>",
+	"homepage": "https://github.com/good-idea/sane-shopify#readme",
+	"license": "ISC",
+	"keywords": [
+		"sanity",
+		"shopify"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/good-idea/sane-shopify.git"
+	},
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"lib"
+	],
+	"main": "lib/index.js",
+	"scripts": {
+		"test": "echo \"Error: run tests from root\" && exit 1"
+	},
+	"bugs": {
+		"url": "https://github.com/good-idea/sane-shopify/issues"
+	},
+	"dependencies": {
+		"@sane-shopify/types": "^0.0.0"
+	}
+}

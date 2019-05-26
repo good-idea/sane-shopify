@@ -1,0 +1,34 @@
+{
+	"name": "@sane-shopify/sync-utils",
+	"version": "0.0.0",
+	"description": "Syncing utility for Node & the browser",
+	"author": "Joseph Thomas | Good Idea Studio",
+	"homepage": "https://github.com/good-idea/sane-shopify#readme",
+	"license": "ISC",
+	"keywords": [
+		"shopify",
+		"sanity"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/good-idea/sane-shopify.git"
+	},
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"lib"
+	],
+	"main": "lib/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"bugs": {
+		"url": "https://github.com/good-idea/sane-shopify/issues"
+	},
+	"dependencies": {
+		"@sane-shopify/types": "^0.0.0",
+		"rxjs": "^6.5.2"
+	}
+}

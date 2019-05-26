@@ -1,6 +1,12 @@
 # config stuff
 .vscode
 
-# build
 node_modules
-lib
+
+# build
+lerna-debug.log
+npm-debug.log
+packages/*/lib
+
+# use npm, not yarn
+yarn.lock
