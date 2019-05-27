@@ -5,32 +5,27 @@ import Fieldset from 'part:@sanity/components/fieldsets/default'
 
 interface Props extends SyncRenderProps {}
 
-const SyncPaneBase = ({
-	ready,
-	valid,
-	loading,
-	totalProducts,
-	productsSynced,
-	run,
-}: Props) => {
-	const handleSyncButton = () => run()
-	if (!valid) return null
-	if (!ready) return 'Loading...'
+const SyncPaneBase = ({ loading, fetchedProducts, productsSynced, fetchedCollections, collectionsSynced, syncAll }: Props) => {
+  const handleSyncButton = () => syncAll()
+  if (loading) return <p>'Loading...'</p>
 
-	return (
-		<Fieldset legend="Sync" level={1}>
-			{productsSynced.length ? (
-				<p>
-					synced {productsSynced.length}/{totalProducts.length} products
-				</p>
-			) : null}
-			<Button loading={loading} color="primary" onClick={handleSyncButton}>
-				Sync from Shopify
-			</Button>
-		</Fieldset>
-	)
+  return (
+    <Fieldset legend="Sync" level={1}>
+      {fetchedCollections.length ? (
+        <p>
+          synced {collectionsSynced.length}/{fetchedCollections.length} products
+        </p>
+      ) : null}
+      {productsSynced.length ? (
+        <p>
+          synced {productsSynced.length}/{fetchedProducts.length} products
+        </p>
+      ) : null}
+      <Button loading={loading} color="primary" onClick={handleSyncButton}>
+        Sync from Shopify
+      </Button>
+    </Fieldset>
+  )
 }
 
-export const SyncPane = () => (
-	<Sync>{syncProps => <SyncPaneBase {...syncProps} />}</Sync>
-)
+export const SyncPane = () => <Sync>{(syncProps) => <SyncPaneBase {...syncProps} />}</Sync>

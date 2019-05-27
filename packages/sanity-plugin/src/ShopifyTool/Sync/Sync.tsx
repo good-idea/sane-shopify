@@ -1,172 +1,124 @@
 import * as React from 'react'
-import { groupBy } from 'ramda'
-import { SanityClient, Provider, ClientContextValue } from '../../Provider'
-import { ShopifyClient } from '../../shopifyClient'
-import { Product, Collection } from '../../types'
-import { createSyncingClient } from '../../syncingClient'
-// import {
-// 	productsQuery,
-// 	ProductsQueryResult,
-// 	collectionsQuery,
-// 	CollectionsQueryResult,
-// } from './query'
-import {
-	FetchingStateAndUpdaters,
-	createFetchingState,
-	organizeResults,
-} from './utils'
-
-import * as utils from './utils'
-
-interface SanityProduct extends Product {
-	_id: string
-	shopifyId: number
-}
-
-interface SanityCollection extends Collection {
-	_id: string
-	shopifyId: number
-}
+import { ShopifyClient, SanityClient } from '@sane-shopify/types'
+import { createSyncingClient, SyncingClient } from '@sane-shopify/sync-utils'
+import { Provider, ClientContextValue } from '../../Provider'
 
 interface State {
-	loading: boolean
-	totalProducts: any[]
-	productsSynced: any[]
-	products: Product[]
-	collections: Collection[]
-	sanityProducts: SanityProduct[]
-	sanityCollections: SanityCollection[]
-	fetchingStates: {
-		shopifyProducts: FetchingStateAndUpdaters
-		shopifyCollections: FetchingStateAndUpdaters
-		sanityProducts: FetchingStateAndUpdaters
-		sanityCollections: FetchingStateAndUpdaters
-		syncedCollections: FetchingStateAndUpdaters
-		syncedProducts: FetchingStateAndUpdaters
-	}
+  loading: boolean
+  fetchedProducts: any[]
+  productsSynced: any[]
+  fetchedCollections: any[]
+  collectionsSynced: any[]
 }
 
-export interface SyncRenderProps {
-	valid: boolean
-	loading: boolean
-	totalProducts: any[]
-	productsSynced: any[]
-	ready: boolean
-	run: () => Promise<void>
+export interface SyncRenderProps extends State {
+  syncProductByHandle: (handle: string) => Promise<void>
+  syncCollectionByHandle: (handle: string) => Promise<void>
+  syncProducts: () => Promise<void>
+  syncCollections: () => Promise<void>
+  syncAll: () => Promise<void>
 }
 
 interface Props extends ClientContextValue {
-	sanityClient: SanityClient
-	shopifyClient: ShopifyClient
-	children?: ((props: SyncRenderProps) => React.ReactNode) | React.ReactNode
+  sanityClient: SanityClient
+  shopifyClient: ShopifyClient
+  children?: ((props: SyncRenderProps) => React.ReactNode) | React.ReactNode
 }
 
-const productsPath = ['data', 'products']
-const collectionsPath = ['data', 'collections']
+const initialState = {
+  fetchedProducts: [],
+  productsSynced: [],
+  fetchedCollections: [],
+  collectionsSynced: [],
+}
 
 class SyncBase extends React.Component<Props, State> {
-	state = {
-		loading: false,
-		totalProducts: [],
-		productsSynced: [],
-		products: [],
-		collections: [],
-		sanityProducts: [],
-		sanityCollections: [],
-		fetchingStates: {
-			shopifyProducts: createFetchingState('Shopify Products'),
-			shopifyCollections: createFetchingState('Shopify Collections'),
-			sanityProducts: createFetchingState('Sanity Products'),
-			sanityCollections: createFetchingState('Sanity Collections'),
-			syncedCollections: createFetchingState('Collections Synced'),
-			syncedProducts: createFetchingState('Products Synced'),
-		},
-	}
+  state = {
+    loading: false,
+    ...initialState,
+  }
 
-	syncingClient = createSyncingClient(
-		this.props.shopifyClient,
-		this.props.sanityClient,
-	)
+  syncingClient: SyncingClient = createSyncingClient(this.props.shopifyClient, this.props.sanityClient)
 
-	getOrCreateDoc = async (
-		item: Product | Collection,
-		type: 'product' | 'collection',
-	) => {
-		if (type === 'product') {
-			const doc = this.state.sanityProducts.find(sp => sp.shopifyId === item.id)
-			console.log(doc)
-		}
-		// const shopifyType =
-		// 	type === 'product' ? 'shopifyProduct' : 'shopifyCollection'
+  reset = async () => {
+    await this.setState({ loading: true, ...initialState })
+  }
 
-		// const newDoc = {
-		// 	_type: shopifyType,
-		// 	shopifyId: item.id,
-		// 	title: item.title,
-		// 	slug: {
-		// 		current: item.handle,
-		// 	},
-		// }
-		// const b = await sanityClient.create(newDoc)
-		// return b
-	}
+  _syncProducts = async () => {
+    await this.syncingClient.syncProducts({
+      onFetchedItems: (nodes) => {
+        this.setState((prevState) => ({
+          fetchedProducts: [...prevState.fetchedProducts, ...nodes],
+        }))
+      },
+      onProgress: (product) => {
+        console.log(product)
+        this.setState((prevState) => ({
+          productsSynced: [...prevState.productsSynced, product],
+        }))
+      },
+    })
+  }
 
-	syncProduct = async (item: Product) => {
-		const doc = await this.getOrCreateDoc(item, 'product')
-		// if (!doc) return
-		// const { title } = item
-		// const patched = await sanityClient
-		// 	.patch(doc._id)
-		// 	.set({ title })
-		// 	.commit()
-		// console.log(patched)
-	}
+  _syncCollections = async () => {
+    await this.syncingClient.syncCollections({
+      onFetchedItems: (nodes) => {
+        this.setState((prevState) => ({
+          fetchedCollections: [...prevState.fetchedProducts, ...nodes],
+        }))
+      },
+      onProgress: (product) => {
+        this.setState((prevState) => ({
+          collectionsSynced: [...prevState.productsSynced, product],
+        }))
+      },
+    })
+  }
 
-	syncCollection = async (item: Collection) => {
-		const doc = await this.getOrCreateDoc(item, 'collection')
-		console.log(doc)
-	}
+  /** Public Methods */
 
-	run = async () => {
-		await this.syncingClient.syncProducts({
-			onFetchedItems: nodes => {
-				this.setState(prevState => ({
-					totalProducts: [...prevState.totalProducts, ...nodes],
-				}))
-			},
-			onProgress: product => {
-				console.log(product)
-				this.setState(prevState => ({
-					productsSynced: [...prevState.productsSynced, product],
-				}))
-			},
-		})
-	}
+  syncProductByHandle = async (handle: string) => {
+    await this.reset()
+    this.syncingClient.syncProductByHandle(handle)
+  }
 
-	render() {
-		const { children, ready, valid } = this.props
-		const { loading, totalProducts, productsSynced } = this.state
-		const renderProps = {
-			productsSynced,
-			totalProducts,
-			loading,
-			valid,
-			ready,
-			run: this.run,
-		}
+  syncCollectionByHandle = async (handle: string) => {
+    await this.reset()
+    this.syncingClient.syncProductByHandle(handle)
+  }
 
-		return children
-			? children instanceof Function
-				? children(renderProps)
-				: children
-			: null
-	}
+  syncProducts = async () => {
+    await this.reset()
+    this._syncProducts()
+  }
+
+  syncCollections = async () => {
+    await this.reset()
+    this._syncCollections()
+  }
+
+  syncAll = async () => {
+    await this.reset()
+    this._syncCollections()
+    this._syncProducts()
+  }
+
+  render() {
+    const { children, ready, valid } = this.props
+    const { syncProductByHandle, syncCollectionByHandle, syncProducts, syncCollections, syncAll } = this
+    const renderProps = {
+      ...this.state,
+      syncProductByHandle,
+      syncCollectionByHandle,
+      syncProducts,
+      syncCollections,
+      syncAll,
+    }
+
+    return children ? (children instanceof Function ? children(renderProps) : children) : null
+  }
 }
 
 export const Sync = (props: { children: React.ReactNode }) => (
-	<Provider>
-		{providerProps =>
-			providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null
-		}
-	</Provider>
+  <Provider>{(providerProps) => (providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null)}</Provider>
 )
