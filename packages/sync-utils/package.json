@@ -21,8 +21,12 @@
 		"lib"
 	],
 	"main": "lib/index.js",
+  "module": "lib/index.es.js",
+  "types": "lib/index.d.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "rollup -c",
+		"watch": "rollup -cw"
 	},
 	"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"
@@ -30,6 +34,10 @@
 	"dependencies": {
 		"@good-idea/unwind-edges": "^1.0.2",
 		"@sane-shopify/types": "^0.0.0",
+		"lodash-es": "^4.17.11",
 		"rxjs": "^6.5.2"
+	},
+	"devDependencies": {
+		"@types/lodash-es": "^4.17.3"
 	}
 }

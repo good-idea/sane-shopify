@@ -5,62 +5,62 @@ import { Paginated, Product, Collection } from '@sane-shopify/types'
  */
 
 const productFragment = /* GraphQL */ `
-	fragment ProductFragment on Product {
-		__typename
-		id
-		handle
-		title
-		description
-		images(first: 1) {
-			edges {
-				node {
-					id
-					altText
-					originalSrc
-					transformedSrc(maxWidth: 100)
-				}
-			}
-		}
-	}
+  fragment ProductFragment on Product {
+    __typename
+    id
+    handle
+    title
+    description
+    images(first: 1) {
+      edges {
+        node {
+          id
+          altText
+          originalSrc
+          transformedSrc(maxWidth: 100)
+        }
+      }
+    }
+  }
 `
 
 export const PRODUCT_QUERY = /* GraphQL */ `
-	query ProductQuery($handle: String!) {
-		productByHandle(handle: $handle) {
-			...ProductFragment
-		}
-	}
-	${productFragment}
+  query ProductQuery($handle: String!) {
+    productByHandle(handle: $handle) {
+      ...ProductFragment
+    }
+  }
+  ${productFragment}
 `
 
 export interface ProductQueryResult {
-	data: {
-		productByHandle: Product
-	}
+  data: {
+    productByHandle: Product
+  }
 }
 
 export const PRODUCTS_QUERY = /* GraphQL */ `
-	query ProductsQuery($first: Int!, $after: String) {
-		products(first: $first, after: $after) {
-			pageInfo {
-				hasNextPage
-				hasPreviousPage
-			}
-			edges {
-				cursor
-				node {
-					...ProductFragment
-				}
-			}
-		}
-	}
-	${productFragment}
+  query ProductsQuery($first: Int!, $after: String) {
+    products(first: $first, after: $after) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        cursor
+        node {
+          ...ProductFragment
+        }
+      }
+    }
+  }
+  ${productFragment}
 `
 
 export interface ProductsQueryResult {
-	data: {
-		products: Paginated<Product>
-	}
+  data: {
+    products: Paginated<Product>
+  }
 }
 
 /**
@@ -68,56 +68,56 @@ export interface ProductsQueryResult {
  */
 
 const collectionFragment = /* GraphQL */ `
-	fragment CollectionFragment on Collection {
-		id
-		handle
-		title
-		description
-		__typename
-		image {
-			id
-			altText
-			originalSrc
-			transformedSrc(maxWidth: 100)
-		}
-	}
+  fragment CollectionFragment on Collection {
+    id
+    handle
+    title
+    description
+    __typename
+    image {
+      id
+      altText
+      originalSrc
+      transformedSrc(maxWidth: 100)
+    }
+  }
 `
 
 export const COLLECTION_QUERY = /* GraphQL */ `
-	query CollectionQuery($handle: String!) {
-		collectionByHandle {
-			...CollectionFragment
-		}
-	}
-	${collectionFragment}
+  query CollectionQuery($handle: String!) {
+    collectionByHandle {
+      ...CollectionFragment
+    }
+  }
+  ${collectionFragment}
 `
 
 export interface CollectionQueryResult {
-	data: {
-		collectionByHandle: Collection
-	}
+  data: {
+    collectionByHandle: Collection
+  }
 }
 
 export const COLLECTIONS_QUERY = /* GraphQL */ `
-	query CollectionsQuery($first: Int!, $after: String) {
-		collections(first: $first, after: $after) {
-			pageInfo {
-				hasNextPage
-				hasPreviousPage
-			}
-			edges {
-				cursor
-				node {
-					...CollectionFragment
-				}
-			}
-		}
-	}
-	${collectionFragment}
+  query CollectionsQuery($first: Int!, $after: String) {
+    collections(first: $first, after: $after) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        cursor
+        node {
+          ...CollectionFragment
+        }
+      }
+    }
+  }
+  ${collectionFragment}
 `
 
 export interface CollectionsQueryResult {
-	data: {
-		collections: Paginated<Collection>
-	}
+  data: {
+    collections: Paginated<Collection>
+  }
 }
