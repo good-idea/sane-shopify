@@ -1,16 +1,25 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"declaration": true,
-		"noImplicitAny": false,
-		"removeComments": true,
-		"noLib": false,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"target": "es6",
-		"sourceMap": true,
-		"lib": ["es6"],
-		"typeRoots": ["packages/typescript-typings/types", "node_modules/@types"]
-	},
-	"exclude": ["node_modules", "**/*.spec.ts"]
+  "compilerOptions": {
+    /* compiling settings */
+    "target": "es5",
+    "declaration": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "inlineSourceMap": true,
+    "jsx": "react",
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+
+    /* type-checking settings */
+
+    // "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
+    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    "removeComments": true,
+    "noLib": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["esnext", "dom"],
+    "types": ["jest"],
+    "typeRoots": ["packages/typescript-typings/types", "node_modules/@types"]
+  },
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
