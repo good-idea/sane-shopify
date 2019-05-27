@@ -1,19 +1,30 @@
-export interface Field {
-	jsonType: string
-	name: string
-	title: string
-	preview: (arg0: any) => any
-	readOnly: boolean
-	type: Field
-	validation: (arg0: any) => any
+/**
+ * Types that are shared between the plugin, the hooks server, and the syncing client.
+ *
+ * Types for the Sanity Desk Tool should go in the sanity-plugin directory.
+ */
+
+export interface SanityDocument {
+  _id: string
+  _type: string
+  [key: string]: any
 }
 
-export interface SanityInputProps {
-	level: number
-	onBlur: () => void
-	onChange: (PatchEvent) => void
-	onFocus: (NextPath) => void
-	readOnly?: boolean
-	filterField: () => boolean
-	type: Field
+export interface SanityShopifyDocument extends SanityDocument {
+  shopifyId: string
+}
+
+interface Patch<ExpectedResult = any> {
+  set: (
+    document: object,
+  ) => {
+    commit: () => Promise<ExpectedResult>
+  }
+}
+
+export interface SanityClient {
+  fetch: <ExpectedResult = SanityDocument | SanityDocument[]>(query: string, params?: object) => Promise<ExpectedResult>
+  createIfNotExists: <ExpectedResult = SanityDocument>(doc: SanityDocument) => Promise<ExpectedResult>
+  create: <ExpectedResult = SanityDocument>(input: object) => Promise<ExpectedResult>
+  patch: <ExpectedResult = SanityDocument>(id: string) => Patch<ExpectedResult>
 }

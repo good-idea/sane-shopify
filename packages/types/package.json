@@ -13,5 +13,6 @@
 		"type": "git",
 		"url": "git+https://github.com/good-idea/sane-shopify.git"
 	},
-	"main": "types/index.ts"
+	"main": "types/index.ts",
+	"devDependencies": {}
 }
