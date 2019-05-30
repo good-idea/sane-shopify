@@ -20,9 +20,9 @@
 	"files": [
 		"lib"
 	],
-  "main": "lib/index.js",
-  "module": "lib/index.es.js",
-  "types": "lib/index.d.ts",
+	"main": "lib/index.js",
+	"module": "lib/index.es.js",
+	"types": "lib/index.d.ts",
 	"scripts": {
 		"test": "echo \"Error: run tests from root\" && exit 1",
 		"build": "rollup -c",

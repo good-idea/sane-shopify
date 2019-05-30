@@ -3,7 +3,8 @@ import { ShopifyClient, SanityClient } from '@sane-shopify/types'
 import { Secrets } from '../types'
 import { createClient } from '../shopifyClient'
 import { testSecrets } from './utils'
-import sanityClient from 'part:@sanity/base/client'
+
+const sanityClient = require('part:@sanity/base/client')
 
 /**
  * Constants & Defaults
@@ -30,7 +31,8 @@ export const ClientConsumer = ClientContext.Consumer
  */
 
 interface SecretUtils {
-  saveSecrets: (Secrets) => Promise<boolean>
+  saveSecrets: (secrets: Secrets) => Promise<boolean>
+
   testSecrets: typeof testSecrets
   clearSecrets: () => Promise<boolean>
 }

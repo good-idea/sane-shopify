@@ -1,9 +1,9 @@
 import * as React from 'react'
 import uniqueId from 'lodash-es/uniqueId'
-import Button from 'part:@sanity/components/buttons/default'
-import Fieldset from 'part:@sanity/components/fieldsets/default'
-import FormField from 'part:@sanity/components/formfields/default'
-import TextInput from 'part:@sanity/components/textinputs/default'
+const Button = require('part:@sanity/components/buttons/default').default
+const Fieldset = require('part:@sanity/components/fieldsets/default').default
+const FormField = require('part:@sanity/components/formfields/default').default
+const TextInput = require('part:@sanity/components/textinputs/default').default
 import { Provider, ClientContextValue } from '../Provider'
 
 interface Props extends ClientContextValue {}
