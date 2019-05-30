@@ -43,24 +43,24 @@ const reducer = (prevState: FetchingState, action: Action) => {
     case STARTED:
       return {
         ...prevState,
-        status: 'fetching' as 'fetching',
+        status: 'fetching' as 'fetching'
       }
     case FETCHED_TOTAL:
       return {
         ...prevState,
-        total: action.payload.count,
+        total: action.payload.count
       }
     case FETCHED_ITEMS:
       const newFetchedCount = prevState.fetched + action.payload.count
       return {
         ...prevState,
         fetched: newFetchedCount,
-        status: newFetchedCount === prevState.total ? ('complete' as 'complete') : prevState.status,
+        status: newFetchedCount === prevState.total ? ('complete' as 'complete') : prevState.status
       }
     case COMPLETED:
       return {
         ...prevState,
-        status: 'complete' as 'complete',
+        status: 'complete' as 'complete'
       }
 
     default:
@@ -95,7 +95,7 @@ const createUpdaters = (prevState: FetchingState): Updaters => {
     start,
     fetchedTotal,
     fetchedItems,
-    complete,
+    complete
   }
 }
 
@@ -104,7 +104,7 @@ export const createFetchingState = (label): FetchingStateAndUpdaters => {
     label,
     status: 'uninitialized' as 'uninitialized',
     total: undefined,
-    fetched: 0,
+    fetched: 0
   }
 
   return [initialState, createUpdaters(initialState)]

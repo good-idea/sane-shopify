@@ -5,6 +5,14 @@
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "ISC",
+	"scripts": {
+		"fix": "run-s fix:*",
+		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
+		"fix:tslint": "tslint --fix --project .",
+		"test": "run-s build test:lint test:unit",
+		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+		"test:unit": "jest --collectCoverage"
+	},
 	"keywords": [
 		"sanity",
 		"shopify"
@@ -14,9 +22,8 @@
 		"url": "git+https://github.com/good-idea/sane-shopify.git"
 	},
 	"main": "lib/index.js",
-  "module": "lib/index.es.js",
-  "types": "lib/index.d.ts",
-
+	"module": "lib/index.es.js",
+	"types": "lib/index.d.ts",
 	"directories": {
 		"lib": "lib",
 		"test": "__tests__"
@@ -24,14 +31,14 @@
 	"files": [
 		"lib"
 	],
-	"scripts": {
-		"test": "echo \"Error: run tests from root\" && exit 1"
-	},
 	"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
 	"dependencies": {
 		"@sane-shopify/types": "^0.0.0"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"npm-run-all": "^4.1.5",
+		"tslint": "^5.16.0"
+	}
 }

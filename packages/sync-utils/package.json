@@ -5,6 +5,19 @@
 	"author": "Joseph Thomas | Good Idea Studio",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "ISC",
+	"scripts": {
+		"fix": "run-s fix:*",
+		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
+		"fix:tslint": "tslint --fix --project .",
+		"test": "run-s build test:lint test:unit",
+		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+		"test:unit": "jest --collectCoverage",
+		"test:watch": "jest --watch",
+		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
+		"test:coverage:send": "codecov",
+		"build": "rollup -c",
+		"watch": "rollup -cw"
+	},
 	"keywords": [
 		"shopify",
 		"sanity"
@@ -23,11 +36,6 @@
 	"main": "lib/index.js",
 	"module": "lib/index.es.js",
 	"types": "lib/index.d.ts",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "rollup -c",
-		"watch": "rollup -cw"
-	},
 	"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
@@ -39,6 +47,8 @@
 	},
 	"devDependencies": {
 		"@types/lodash-es": "^4.17.3",
-		"react-hot-loader": "^4.8.8"
+		"npm-run-all": "^4.1.5",
+		"react-hot-loader": "^4.8.8",
+		"tslint": "^5.16.0"
 	}
 }

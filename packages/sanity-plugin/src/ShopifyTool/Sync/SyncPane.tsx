@@ -12,15 +12,14 @@ const SyncPaneBase = ({
   productsSynced,
   fetchedCollections,
   collectionsSynced,
-  syncAll,
+  syncAll
 }: SyncRenderProps) => {
   const handleSyncButton = () => syncAll()
   return (
     <Fieldset legend="Sync" level={1}>
       {fetchedCollections.length ? (
         <p>
-          synced {collectionsSynced.length}/{fetchedCollections.length}{' '}
-          collections
+          synced {collectionsSynced.length}/{fetchedCollections.length} collections
         </p>
       ) : null}
       {productsSynced.length ? (
@@ -35,21 +34,15 @@ const SyncPaneBase = ({
       ) : null}
       {syncState === 'syncing' ? (
         <p>
-          This will take a few minutes. Do not navigate away from this tab until
-          syncing is complete.
+          This will take a few minutes. Do not navigate away from this tab until syncing is
+          complete.
         </p>
       ) : null}
-      <Button
-        loading={syncState === 'ready'}
-        color="primary"
-        onClick={handleSyncButton}
-      >
+      <Button loading={syncState === 'ready'} color="primary" onClick={handleSyncButton}>
         Sync from Shopify
       </Button>
     </Fieldset>
   )
 }
 
-export const SyncPane = () => (
-  <Sync>{(syncProps) => <SyncPaneBase {...syncProps} />}</Sync>
-)
+export const SyncPane = () => <Sync>{(syncProps) => <SyncPaneBase {...syncProps} />}</Sync>

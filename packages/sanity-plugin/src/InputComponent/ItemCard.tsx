@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-interface ItemCardProps {}
+// interface ItemCardProps {}
 
-export const ItemCard: React.FunctionComponent<ItemCardProps> = (props) => {
+export const ItemCard: React.FunctionComponent = (props) => {
   return <p>hi</p>
 }

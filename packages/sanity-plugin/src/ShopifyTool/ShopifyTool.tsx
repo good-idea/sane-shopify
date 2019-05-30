@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ClientContextValue } from '../Provider'
-import { SyncPane } from './Sync'
 import { Setup } from './Setup'
+import { SyncPane } from './Sync'
 
 interface Props {
   clientProps: ClientContextValue

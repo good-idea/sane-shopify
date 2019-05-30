@@ -1,10 +1,12 @@
-import * as React from 'react'
-import Button from 'part:@sanity/components/buttons/default'
-import Fieldset from 'part:@sanity/components/fieldsets/default'
 import { ShopifyClient, ShopifyItem } from '@sane-shopify/types'
+import * as React from 'react'
 import { SanityInputProps } from '../types'
-import { SelectorDialog } from './SelectorDialog'
 import { SelectedItem } from './SelectedItem'
+import { SelectorDialog } from './SelectorDialog'
+/* tslint:disable */
+const Button = require('part:@sanity/components/buttons/default')
+const Fieldset = require('part:@sanity/components/fieldsets/default')
+/* tslint:enable*/
 
 interface Props extends SanityInputProps {
   shopifyClient: ShopifyClient
@@ -12,7 +14,7 @@ interface Props extends SanityInputProps {
 
 const defaultOptions = {
   collections: true,
-  products: true,
+  products: true
 }
 
 interface State {
@@ -30,35 +32,42 @@ interface State {
  */
 
 export class ShopifyInput extends React.Component<Props, State> {
-  state = {
+  public state = {
     open: false,
-    itemId: undefined,
+    itemId: undefined
   }
 
-  openSelector = () => {
+  public openSelector = () => {
     this.setState({ open: true })
   }
 
-  closeSelector = () => {
+  public closeSelector = () => {
     this.setState({ open: false })
   }
 
-  saveItem = (item: ShopifyItem) => {}
+  public saveItem = (item: ShopifyItem) => {
+    // ...
+  }
 
-  render() {
+  public render() {
     const { type, shopifyClient } = this.props
     const { open, itemId } = this.state
     const { title, options: userOptions } = type
 
     const options = {
       ...defaultOptions,
-      ...userOptions,
+      ...userOptions
     }
 
     return (
       <Fieldset legend={title} level={1}>
         {open ? (
-          <SelectorDialog shopifyClient={shopifyClient} saveItem={this.saveItem} close={this.closeSelector} options={options} />
+          <SelectorDialog
+            shopifyClient={shopifyClient}
+            saveItem={this.saveItem}
+            close={this.closeSelector}
+            options={options}
+          />
         ) : null}
         {!itemId || !itemId.length ? (
           <Button color="primary" kind="default" onClick={this.openSelector}>

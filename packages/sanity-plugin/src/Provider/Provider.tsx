@@ -1,10 +1,11 @@
+import { SanityClient, ShopifyClient } from '@sane-shopify/types'
 import * as React from 'react'
-import { ShopifyClient, SanityClient } from '@sane-shopify/types'
-import { Secrets } from '../types'
 import { createClient } from '../shopifyClient'
+import { Secrets } from '../types'
 import { testSecrets } from './utils'
 
-const sanityClient = require('part:@sanity/base/client')
+/* tslint:disable-next-line */
+const defaultSanityClient = require('part:@sanity/base/client')
 
 /**
  * Constants & Defaults
@@ -12,7 +13,7 @@ const sanityClient = require('part:@sanity/base/client')
 
 const emptySecrets = {
   storefrontName: '',
-  storefrontApiKey: '',
+  storefrontApiKey: ''
 }
 
 const KEYS_ID = 'secrets.sane-shopify'
@@ -56,29 +57,29 @@ interface ClientContextState {
 }
 
 export class Provider extends React.Component<ClientContextProps, ClientContextState> {
-  state = {
+  public state = {
     secrets: undefined,
     valid: false,
-    ready: false,
+    ready: false
   }
 
-  shopifyClient?: ShopifyClient = undefined
+  public shopifyClient?: ShopifyClient = undefined
 
-  sanityClient: SanityClient = sanityClient
+  public sanityClient: SanityClient = defaultSanityClient
 
-  async componentDidMount() {
+  public async componentDidMount() {
     const secrets = await this.fetchSecrets()
     const { valid } = await testSecrets(secrets)
     if (valid) {
       this.shopifyClient = createClient(secrets)
-      this.setState({ valid: true, ready: true, secrets })
+      this.setState({ secrets, valid: true, ready: true })
     } else {
       this.setState({ valid: false, ready: true, secrets: emptySecrets })
     }
   }
 
-  fetchSecrets = async (): Promise<Secrets | null> => {
-    const results: Secrets[] = await sanityClient.fetch(`*[_id == "${KEYS_ID}"]`)
+  public fetchSecrets = async (): Promise<Secrets | null> => {
+    const results: Secrets[] = await this.sanityClient.fetch(`*[_id == "${KEYS_ID}"]`)
     if (results.length) return results[0]
     return null
   }
@@ -86,16 +87,16 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
   /**
    * Returns true on success, false otherwise
    */
-  saveSecrets = async (secrets: Secrets): Promise<boolean> => {
+  public saveSecrets = async (secrets: Secrets): Promise<boolean> => {
     const valid = await testSecrets(secrets)
     if (!valid) return false
     const doc = {
       _id: KEYS_ID,
       _type: KEYS_TYPE,
-      ...secrets,
+      ...secrets
     }
-    await sanityClient.createIfNotExists(doc)
-    await sanityClient
+    await this.sanityClient.createIfNotExists(doc)
+    await this.sanityClient
       .patch(KEYS_ID)
       .set({ ...secrets })
       .commit()
@@ -103,24 +104,23 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
     return true
   }
 
-  clearSecrets = async (): Promise<boolean> => {
-    await sanityClient
+  public clearSecrets = async (): Promise<boolean> => {
+    await this.sanityClient
       .patch(KEYS_ID)
       .set({
-        ...emptySecrets,
+        ...emptySecrets
       })
       .commit()
     await this.setState({ valid: false })
     return true
   }
 
-  render() {
+  public render() {
     const { children } = this.props
     const { secrets, valid, ready } = this.state
     const { saveSecrets, clearSecrets, shopifyClient, sanityClient } = this
 
     const value = {
-      secrets: secrets || emptySecrets,
       valid,
       ready,
       saveSecrets,
@@ -128,10 +128,13 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
       clearSecrets,
       shopifyClient,
       sanityClient,
+      secrets: secrets || emptySecrets
     }
 
     return (
-      <ClientContext.Provider value={value}>{children instanceof Function ? children(value) : children}</ClientContext.Provider>
+      <ClientContext.Provider value={value}>
+        {children instanceof Function ? children(value) : children}
+      </ClientContext.Provider>
     )
   }
 }

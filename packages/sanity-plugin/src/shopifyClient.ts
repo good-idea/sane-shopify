@@ -18,14 +18,17 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
   const url = `https://${storefrontName}.myshopify.com/api/graphql`
   const headers = {
     'Content-Type': 'application/json',
-    'X-Shopify-Storefront-Access-Token': storefrontApiKey,
+    'X-Shopify-Storefront-Access-Token': storefrontApiKey
   }
 
-  const query = async <ResponseType>(queryString: string, variables?: Variables): Promise<ResponseType> =>
+  const query = async <ResponseType>(
+    queryString: string,
+    variables?: Variables
+  ): Promise<ResponseType> =>
     fetch(url, {
       headers,
       method: 'POST',
-      body: JSON.stringify({ query: queryString, variables }),
+      body: JSON.stringify({ variables, query: queryString })
     }).then(async (r) => {
       if (!r.ok) throw new Error(getErrorMessage(r))
       const json = await r.json()
@@ -33,6 +36,6 @@ export const createClient = (secrets: Secrets): ShopifyClient => {
     })
 
   return {
-    query,
+    query
   }
 }

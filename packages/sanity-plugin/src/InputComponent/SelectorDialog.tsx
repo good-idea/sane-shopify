@@ -1,8 +1,10 @@
-import * as React from 'react'
-import DefaultDialog from 'part:@sanity/components/dialogs/default'
 import { ShopifyClient, ShopifyItem } from '@sane-shopify/types'
-import ItemSelector from './ItemSelector'
+import * as React from 'react'
 import { ShopifySelectorInputOptions } from '../types'
+import ItemSelector from './ItemSelector'
+
+/* tslint:disable-next-line */
+const DefaultDialog = require('part:@sanity/components/dialogs/default')
 
 interface SelectorDialogProps {
   close: () => void
@@ -19,23 +21,21 @@ const dialogButtonActions = [
   {
     index: '1',
     title: 'Select',
-    color: 'primary',
+    color: 'primary'
   },
   {
     index: '2',
     title: 'Cancel',
     color: 'white',
-    secondary: true,
-  },
+    secondary: true
+  }
 ]
 
 export class SelectorDialog extends React.Component<SelectorDialogProps, SelectorDialogState> {
-  handleAction = (action) => {
+  public handleAction = (action) => {
     const { close } = this.props
-    console.log(action)
     switch (action.title) {
       case 'Select':
-        console.log('SELECTED')
         close()
         return
       case 'Cancel':
@@ -47,14 +47,14 @@ export class SelectorDialog extends React.Component<SelectorDialogProps, Selecto
     }
   }
 
-  cancel = () => {
+  public cancel = () => {
     this.setSelection(undefined)
     this.props.close()
   }
 
-  setSelection = (selectedItem: ShopifyItem) => {
+  public setSelection = (selectedItem: ShopifyItem) => {
     this.setState({
-      selectedItem,
+      selectedItem
     })
   }
 
@@ -69,7 +69,11 @@ export class SelectorDialog extends React.Component<SelectorDialogProps, Selecto
         actions={dialogButtonActions}
         onAction={this.handleAction}
       >
-        <ItemSelector shopifyClient={shopifyClient} setSelection={this.setSelection} options={options} />
+        <ItemSelector
+          shopifyClient={shopifyClient}
+          setSelection={this.setSelection}
+          options={options}
+        />
       </DefaultDialog>
     )
   }

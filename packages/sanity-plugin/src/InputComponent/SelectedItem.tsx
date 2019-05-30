@@ -1,5 +1,5 @@
-import * as React from 'react'
 import { ShopifyClient } from '@sane-shopify/types'
+import * as React from 'react'
 
 interface Props {
   id: string
@@ -7,8 +7,7 @@ interface Props {
 }
 
 export class SelectedItem extends React.Component<Props> {
-  render() {
-    console.log(this.props)
+  public render() {
     return <p>hi</p>
   }
 }

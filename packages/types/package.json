@@ -5,6 +5,13 @@
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "ISC",
+	"scripts": {
+		"fix": "run-s fix:*",
+		"fix:prettier": "prettier \"types/**/*.ts\" --write --loglevel warn",
+		"fix:tslint": "tslint --fix --project .",
+		"test": "run-s test:lint",
+		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different"
+	},
 	"keywords": [
 		"sanity",
 		"shopify"
@@ -14,5 +21,8 @@
 		"url": "git+https://github.com/good-idea/sane-shopify.git"
 	},
 	"main": "types/index.ts",
-	"devDependencies": {}
+	"devDependencies": {
+		"npm-run-all": "^4.1.5",
+		"tslint": "^5.16.0"
+	}
 }

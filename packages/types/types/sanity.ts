@@ -16,15 +16,20 @@ export interface SanityShopifyDocument extends SanityDocument {
 
 interface Patch<ExpectedResult = any> {
   set: (
-    document: object,
+    document: object
   ) => {
     commit: () => Promise<ExpectedResult>
   }
 }
 
 export interface SanityClient {
-  fetch: <ExpectedResult = SanityDocument | SanityDocument[]>(query: string, params?: object) => Promise<ExpectedResult>
-  createIfNotExists: <ExpectedResult = SanityDocument>(doc: SanityDocument) => Promise<ExpectedResult>
+  fetch: <ExpectedResult = SanityDocument | SanityDocument[]>(
+    query: string,
+    params?: object
+  ) => Promise<ExpectedResult>
+  createIfNotExists: <ExpectedResult = SanityDocument>(
+    doc: SanityDocument
+  ) => Promise<ExpectedResult>
   create: <ExpectedResult = SanityDocument>(input: object) => Promise<ExpectedResult>
   patch: <ExpectedResult = SanityDocument>(id: string) => Patch<ExpectedResult>
 }

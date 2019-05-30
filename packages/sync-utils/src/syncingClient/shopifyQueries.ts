@@ -1,4 +1,4 @@
-import { Paginated, Product, Collection } from '@sane-shopify/types'
+import { Collection, Paginated, Product } from '@sane-shopify/types'
 
 /**
  * Product Queries

@@ -1,14 +1,30 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-config-prettier",
-    "tslint-config-airbnb"
-  ],
+  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-react", "tslint-config-airbnb"],
   "rules": {
     "interface-name": [true, "never-prefix"],
     "variable-name": false,
     "semicolon": [true, "never"],
     "ter-arrow-parens": [true, "always"],
+    "prefer-array-literal": false,
+    "no-submodule-imports": [true, "rxjs"],
+    "jsx-no-multiline-js": false,
+    "typedef": [
+      true,
+      [
+        "call-signature",
+        "arrow-call-signature",
+        "parameter",
+        "arrow-parameter",
+        "property-declaration",
+        "variable-declaration",
+        // "member-variable-declaration",
+        "object-destructuring",
+        "array-destructuring"
+      ]
+    ],
+    "trailing-comma": false, // conflicts with prettier?
+    "max-line-length": false, // let prettier do it
+    "no-this-assignment": false,
     "no-var-requires": false, // all of those 'part:@sanity/...' need to be imported with require :/
     // TODO: allow devDependencies only in **/*.spec.ts files:
     // waiting on https://github.com/palantir/tslint/pull/3708
@@ -18,7 +34,6 @@
     "ordered-imports": true,
     "no-var-keyword": true,
     "no-parameter-reassignment": true,
-    "typedef": [true, "call-signature"],
 
     // Immutability rules
     // "readonly-keyword": true,

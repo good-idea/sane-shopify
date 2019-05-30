@@ -1,9 +1,9 @@
-import { ShopifyTool } from './ShopifyTool'
 import { ShopifyIcon } from './ShopifyIcon'
+import { ShopifyTool } from './ShopifyTool'
 
 export default {
-	title: 'Shopify',
-	name: 'shopify',
-	icon: ShopifyIcon,
-	component: ShopifyTool,
+  title: 'Shopify',
+  name: 'shopify',
+  icon: ShopifyIcon,
+  component: ShopifyTool
 }

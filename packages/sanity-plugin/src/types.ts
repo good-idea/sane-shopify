@@ -1,5 +1,5 @@
-import { testSecrets } from './Provider/utils'
 import { ShopifyClient } from '@sane-shopify/types'
+import { testSecrets } from './Provider/utils'
 
 /**
  * Client Context
@@ -46,11 +46,14 @@ export interface Field {
   validation: (arg0: any) => any
 }
 
+type PatchEvent = any
+type NextPath = any
+
 export interface SanityInputProps {
   level: number
   onBlur: () => void
-  onChange: (PatchEvent) => void
-  onFocus: (NextPath) => void
+  onChange: (event: PatchEvent) => void
+  onFocus: (nextPath: NextPath) => void
   readOnly?: boolean
   filterField: () => boolean
   type: Field
