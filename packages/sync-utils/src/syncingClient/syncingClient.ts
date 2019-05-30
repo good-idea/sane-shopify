@@ -59,10 +59,11 @@ export const createSyncingClient = (shopifyClient: ShopifyClient, sanityClient: 
   const syncSanityDocument = <ExpectedResult>(item: Product | Collection, doc?: SanityShopifyDocument) => {
     const _type = getItemType(item)
     const docInfo = {
+      _type,
       slug: {
         current: item.handle,
       },
-      __sourceInfo: item,
+      sourceData: item,
     }
     // const b = from(sanityClient.create<ExpectedResult>(docInfo)).pipe(map((doc) => ({ operation: 'create', doc, [_type]: item })))
     if (!doc)
@@ -111,7 +112,7 @@ export const createSyncingClient = (shopifyClient: ShopifyClient, sanityClient: 
   ) => {
     const query = type === 'products' ? PRODUCTS_QUERY : COLLECTIONS_QUERY
     const fetchPage = (after?: string) =>
-      from(shopifyClient.query<T>(query, { first: 25, after })).pipe(
+      from(shopifyClient.query<T>(query, { first: 100, after })).pipe(
         map((response) => {
           const [nodes, { pageInfo, lastCursor }] = unwindEdges(response.data[type])
           if (onFetchedItems) onFetchedItems(nodes)
@@ -148,7 +149,7 @@ export const createSyncingClient = (shopifyClient: ShopifyClient, sanityClient: 
           (item: ItemType) => onProgress && onProgress(item),
           (error) => onError && onError(error),
           () => {
-            onComplete()
+            if (onComplete && typeof onComplete === 'function') onComplete()
             resolve()
           },
         )
