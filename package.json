@@ -16,12 +16,17 @@
 		"husky": "^2.3.0",
 		"lerna": "^3.14.1",
 		"npm-check-updates": "^3.1.9",
+		"npm-run-all": "^4.1.5",
 		"prettier": "^1.17.1",
 		"pretty-quick": "^1.11.0",
 		"rollup": "^1.12.4",
 		"rollup-plugin-ts-paths": "^1.0.3",
 		"rollup-plugin-typescript2": "^0.21.1",
+		"tslint": "^5.16.0",
+		"tslint-config-airbnb": "^5.11.1",
+		"tslint-config-prettier": "^1.18.0",
 		"typescript": "^3.5.1",
+		"typescript-tslint-plugin": "^0.4.0",
 		"typesync": "^0.5.1"
 	},
 	"husky": {

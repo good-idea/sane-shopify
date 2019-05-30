@@ -1,0 +1,42 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier",
+    "tslint-config-airbnb"
+  ],
+  "rules": {
+    "interface-name": [true, "never-prefix"],
+    "variable-name": false,
+    "semicolon": [true, "never"],
+    "ter-arrow-parens": [true, "always"],
+    "no-var-requires": false, // all of those 'part:@sanity/...' need to be imported with require :/
+    // TODO: allow devDependencies only in **/*.spec.ts files:
+    // waiting on https://github.com/palantir/tslint/pull/3708
+    "no-implicit-dependencies": [true, "dev"],
+    "curly": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": true,
+    "no-var-keyword": true,
+    "no-parameter-reassignment": true,
+    "typedef": [true, "call-signature"],
+
+    // Immutability rules
+    // "readonly-keyword": true,
+    // "readonly-array": true,
+    // "no-let": true,
+    // "no-object-mutation": true,
+    // "no-delete": true,
+    // "no-method-signature": true,
+
+    // Functional style rules
+    // "no-this": true,
+    // "no-class": true,
+    // "no-mixed-interface": true,
+    // "no-expression-statement": [
+    //   true,
+    //   { "ignore-prefix": ["console.", "process.exit", "dispatch"] }
+    // ]
+    /* end tslint-immutable rules */
+    "prettier": [true, ".prettierrc"]
+  }
+}

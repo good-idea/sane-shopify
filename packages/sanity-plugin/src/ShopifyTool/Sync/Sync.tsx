@@ -4,16 +4,14 @@ import { createSyncingClient, SyncingClient } from '@sane-shopify/sync-utils'
 import { Provider, ClientContextValue } from '../../Provider'
 
 interface State {
+  syncState: 'ready' | 'syncing' | 'complete'
   fetchedProducts: any[]
   productsSynced: any[]
-  productsState: string
   fetchedCollections: any[]
   collectionsSynced: any[]
-  collectionsState: string
 }
 
 export interface SyncRenderProps extends State {
-  loading: boolean
   syncProductByHandle: (handle: string) => Promise<void>
   syncCollectionByHandle: (handle: string) => Promise<void>
   syncProducts: () => Promise<void>
@@ -28,12 +26,11 @@ interface Props extends ClientContextValue {
 }
 
 const initialState = {
+  syncState: 'ready' as 'ready',
   fetchedProducts: [],
   productsSynced: [],
-  productsState: 'rest',
   fetchedCollections: [],
   collectionsSynced: [],
-  collectionsState: 'rest',
 }
 
 class SyncBase extends React.Component<Props, State> {
@@ -41,14 +38,16 @@ class SyncBase extends React.Component<Props, State> {
     ...initialState,
   }
 
-  syncingClient: SyncingClient = createSyncingClient(this.props.shopifyClient, this.props.sanityClient)
+  syncingClient: SyncingClient = createSyncingClient(
+    this.props.shopifyClient,
+    this.props.sanityClient,
+  )
 
   reset = async () => {
     await this.setState(initialState)
   }
 
   _syncProducts = async () => {
-    this.setState({ productsState: 'syncing' })
     await this.syncingClient.syncProducts({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
@@ -61,14 +60,10 @@ class SyncBase extends React.Component<Props, State> {
           productsSynced: [...prevState.productsSynced, product],
         }))
       },
-      onComplete: () => {
-        this.setState({ productsState: 'complete' })
-      },
     })
   }
 
   _syncCollections = async () => {
-    this.setState({ collectionsState: 'syncing' })
     await this.syncingClient.syncCollections({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
@@ -81,9 +76,6 @@ class SyncBase extends React.Component<Props, State> {
           collectionsSynced: [...prevState.collectionsSynced, collection],
         }))
       },
-      onComplete: () => {
-        this.setState({ collectionsState: 'complete' })
-      },
     })
   }
 
@@ -91,37 +83,51 @@ class SyncBase extends React.Component<Props, State> {
 
   syncProductByHandle = async (handle: string) => {
     await this.reset()
-    this.syncingClient.syncProductByHandle(handle)
+    this.setState({ syncState: 'syncing' as 'syncing' })
+    await this.syncingClient.syncProductByHandle(handle)
+    this.setState({ syncState: 'complete' as 'complete' })
   }
 
   syncCollectionByHandle = async (handle: string) => {
     await this.reset()
+    this.setState({ syncState: 'syncing' as 'syncing' })
     this.syncingClient.syncProductByHandle(handle)
+    this.setState({ syncState: 'complete' as 'complete' })
   }
 
   syncProducts = async () => {
     await this.reset()
+    this.setState({ syncState: 'syncing' as 'syncing' })
     this._syncProducts()
+    this.setState({ syncState: 'complete' as 'complete' })
   }
 
   syncCollections = async () => {
     await this.reset()
+    this.setState({ syncState: 'syncing' as 'syncing' })
     this._syncCollections()
+    this.setState({ syncState: 'complete' as 'complete' })
   }
 
   syncAll = async () => {
     await this.reset()
+    this.setState({ syncState: 'syncing' as 'syncing' })
     this._syncCollections()
     this._syncProducts()
+    this.setState({ syncState: 'complete' as 'complete' })
   }
 
   render() {
     const { children, ready, valid } = this.props
-    const { syncProductByHandle, syncCollectionByHandle, syncProducts, syncCollections, syncAll } = this
-    const loading = Boolean(this.state.productsState === 'syncing' || this.state.collectionsState === 'syncing')
+    const {
+      syncProductByHandle,
+      syncCollectionByHandle,
+      syncProducts,
+      syncCollections,
+      syncAll,
+    } = this
     const renderProps = {
       ...this.state,
-      loading,
       syncProductByHandle,
       syncCollectionByHandle,
       syncProducts,
@@ -129,10 +135,18 @@ class SyncBase extends React.Component<Props, State> {
       syncAll,
     }
 
-    return children ? (children instanceof Function ? children(renderProps) : children) : null
+    return children
+      ? children instanceof Function
+        ? children(renderProps)
+        : children
+      : null
   }
 }
 
 export const Sync = (props: { children: React.ReactNode }) => (
-  <Provider>{(providerProps) => (providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null)}</Provider>
+  <Provider>
+    {(providerProps) =>
+      providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null
+    }
+  </Provider>
 )
