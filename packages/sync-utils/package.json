@@ -21,8 +21,8 @@
 		"lib"
 	],
 	"main": "lib/index.js",
-  "module": "lib/index.es.js",
-  "types": "lib/index.d.ts",
+	"module": "lib/index.es.js",
+	"types": "lib/index.d.ts",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "rollup -c",
@@ -38,6 +38,7 @@
 		"rxjs": "^6.5.2"
 	},
 	"devDependencies": {
-		"@types/lodash-es": "^4.17.3"
+		"@types/lodash-es": "^4.17.3",
+		"react-hot-loader": "^4.8.8"
 	}
 }
