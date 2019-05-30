@@ -1,19 +1,17 @@
 import * as React from 'react'
 import { Sync, SyncRenderProps } from './Sync'
-import Button from 'part:@sanity/components/buttons/default'
-import Fieldset from 'part:@sanity/components/fieldsets/default'
+const Button = require('part:@sanity/components/buttons/default').default
+const Fieldset = require('part:@sanity/components/fieldsets/default').default
 
 interface Props extends SyncRenderProps {}
 
 const SyncPaneBase = ({ loading, fetchedProducts, productsSynced, fetchedCollections, collectionsSynced, syncAll }: Props) => {
   const handleSyncButton = () => syncAll()
-  if (loading) return <p>'Loading...'</p>
-
   return (
     <Fieldset legend="Sync" level={1}>
       {fetchedCollections.length ? (
         <p>
-          synced {collectionsSynced.length}/{fetchedCollections.length} products
+          synced {collectionsSynced.length}/{fetchedCollections.length} collections
         </p>
       ) : null}
       {productsSynced.length ? (
