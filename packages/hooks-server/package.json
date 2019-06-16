@@ -11,7 +11,8 @@
 		"fix:tslint": "tslint --fix --project .",
 		"test": "run-s build test:lint test:unit",
 		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
-		"test:unit": "jest --collectCoverage"
+		"test:unit": "jest --collectCoverage",
+		"prepare": "npm run build"
 	},
 	"keywords": [
 		"sanity",
