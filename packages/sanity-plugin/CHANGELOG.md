@@ -1,0 +1,18 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 0.1.0 (2019-06-16)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix collection loading data ([6099d88](https://github.com/good-idea/sane-shopify/commit/6099d88))
+- **sanity-plugin:** fix rollup warnings ([c84cc76](https://github.com/good-idea/sane-shopify/commit/c84cc76))
+
+### Features
+
+- **sanity-plugin:** extract sync-client ([6d39d6d](https://github.com/good-idea/sane-shopify/commit/6d39d6d))
+- **sanity-plugin:** report syncing in-progress ([9ffc336](https://github.com/good-idea/sane-shopify/commit/9ffc336))
+- **sanity-plugin:** test of syncing (WIP) ([3903061](https://github.com/good-idea/sane-shopify/commit/3903061))
+- **sanity-plugin:** update sync UI ([d88c88a](https://github.com/good-idea/sane-shopify/commit/d88c88a))
