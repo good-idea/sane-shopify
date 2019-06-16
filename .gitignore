@@ -11,3 +11,4 @@ packages/*/lib
 
 # use npm, not yarn
 yarn.lock
+*.log
