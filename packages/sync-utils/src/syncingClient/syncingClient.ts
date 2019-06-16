@@ -8,14 +8,8 @@ import {
 } from '@sane-shopify/types'
 import { isMatch } from 'lodash-es'
 import { empty, from, of } from 'rxjs'
-import {
-  concatMap,
-  delay,
-  expand,
-  map,
-  mergeMap
-  // take,
-} from 'rxjs/operators'
+
+import { catchError, concatMap, delay, expand, map, mergeMap, take } from 'rxjs/operators'
 import {
   COLLECTIONS_QUERY,
   CollectionsQueryResult,
@@ -24,6 +18,7 @@ import {
   PRODUCTS_QUERY,
   ProductsQueryResult
 } from './shopifyQueries'
+import { addImageKeys } from './utils'
 
 export interface SyncingClient {
   syncProducts: (cbs?: SubscriptionCallbacks<Product>) => void
@@ -72,10 +67,10 @@ export const createSyncingClient = (
     const _type = getItemType(item)
     const docInfo = {
       _type,
-      slug: {
-        current: item.handle
-      },
-      sourceData: item
+      title: item.title,
+      shopifyId: item.id,
+      handle: item.handle,
+      sourceData: addImageKeys(item)
     }
     if (!doc)
       return from(sanityClient.create<ExpectedResult>(docInfo)).pipe(
@@ -89,7 +84,7 @@ export const createSyncingClient = (
             .patch<ExpectedResult>(doc._id)
             .set(docInfo)
             .commit()
-        ).pipe(map((updatedDoc) => ({ operation: 'updated', doc: updatedDoc, [_type]: item })))
+        ).pipe(map((updatedDoc) => ({ operation: 'update', doc: updatedDoc, [_type]: item })))
   }
 
   const syncItem = (item: Product | Collection) => {
@@ -133,12 +128,16 @@ export const createSyncingClient = (
     const fetchPage = (after?: string) =>
       from(shopifyClient.query<T>(query, { after, first: 100 })).pipe(
         map((response) => {
+          if (response.errors) throw new Error(response.errors[0].message)
           const [nodes, { pageInfo, lastCursor }] = unwindEdges(response.data[type])
           if (onFetchedItems) onFetchedItems(nodes)
           return {
             nodes,
             next: pageInfo.hasNextPage ? () => fetchPage(lastCursor) : empty
           }
+        }),
+        catchError((error) => {
+          return of(error)
         })
       )
 
@@ -162,7 +161,7 @@ export const createSyncingClient = (
       const products$ = fetchAll(itemType, onFetchedItems)
         .pipe(
           mergeMap((node: Product) => syncItem(node), undefined, 25)
-          // take(22), // Uncomment for debugging
+          // take(5) // Uncomment for debugging
         )
         .subscribe(
           (item: ItemType) => onProgress && onProgress(item),

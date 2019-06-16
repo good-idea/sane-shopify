@@ -1,6 +1,26 @@
 import { Collection, Paginated, Product } from '@sane-shopify/types'
 
 /**
+ * Shared
+ */
+
+interface ShopifyError {
+  message: string
+}
+
+const imageFragment = /* GraphQL */ `
+  fragment ImageFragment on Image {
+    __typename
+    id
+    altText
+    originalSrc
+    w100: transformedSrc(maxWidth: 100, crop: CENTER)
+    w300: transformedSrc(maxWidth: 300, crop: CENTER)
+    w800: transformedSrc(maxWidth: 800, crop: CENTER)
+  }
+`
+
+/**
  * Product Queries
  */
 
@@ -13,11 +33,9 @@ const productFragment = /* GraphQL */ `
     description
     images(first: 1) {
       edges {
+        cursor
         node {
-          id
-          altText
-          originalSrc
-          transformedSrc(maxWidth: 100)
+          ...ImageFragment
         }
       }
     }
@@ -31,11 +49,13 @@ export const PRODUCT_QUERY = /* GraphQL */ `
     }
   }
   ${productFragment}
+  ${imageFragment}
 `
 
 export interface ProductQueryResult {
-  data: {
-    productByHandle: Product
+  errors?: ShopifyError[]
+  data?: {
+    productByHandle?: Product
   }
 }
 
@@ -55,10 +75,12 @@ export const PRODUCTS_QUERY = /* GraphQL */ `
     }
   }
   ${productFragment}
+  ${imageFragment}
 `
 
 export interface ProductsQueryResult {
-  data: {
+  errors?: ShopifyError[]
+  data?: {
     products: Paginated<Product>
   }
 }
@@ -75,10 +97,7 @@ const collectionFragment = /* GraphQL */ `
     description
     __typename
     image {
-      id
-      altText
-      originalSrc
-      transformedSrc(maxWidth: 100)
+      ...ImageFragment
     }
   }
 `
@@ -90,11 +109,13 @@ export const COLLECTION_QUERY = /* GraphQL */ `
     }
   }
   ${collectionFragment}
+  ${imageFragment}
 `
 
 export interface CollectionQueryResult {
-  data: {
-    collectionByHandle: Collection
+  errors?: ShopifyError[]
+  data?: {
+    collectionByHandle?: Collection
   }
 }
 
@@ -114,10 +135,12 @@ export const COLLECTIONS_QUERY = /* GraphQL */ `
     }
   }
   ${collectionFragment}
+  ${imageFragment}
 `
 
 export interface CollectionsQueryResult {
-  data: {
+  errors?: ShopifyError[]
+  data?: {
     collections: Paginated<Collection>
   }
 }
