@@ -13,6 +13,9 @@
 		"type": "git",
 		"url": "git+https://github.com/good-idea/sane-shopify.git"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"directories": {
 		"lib": "lib",
 		"test": "__tests__"
@@ -77,5 +80,6 @@
 		"ramda": "^0.26.1",
 		"react-icons": "^3.7.0",
 		"rxjs": "^6.5.2"
-	}
+	},
+	"gitHead": "e728b8d20fecbf2ba703cec9ac370d8fb928fde6"
 }
