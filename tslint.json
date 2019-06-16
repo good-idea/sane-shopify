@@ -24,6 +24,7 @@
     ],
     "trailing-comma": false, // conflicts with prettier?
     "max-line-length": false, // let prettier do it
+    "ter-indent": false, // let prettier do it
     "no-this-assignment": false,
     "no-var-requires": false, // all of those 'part:@sanity/...' need to be imported with require :/
     // TODO: allow devDependencies only in **/*.spec.ts files:
@@ -31,7 +32,7 @@
     "no-implicit-dependencies": [true, "dev"],
     "curly": false,
     "object-literal-sort-keys": false,
-    "ordered-imports": true,
+    "ordered-imports": false,
     "no-var-keyword": true,
     "no-parameter-reassignment": true,
 
