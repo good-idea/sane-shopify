@@ -5,7 +5,6 @@
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "ISC",
-	"private": true,
 	"scripts": {
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"types/**/*.ts\" --write --loglevel warn",
