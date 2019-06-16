@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/hooks-server",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "Keeps Sanity dataset in sync via shopify hooks",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
