@@ -38,7 +38,12 @@ const SyncPaneBase = ({
           complete.
         </p>
       ) : null}
-      <Button loading={syncState === 'ready'} color="primary" onClick={handleSyncButton}>
+      <Button
+        loading={syncState === 'syncing'}
+        disabled={syncState === 'complete'}
+        color="primary"
+        onClick={handleSyncButton}
+      >
         Sync from Shopify
       </Button>
     </Fieldset>

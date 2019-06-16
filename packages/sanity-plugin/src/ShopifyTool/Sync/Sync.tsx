@@ -89,29 +89,28 @@ class SyncBase extends React.Component<Props, State> {
   public syncCollectionByHandle = async (handle: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    this.syncingClient.syncProductByHandle(handle)
+    await this.syncingClient.syncProductByHandle(handle)
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
   public syncProducts = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    this._syncProducts()
+    await this._syncProducts()
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
   public syncCollections = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    this._syncCollections()
+    await this._syncCollections()
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    this._syncCollections()
-    this._syncProducts()
+    await Promise.all([this._syncCollections(), this._syncProducts()])
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
