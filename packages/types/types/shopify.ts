@@ -20,7 +20,7 @@ export interface ShopifyImage {
 
 export type Money = string
 
-interface SelectedOption {
+export interface SelectedOption {
   name: string
   value: string
 }
@@ -36,7 +36,7 @@ export interface Variant {
   weightUnit?: string
 }
 
-interface ProductPriceRange {
+export interface ProductPriceRange {
   minVariantPrice: Money
   maxVariantPrice: Money
 }
