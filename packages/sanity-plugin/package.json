@@ -71,6 +71,7 @@
 		"react-dom": "16.2",
 		"react-hot-loader": "^4.8.8",
 		"rimraf": "^2.6.3",
+		"rollup": "^1.15.6",
 		"tslint": "^5.16.0"
 	},
 	"dependencies": {
@@ -83,5 +84,5 @@
 		"react-icons": "^3.7.0",
 		"rxjs": "^6.5.2"
 	},
-	"gitHead": "e728b8d20fecbf2ba703cec9ac370d8fb928fde6"
+	"gitHead": "26ed458ab898470e7fcd2cd9050f5759546d7623"
 }
