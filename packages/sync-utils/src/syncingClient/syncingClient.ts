@@ -8,7 +8,6 @@ import {
 } from '@sane-shopify/types'
 import { isMatch } from 'lodash-es'
 import { empty, from, of } from 'rxjs'
-
 import { catchError, concatMap, delay, expand, map, mergeMap, take } from 'rxjs/operators'
 import {
   COLLECTIONS_QUERY,
@@ -18,7 +17,7 @@ import {
   PRODUCTS_QUERY,
   ProductsQueryResult
 } from './shopifyQueries'
-import { addImageKeys } from './utils'
+import { prepareImages } from './utils'
 
 export interface SyncingClient {
   syncProducts: (cbs?: SubscriptionCallbacks<Product>) => void
@@ -65,18 +64,20 @@ export const createSyncingClient = (
     doc?: SanityShopifyDocument
   ) => {
     const _type = getItemType(item)
+    console.log('syncing', item)
     const docInfo = {
       _type,
       title: item.title,
       shopifyId: item.id,
       handle: item.handle,
-      sourceData: addImageKeys(item)
+      sourceData: prepareImages(item)
     }
     if (!doc)
       return from(sanityClient.create<ExpectedResult>(docInfo)).pipe(
         map((newDoc) => ({ operation: 'create', doc: newDoc, [_type]: item }))
       )
 
+    console.log('match?', isMatch(doc, docInfo))
     return isMatch(doc, docInfo)
       ? of(doc).pipe(map((existingDoc) => ({ operation: 'skip', doc: existingDoc, [_type]: item })))
       : from(
