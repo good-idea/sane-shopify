@@ -35,10 +35,12 @@ In your Sanity installation, install the plugin: `yarn add @sane-shopify/sanity-
 
 Add the Product and Collection documents to your schema:
 
-- Import `createProductDocument` and `createCollectionDocument` from `@sane-shopify/sanity-plugin`. Use these to create the bare document types, and add them to your schema:
+- Import the `sanityObjects` array
+- Import `createProductDocument` and `createCollectionDocument` from `@sane-shopify/sanity-plugin`. Use these to create the bare document types. (See more on these functions below)
+- Add all of the above to your schema. `sanityObjects` is required.
 
 ```js
-import { createProductDocument, createCollectionDocument } from '@sane-shopify/sanity-plugin'
+import { createProductDocument, createCollectionDocument, sanityObjects } from '@sane-shopify/sanity-plugin'
 
 const product = createProductDocument()
 const collection = createCollectionDocument()
@@ -47,8 +49,9 @@ export default createSchema({
 name: 'default',
 types: schemaTypes.concat([
 	/* Your types here! */
+  ...sanityObjects,
 	product,
-   collection
+  collection
 ]),
 }/)
 ```

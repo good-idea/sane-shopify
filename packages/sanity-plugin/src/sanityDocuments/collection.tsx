@@ -1,10 +1,5 @@
 import * as React from 'react'
-import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
-
-const ImagePreview = (props) => {
-  return <img src={props.w100} alt={props.altText} />
-}
 
 export const createCollectionDocument = ({ fields, ...rest }: SanityDocumentConfig = {}) => {
   if (rest && rest.name && rest.name !== 'shopifyCollection')
@@ -41,65 +36,7 @@ export const createCollectionDocument = ({ fields, ...rest }: SanityDocumentConf
         title: 'Shopify Data',
         name: 'sourceData',
         readOnly: true,
-        type: 'object',
-        fields: [
-          { title: 'Title', name: 'title', type: 'string' },
-          {
-            title: 'Handle',
-            name: 'handle',
-            type: 'string'
-          },
-          {
-            title: 'Description',
-            name: 'description',
-            type: 'text',
-            rows: 3
-          },
-          {
-            title: 'ID',
-            name: 'id',
-            type: 'string',
-            hidden: true
-          },
-          {
-            title: 'Image',
-            name: 'image',
-            type: 'object',
-            inputComponent: ImagePreview,
-            fields: [
-              {
-                title: 'altText',
-                name: 'altText',
-                type: 'string'
-              },
-              {
-                title: 'id',
-                name: 'id',
-                type: 'string'
-              },
-              {
-                title: 'originalSrc',
-                name: 'originalSrc',
-                type: 'string'
-              },
-              {
-                title: 'w100',
-                name: 'w100',
-                type: 'string'
-              },
-              {
-                title: 'w300',
-                name: 'w300',
-                type: 'string'
-              },
-              {
-                title: 'w800',
-                name: 'w800',
-                type: 'string'
-              }
-            ]
-          }
-        ]
+        type: 'shopifyCollectionSource'
       },
       ...additionalFields
     ],

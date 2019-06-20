@@ -2,20 +2,6 @@ import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
 
-const ImagePreview = (props) => {
-  return (
-    <>
-      {props.value.edges.map((imageEdge) => (
-        <img
-          key={imageEdge.cursor}
-          src={imageEdge.node.transformedSrc}
-          alt={imageEdge.node.altText}
-        />
-      ))}
-    </>
-  )
-}
-
 export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig = {}) => {
   if (rest && rest.name && rest.name !== 'shopifyProduct')
     throw new Error('The document name for a product must be "shopifyProduct"')
@@ -51,78 +37,7 @@ export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig 
         title: 'Shopify Data',
         name: 'sourceData',
         readOnly: true,
-        type: 'object',
-        fields: [
-          { title: 'Title', name: 'title', type: 'string' },
-          {
-            title: 'Handle',
-            name: 'handle',
-            type: 'string'
-          },
-          {
-            title: 'Description',
-            name: 'description',
-            type: 'text',
-            rows: 3
-          },
-          {
-            title: 'ID',
-            name: 'id',
-            type: 'string',
-            hidden: true
-          },
-          {
-            title: 'Images',
-            name: 'images',
-            type: 'object',
-            inputComponent: ImagePreview,
-            fields: [
-              {
-                title: 'edges',
-                name: 'edges',
-                type: 'array',
-                of: [
-                  {
-                    name: 'node',
-                    type: 'object',
-                    fields: [
-                      {
-                        title: 'altText',
-                        name: 'altText',
-                        type: 'string'
-                      },
-                      {
-                        title: 'id',
-                        name: 'id',
-                        type: 'string'
-                      },
-                      {
-                        title: 'originalSrc',
-                        name: 'originalSrc',
-                        type: 'string'
-                      },
-                      {
-                        title: 'w100',
-                        name: 'w100',
-                        type: 'string'
-                      },
-                      {
-                        title: 'w300',
-                        name: 'w300',
-                        type: 'string'
-                      },
-                      {
-                        title: 'w800',
-                        name: 'w800',
-                        type: 'string'
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        type: 'shopifyProductSource'
       },
       ...additionalFields
     ],
