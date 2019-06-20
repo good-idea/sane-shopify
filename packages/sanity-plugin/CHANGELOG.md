@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/good-idea/sane-shopify/compare/v0.2.0...v0.2.1) (2019-06-20)
+
+### Bug Fixes
+
+- **sanity-plugin:** make documents graphql-compatible ([74882ea](https://github.com/good-idea/sane-shopify/commit/74882ea))
+
 # [0.2.0](https://github.com/good-idea/sane-shopify/compare/v0.1.5...v0.2.0) (2019-06-18)
 
 ### Features
