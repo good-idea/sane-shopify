@@ -33,6 +33,8 @@ interface SubscriptionCallbacks<NodeType> {
   onComplete?: () => void
 }
 
+// TODO: the use of 'shopifyProduct' and 'shopifyCollection' should
+// use constants shared throughout sane-shopify
 const getItemType = (item: Product | Collection) => {
   switch (item.__typename) {
     case 'Product':
@@ -64,7 +66,6 @@ export const createSyncingClient = (
     doc?: SanityShopifyDocument
   ) => {
     const _type = getItemType(item)
-    console.log('syncing', item)
     const docInfo = {
       _type,
       title: item.title,
@@ -77,7 +78,6 @@ export const createSyncingClient = (
         map((newDoc) => ({ operation: 'create', doc: newDoc, [_type]: item }))
       )
 
-    console.log('match?', isMatch(doc, docInfo))
     return isMatch(doc, docInfo)
       ? of(doc).pipe(map((existingDoc) => ({ operation: 'skip', doc: existingDoc, [_type]: item })))
       : from(

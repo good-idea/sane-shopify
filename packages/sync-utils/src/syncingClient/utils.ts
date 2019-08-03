@@ -19,7 +19,6 @@ export const prepareImages = (item: Product | Collection) => {
   }
   if (item.__typename === 'Collection') {
     // Use an empty object by default (sanity will complain if the image is `null`)
-    console.log('?????', item)
     return {
       ...item,
       image: item.image || {}
