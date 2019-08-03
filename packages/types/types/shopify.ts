@@ -10,6 +10,11 @@ export interface ShopifyClient {
   query: <ResponseType>(query: string, variables?: Variables) => Promise<ResponseType>
 }
 
+export interface ShopifySecrets {
+  storefrontName: string
+  storefrontApiKey: string
+}
+
 export interface ShopifyImage {
   id: string
   originalSrc: string
