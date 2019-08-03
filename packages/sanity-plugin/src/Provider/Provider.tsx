@@ -1,8 +1,7 @@
-import { SanityClient, ShopifyClient } from '@sane-shopify/types'
+import { SanityClient, ShopifyClient, ShopifySecrets } from '@sane-shopify/types'
 import * as React from 'react'
-import { createClient } from '../shopifyClient'
-import { Secrets } from '../types'
-import { testSecrets } from './utils'
+import { createShopifyClient, testSecrets } from '@sane-shopify/sync-utils'
+// import { createShopifyClient } from '../shopifyClient'
 
 /* tslint:disable-next-line */
 const defaultSanityClient = require('part:@sanity/base/client')
@@ -32,14 +31,14 @@ export const ClientConsumer = ClientContext.Consumer
  */
 
 interface SecretUtils {
-  saveSecrets: (secrets: Secrets) => Promise<boolean>
+  saveSecrets: (secrets: ShopifySecrets) => Promise<boolean>
 
   testSecrets: typeof testSecrets
   clearSecrets: () => Promise<boolean>
 }
 
 export interface ClientContextValue extends SecretUtils {
-  secrets: Secrets
+  secrets: ShopifySecrets
   valid: boolean
   ready: boolean
   shopifyClient: ShopifyClient
@@ -51,7 +50,7 @@ interface ClientContextProps {
 }
 
 interface ClientContextState {
-  secrets?: Secrets
+  secrets?: ShopifySecrets
   valid: boolean
   ready: boolean
 }
@@ -71,15 +70,15 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
     const secrets = await this.fetchSecrets()
     const { valid } = await testSecrets(secrets)
     if (valid) {
-      this.shopifyClient = createClient(secrets)
+      this.shopifyClient = createShopifyClient(secrets)
       this.setState({ secrets, valid: true, ready: true })
     } else {
       this.setState({ valid: false, ready: true, secrets: emptySecrets })
     }
   }
 
-  public fetchSecrets = async (): Promise<Secrets | null> => {
-    const results: Secrets[] = await this.sanityClient.fetch(`*[_id == "${KEYS_ID}"]`)
+  public fetchSecrets = async (): Promise<ShopifySecrets | null> => {
+    const results: ShopifySecrets[] = await this.sanityClient.fetch(`*[_id == "${KEYS_ID}"]`)
     if (results.length) return results[0]
     return null
   }
@@ -87,7 +86,7 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
   /**
    * Returns true on success, false otherwise
    */
-  public saveSecrets = async (secrets: Secrets): Promise<boolean> => {
+  public saveSecrets = async (secrets: ShopifySecrets): Promise<boolean> => {
     const valid = await testSecrets(secrets)
     if (!valid) return false
     const doc = {

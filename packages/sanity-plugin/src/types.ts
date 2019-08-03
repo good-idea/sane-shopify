@@ -1,4 +1,4 @@
-import { ShopifyClient } from '@sane-shopify/types'
+import { ShopifyClient, ShopifySecrets } from '@sane-shopify/types'
 import { testSecrets } from './Provider/utils'
 
 /**
@@ -21,18 +21,13 @@ export interface SanityDocumentConfig {
  * Client Context
  */
 
-export interface Secrets {
-  storefrontName: string
-  storefrontApiKey: string
-}
-
 interface SecretUtils {
   saveSecrets: (Secrets) => Promise<boolean>
   testSecrets: typeof testSecrets
 }
 
 export interface ClientContextValue extends SecretUtils {
-  secrets: Secrets
+  secrets: ShopifySecrets
   valid: boolean
   ready: boolean
   shopifyClient: ShopifyClient

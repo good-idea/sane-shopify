@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { ShopifySecrets } from '@sane-shopify/types'
 import { Provider } from '../Provider'
-import { ClientContextValue, SanityInputProps, Secrets } from '../types'
+import { ClientContextValue, SanityInputProps } from '../types'
 import { ShopifyInput } from './ShopifyInput'
 
 interface InputProps extends ClientContextValue {
@@ -9,7 +10,7 @@ interface InputProps extends ClientContextValue {
 
 interface State {
   initialized: boolean
-  secrets: Secrets | null
+  secrets: ShopifySecrets | null
   valid?: boolean
 }
 
