@@ -44,8 +44,8 @@
 	},
   "workspaces": [
     "packages/types",
-    "packages/server",
     "packages/sync-utils",
+    "packages/server",
     "packages/sanity-plugin"
   ],
 	"husky": {
