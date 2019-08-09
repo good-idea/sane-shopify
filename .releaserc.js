@@ -1,5 +1,4 @@
 const hooks = require('semantic-release-monorepo-hooks')
-console.log(hooks)
 const output = hooks()
 
 module.exports = {

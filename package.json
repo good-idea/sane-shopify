@@ -2,7 +2,7 @@
 	"name": "root",
 	"private": true,
 	"scripts": {
-    "test": "echo 'no tests yet!'",
+		"test": "echo 'no tests yet!'",
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",
 		"fix": "lerna run fix",
@@ -23,10 +23,12 @@
 		"@types/node": "^12.7.1",
 		"husky": "^3.0.3",
 		"lerna": "^3.16.4",
+		"multi-semantic-release": "^1.1.0",
 		"npm-check-updates": "^3.1.20",
 		"npm-run-all": "^4.1.5",
 		"prettier": "^1.18.2",
 		"pretty-quick": "^1.11.1",
+		"require-in-the-middle": "^4.0.0",
 		"rollup": "^1.19.4",
 		"rollup-plugin-ts-paths": "^1.0.3",
 		"rollup-plugin-typescript2": "^0.22.1",
@@ -42,12 +44,12 @@
 		"typescript-tslint-plugin": "^0.5.4",
 		"typesync": "^0.5.2"
 	},
-  "workspaces": [
-    "packages/types",
-    "packages/sync-utils",
-    "packages/server",
-    "packages/sanity-plugin"
-  ],
+	"workspaces": [
+		"packages/types",
+		"packages/sync-utils",
+		"packages/server",
+		"packages/sanity-plugin"
+	],
 	"husky": {
 		"hooks": {
 			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
