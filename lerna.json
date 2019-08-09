@@ -2,11 +2,5 @@
   "packages": ["packages/*"],
   "version": "0.3.0",
   "useWorkspaces": true,
-  "command": {
-    "publish": {
-      "conventionalCommits": true,
-      "allowBranch": "none",
-      "message": "chore(release): %s"
-    }
-  }
+  "npmClient": "yarn"
 }

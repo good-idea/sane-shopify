@@ -1,23 +1,25 @@
-sudo: false
 language: node_js
 node_js:
   - '10'
-cahse:
-  directories:
-    - '$HOME/.npm'
-    - node_modules
 
-jobs:
-  include:
-    - stage: test
-      script: yarn test
-    - stage: release
-      if: branch = master
-      node_js: lts/*
-      before_install: skip
-      script: yarn workspaces run build
-      deploy:
-        provider: script
-        skip_cleanup: true
-        script:
-          - yarn lerna exec --concurrency 1 "npx --no-install semantic-release -e semantic-release-monorepo" && node -e "require('semantic-release-monorepo-hooks').hookAfterAll()"
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.9.4
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - npm install -g lerna
+  - npm install -g greenkeeper-lockfile
+
+install:
+  - yarn cache clean
+  - yarn install
+  - yarn workspaces run build
+
+script:
+  - yarn test
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+    - yarn lerna exec --concurrency 1 "npx --no-install semantic-release -e semantic-release-monorepo" && node -e "require('semantic-release-monorepo-hooks').hookAfterAll()"
+  on:
+    branch: master
