@@ -11,7 +11,6 @@ before_install:
 install:
   - yarn cache clean
   - yarn install
-  - yarn workspaces run build
 
 script:
   - yarn test
@@ -20,6 +19,6 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    - yarn lerna exec --concurrency 1 "npx --no-install semantic-release -e semantic-release-monorepo" && node -e "require('semantic-release-monorepo-hooks').hookAfterAll()"
+    - yarn lerna run build && yarn lerna exec --concurrency 1 "npx --no-install semantic-release -e semantic-release-monorepo" && node -e "require('semantic-release-monorepo-hooks').hookAfterAll()"
   on:
     branch: master
