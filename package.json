@@ -42,6 +42,12 @@
 		"typescript-tslint-plugin": "^0.4.0",
 		"typesync": "^0.5.1"
 	},
+  "workspaces": [
+    "packages/types",
+    "packages/server",
+    "packages/sync-utils",
+    "packages/sanity-plugin"
+  ],
 	"husky": {
 		"hooks": {
 			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
