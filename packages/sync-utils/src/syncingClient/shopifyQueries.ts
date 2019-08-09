@@ -144,3 +144,31 @@ export interface CollectionsQueryResult {
     collections: Paginated<Collection>
   }
 }
+
+/**
+ * Node Query
+ * (fetch a product, collection, etc by ID)
+ */
+
+export const NODE_QUERY = /* GraphQL */ `
+  query NodeQuery($id: ID!) {
+    node(id: $id) {
+      ... on Product {
+        ...ProductFragment
+      }
+      ... on Collection {
+        ...CollectionFragment
+      }
+    }
+  }
+  ${productFragment}
+  ${collectionFragment}
+  ${imageFragment}
+`
+
+export interface NodeQueryResult<NodeType> {
+  errors?: ShopifyError[]
+  data?: {
+    node: NodeType
+  }
+}

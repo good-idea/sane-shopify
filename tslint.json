@@ -1,5 +1,10 @@
 {
-  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-react", "tslint-config-airbnb"],
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier",
+    "tslint-react",
+    "tslint-config-airbnb"
+  ],
   "rules": {
     "interface-name": [true, "never-prefix"],
     "variable-name": false,
@@ -8,6 +13,7 @@
     "prefer-array-literal": false,
     "no-submodule-imports": [true, "rxjs"],
     "jsx-no-multiline-js": false,
+    "import-name": false,
     "typedef": [
       true,
       [

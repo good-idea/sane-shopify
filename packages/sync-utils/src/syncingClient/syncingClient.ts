@@ -4,12 +4,26 @@ import {
   Product,
   SanityClient,
   SanityShopifyDocument,
-  ShopifyClient
+  ShopifyClient,
+  SaneShopifyConfig
 } from '@sane-shopify/types'
 import { isMatch } from 'lodash-es'
 import { empty, from, of } from 'rxjs'
-import { catchError, concatMap, delay, expand, map, mergeMap, take } from 'rxjs/operators'
 import {
+  catchError,
+  concatMap,
+  delay,
+  expand,
+  map,
+  mergeMap,
+  take
+} from 'rxjs/operators'
+import createSanityClient from '@sanity/client'
+import { createShopifyClient } from '../shopify'
+
+import {
+  NODE_QUERY,
+  NodeQueryResult,
   COLLECTIONS_QUERY,
   CollectionsQueryResult,
   PRODUCT_QUERY,
@@ -22,15 +36,25 @@ import { prepareImages } from './utils'
 export interface SyncingClient {
   syncProducts: (cbs?: SubscriptionCallbacks<Product>) => void
   syncCollections: (cbs?: SubscriptionCallbacks<Collection>) => void
-  syncProductByHandle: (handle: string, cbs?: SubscriptionCallbacks<Product>) => void
-  syncCollectionByHandle: (handle: string, cbs?: SubscriptionCallbacks<Collection>) => void
+  syncProductByHandle: (
+    handle: string,
+    cbs?: SubscriptionCallbacks<Product>
+  ) => void
+  syncCollectionByHandle: (
+    handle: string,
+    cbs?: SubscriptionCallbacks<Collection>
+  ) => void
+  syncItemByID: (
+    id: string,
+    cbs?: SubscriptionCallbacks<Product | Collection>
+  ) => void
 }
 
 interface SubscriptionCallbacks<NodeType> {
   onFetchedItems?: (nodes: NodeType[]) => void
   onProgress?: (node: NodeType) => void
   onError?: (err: Error) => void
-  onComplete?: () => void
+  onComplete?: (payload?: any) => void
 }
 
 // TODO: the use of 'shopifyProduct' and 'shopifyCollection' should
@@ -51,10 +75,10 @@ const getItemType = (item: Product | Collection) => {
   }
 }
 
-export const createSyncingClient = (
+export const mergeClients = (
   shopifyClient: ShopifyClient,
   sanityClient: SanityClient
-): SyncingClient => {
+) => {
   /**
    * Syncs the existing shopify data to a Sanity document.
    * If the document does not exist, it creates it.
@@ -79,13 +103,25 @@ export const createSyncingClient = (
       )
 
     return isMatch(doc, docInfo)
-      ? of(doc).pipe(map((existingDoc) => ({ operation: 'skip', doc: existingDoc, [_type]: item })))
+      ? of(doc).pipe(
+          map((existingDoc) => ({
+            operation: 'skip',
+            doc: existingDoc,
+            [_type]: item
+          }))
+        )
       : from(
           sanityClient
             .patch<ExpectedResult>(doc._id)
             .set(docInfo)
             .commit()
-        ).pipe(map((updatedDoc) => ({ operation: 'update', doc: updatedDoc, [_type]: item })))
+        ).pipe(
+          map((updatedDoc) => ({
+            operation: 'update',
+            doc: updatedDoc,
+            [_type]: item
+          }))
+        )
   }
 
   const syncItem = (item: Product | Collection) => {
@@ -107,8 +143,10 @@ export const createSyncingClient = (
         }
       )
     ).pipe(
-      delay(100),
-      mergeMap((doc) => syncSanityDocument<SanityShopifyDocument>(item, doc))
+      delay(100), // For rate limiting. TODO: implement real throttling
+      mergeMap((doc: SanityShopifyDocument) =>
+        syncSanityDocument<SanityShopifyDocument>(item, doc)
+      )
     )
     return sync$
   }
@@ -116,10 +154,17 @@ export const createSyncingClient = (
   /**
    * Shopify
    */
-  const fetchProduct = (handle: string) =>
-    from(shopifyClient.query<ProductQueryResult>(PRODUCT_QUERY, { handle })).pipe(
-      map((response) => response.data.productByHandle)
+  const fetchProduct = async (handle: string) => {
+    const product = await shopifyClient.query<ProductQueryResult>(
+      PRODUCT_QUERY,
+      { handle }
     )
+    return product
+  }
+
+  /* NOTE: This only works with the Storefront API IDs, which are not returned by webhooks */
+  const fetchItemById = async <ItemType = Product | Collection>(id: string) =>
+    shopifyClient.query<NodeQueryResult<ItemType>>(NODE_QUERY, { id })
 
   const fetchAll = <T extends ProductsQueryResult | CollectionsQueryResult>(
     type: 'products' | 'collections',
@@ -130,7 +175,9 @@ export const createSyncingClient = (
       from(shopifyClient.query<T>(query, { after, first: 100 })).pipe(
         map((response) => {
           if (response.errors) throw new Error(response.errors[0].message)
-          const [nodes, { pageInfo, lastCursor }] = unwindEdges(response.data[type])
+          const [nodes, { pageInfo, lastCursor }] = unwindEdges(
+            response.data[type]
+          )
           if (onFetchedItems) onFetchedItems(nodes)
           return {
             nodes,
@@ -152,7 +199,9 @@ export const createSyncingClient = (
     return allItemsStream
   }
 
-  const syncItems = <ItemType = Product | Collection>(itemType: 'products' | 'collections') => ({
+  const syncItems = <ItemType = Product | Collection>(
+    itemType: 'products' | 'collections'
+  ) => ({
     onFetchedItems,
     onProgress,
     onError,
@@ -177,9 +226,29 @@ export const createSyncingClient = (
 
   const syncItemByHandle = <ItemType = Product | Collection>(
     itemType: 'product' | 'collection'
-  ) => (handle, { onProgress, onError, onComplete }: SubscriptionCallbacks<ItemType> = {}) => {
-    const product$ = fetchProduct(handle)
+  ) => (
+    handle,
+    { onProgress, onError, onComplete }: SubscriptionCallbacks<ItemType> = {}
+  ) => {
+    const product$ = from(fetchProduct(handle))
+      .pipe(map((response) => response.data.productByHandle))
       .pipe(mergeMap((node: Product) => syncItem(node)))
+      .subscribe(
+        // @ts-ignore
+        (product) => onProgress && onProgress(product),
+        (error) => onError && onError(error),
+        () => onComplete && onComplete()
+      )
+  }
+
+  const syncItemByID = <ItemType = Product | Collection>(
+    id: string,
+    { onProgress, onError, onComplete }: SubscriptionCallbacks<ItemType> = {}
+  ) => {
+    const item$ = from(fetchItemById<ItemType>(id))
+      .pipe(map((response) => response.data.node))
+      // @ts-ignore
+      .pipe(mergeMap((node: ItemType) => syncItem(node)))
       .subscribe(
         // @ts-ignore
         (product) => onProgress && onProgress(product),
@@ -194,6 +263,11 @@ export const createSyncingClient = (
   const syncProducts = syncItems<Product>('products')
   const syncCollections = syncItems<Collection>('collections')
 
+  // const syncProductById = (id: string, callbacks: SubscriptionCallbacks<Product>) =>
+  //   syncItemByID<Product>(id, callbacks)
+  // const syncCollectionById = (id: string, callbacks: SubscriptionCallbacks<Collection>) =>
+  //   syncItemByID<Collection>(id, callbacks)
+
   const syncProductByHandle = syncItemByHandle<Product>('product')
   const syncCollectionByHandle = syncItemByHandle<Collection>('collection')
 
@@ -201,6 +275,25 @@ export const createSyncingClient = (
     syncProducts,
     syncCollections,
     syncCollectionByHandle,
-    syncProductByHandle
+    syncProductByHandle,
+    syncItemByID
   }
+}
+
+export const createSyncingClient = ({
+  shopify,
+  sanity
+}: SaneShopifyConfig): SyncingClient => {
+  const shopifyClient = createShopifyClient({
+    storefrontApiKey: shopify.accessToken,
+    storefrontName: shopify.shopName
+  })
+
+  const sanityClient = createSanityClient({
+    projectId: sanity.projectId,
+    dataset: sanity.dataset,
+    token: sanity.authToken
+  })
+
+  return mergeClients(shopifyClient, sanityClient)
 }

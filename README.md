@@ -5,8 +5,7 @@
 This repo consists of several packages that connect [Sanity](https://www.sanity.io) and the [Shopify Storefront API](https://help.shopify.com/en/api/storefront-api).
 
 - `@sane-shopify/sanity-plugin`: A plugin for Sanity that syncs product & collection data from Shopify to Sanity
-- `@sane-shopify/hooks-server`: A simple server that syncs items on Shopify webhook notifications
-- `@sane-shopify/proxy-server`: A single endpoint that merges the Shopify Storefront and Sanity GraphQL APIs.
+- `@sane-shopify/server`: Server-side utilities for serving Shopify & Sanity data from a single GraphQL Endpoint, and webhooks for updating Sanity data when it changes in Shopify. This includes a single server, as well as individual Lamdbas that can be used with AWS and Netlify.
 - `@sane-shopify/sync-utils`: Utilities that are used across the packages
 - `@sane-shopify/types`: Types that are used across packages.
 

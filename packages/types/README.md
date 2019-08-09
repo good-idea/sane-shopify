@@ -1,8 +1,8 @@
-# @joincivil/typescript-typings
-
 This package is a Typescript typeRoot of typings of both common types throughout the @sane-shopify repo and external packages that otherwise have no types of their own.
 
 Common types are exported in `types/index.ts`, and external packages are typed in `external/package-name/index.d.ts`.
+
+This also includes all types from [@good-idea/unwind-edges](https://www.github.com/good-idea/unwind-edges).
 
 ## Reasoning
 

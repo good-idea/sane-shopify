@@ -1,6 +1,15 @@
-import { SanityClient, ShopifyClient, ShopifySecrets } from '@sane-shopify/types'
+import {
+  SanityClient,
+  ShopifyClient,
+  ShopifySecrets
+} from '@sane-shopify/types'
 import * as React from 'react'
-import { createShopifyClient, testSecrets } from '@sane-shopify/sync-utils'
+import {
+  createShopifyClient,
+  mergeClients,
+  SyncingClient,
+  testSecrets
+} from '@sane-shopify/sync-utils'
 // import { createShopifyClient } from '../shopifyClient'
 
 /* tslint:disable-next-line */
@@ -41,6 +50,7 @@ export interface ClientContextValue extends SecretUtils {
   secrets: ShopifySecrets
   valid: boolean
   ready: boolean
+  syncingClient: SyncingClient
   shopifyClient: ShopifyClient
   sanityClient: SanityClient
 }
@@ -55,7 +65,10 @@ interface ClientContextState {
   ready: boolean
 }
 
-export class Provider extends React.Component<ClientContextProps, ClientContextState> {
+export class Provider extends React.Component<
+  ClientContextProps,
+  ClientContextState
+> {
   public state = {
     secrets: undefined,
     valid: false,
@@ -66,11 +79,14 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
 
   public sanityClient: SanityClient = defaultSanityClient
 
+  public syncingClient?: SyncingClient = undefined
+
   public async componentDidMount() {
     const secrets = await this.fetchSecrets()
     const { valid } = await testSecrets(secrets)
     if (valid) {
       this.shopifyClient = createShopifyClient(secrets)
+      this.syncingClient = mergeClients(this.shopifyClient, defaultSanityClient)
       this.setState({ secrets, valid: true, ready: true })
     } else {
       this.setState({ valid: false, ready: true, secrets: emptySecrets })
@@ -78,7 +94,9 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
   }
 
   public fetchSecrets = async (): Promise<ShopifySecrets | null> => {
-    const results: ShopifySecrets[] = await this.sanityClient.fetch(`*[_id == "${KEYS_ID}"]`)
+    const results: ShopifySecrets[] = await this.sanityClient.fetch(
+      `*[_id == "${KEYS_ID}"]`
+    )
     if (results.length) return results[0]
     return null
   }
@@ -117,7 +135,13 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
   public render() {
     const { children } = this.props
     const { secrets, valid, ready } = this.state
-    const { saveSecrets, clearSecrets, shopifyClient, sanityClient } = this
+    const {
+      saveSecrets,
+      clearSecrets,
+      syncingClient,
+      shopifyClient,
+      sanityClient
+    } = this
 
     const value = {
       valid,
@@ -125,6 +149,7 @@ export class Provider extends React.Component<ClientContextProps, ClientContextS
       saveSecrets,
       testSecrets,
       clearSecrets,
+      syncingClient,
       shopifyClient,
       sanityClient,
       secrets: secrets || emptySecrets

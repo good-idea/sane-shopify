@@ -1,4 +1,4 @@
-import { createSyncingClient, SyncingClient } from '@sane-shopify/sync-utils'
+import { SyncingClient } from '@sane-shopify/sync-utils'
 import { SanityClient, ShopifyClient } from '@sane-shopify/types'
 import * as React from 'react'
 import { ClientContextValue, Provider } from '../../Provider'
@@ -20,8 +20,7 @@ export interface SyncRenderProps extends State {
 }
 
 interface Props extends ClientContextValue {
-  sanityClient: SanityClient
-  shopifyClient: ShopifyClient
+  syncingClient: SyncingClient
   children?: ((props: SyncRenderProps) => React.ReactNode) | React.ReactNode
 }
 
@@ -38,17 +37,12 @@ class SyncBase extends React.Component<Props, State> {
     ...initialState
   }
 
-  public syncingClient: SyncingClient = createSyncingClient(
-    this.props.shopifyClient,
-    this.props.sanityClient
-  )
-
   public reset = async () => {
     await this.setState(initialState)
   }
 
   public _syncProducts = async () => {
-    await this.syncingClient.syncProducts({
+    await this.props.syncingClient.syncProducts({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
           fetchedProducts: [...prevState.fetchedProducts, ...nodes]
@@ -63,7 +57,7 @@ class SyncBase extends React.Component<Props, State> {
   }
 
   public _syncCollections = async () => {
-    await this.syncingClient.syncCollections({
+    await this.props.syncingClient.syncCollections({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
           fetchedCollections: [...prevState.fetchedProducts, ...nodes]
@@ -82,14 +76,14 @@ class SyncBase extends React.Component<Props, State> {
   public syncProductByHandle = async (handle: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this.syncingClient.syncProductByHandle(handle)
+    await this.props.syncingClient.syncProductByHandle(handle)
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
   public syncCollectionByHandle = async (handle: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this.syncingClient.syncProductByHandle(handle)
+    await this.props.syncingClient.syncProductByHandle(handle)
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
@@ -132,12 +126,18 @@ class SyncBase extends React.Component<Props, State> {
       syncAll
     }
 
-    return children ? (children instanceof Function ? children(renderProps) : children) : null
+    return children
+      ? children instanceof Function
+        ? children(renderProps)
+        : children
+      : null
   }
 }
 
 export const Sync = (props: { children: React.ReactNode }) => (
   <Provider>
-    {(providerProps) => (providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null)}
+    {(providerProps) =>
+      providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null
+    }
   </Provider>
 )

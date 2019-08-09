@@ -3,6 +3,11 @@
  *
  * Types for the Sanity Desk Tool should go in the sanity-plugin directory.
  */
+export interface SanityClientConfig {
+  projectId: string
+  dataset: string
+  authToken?: string
+}
 
 export interface SanityDocument {
   _id: string
@@ -30,6 +35,8 @@ export interface SanityClient {
   createIfNotExists: <ExpectedResult = SanityDocument>(
     doc: SanityDocument
   ) => Promise<ExpectedResult>
-  create: <ExpectedResult = SanityDocument>(input: object) => Promise<ExpectedResult>
+  create: <ExpectedResult = SanityDocument>(
+    input: object
+  ) => Promise<ExpectedResult>
   patch: <ExpectedResult = SanityDocument>(id: string) => Patch<ExpectedResult>
 }

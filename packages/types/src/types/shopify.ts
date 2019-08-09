@@ -1,4 +1,9 @@
-import { Paginated } from './graphql'
+import { Paginated } from '@good-idea/unwind-edges'
+
+export interface ShopifyClientConfig {
+  shopName: string
+  accessToken: string
+}
 
 type Variables = object
 
@@ -7,7 +12,10 @@ export interface ShopifyItem {
 }
 
 export interface ShopifyClient {
-  query: <ResponseType>(query: string, variables?: Variables) => Promise<ResponseType>
+  query: <ResponseType>(
+    query: string,
+    variables?: Variables
+  ) => Promise<ResponseType>
 }
 
 export interface ShopifySecrets {
