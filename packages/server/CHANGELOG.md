@@ -1,3 +1,30 @@
+# @sane-shopify/server 1.0.0 (2019-08-09)
+
+
+### Bug Fixes
+
+* **server:** another test fix ([bbf906a](https://github.com/good-idea/sane-shopify/commit/bbf906a))
+* **server:** another test fix ([dd2302c](https://github.com/good-idea/sane-shopify/commit/dd2302c))
+* **server:** remove unused hooks files ([d3b110b](https://github.com/good-idea/sane-shopify/commit/d3b110b))
+* **server:** temp file for test fix + publish ([f941cf9](https://github.com/good-idea/sane-shopify/commit/f941cf9))
+* **server:** test fix for server publish ([2b37aff](https://github.com/good-idea/sane-shopify/commit/2b37aff))
+* **server:** throw error if missing Sanity auth token ([00b9dff](https://github.com/good-idea/sane-shopify/commit/00b9dff))
+* **server:** update deps (test fix for publish) ([fc03f3e](https://github.com/good-idea/sane-shopify/commit/fc03f3e))
+
+
+### Features
+
+* **server:** export graphQL and webhook lambdas ([9679cac](https://github.com/good-idea/sane-shopify/commit/9679cac))
+
+
+
+
+
+### Dependencies
+
+* **@sane-shopify/sync-utils:** upgraded to 1.0.0
+* **@sane-shopify/types:** upgraded to 1.0.0
+
 # [@sane-shopify/server-v0.3.2](https://github.com/good-idea/sane-shopify.git/compare/v0.3.1...v0.3.2) (2019-08-09)
 
 
