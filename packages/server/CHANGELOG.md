@@ -1,3 +1,10 @@
+# [@sane-shopify/server-v0.3.2](https://github.com/good-idea/sane-shopify.git/compare/v0.3.1...v0.3.2) (2019-08-09)
+
+
+### Bug Fixes
+
+* **server:** remove unused hooks files ([d3b110b](https://github.com/good-idea/sane-shopify.git/commit/d3b110b))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
