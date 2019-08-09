@@ -15,9 +15,9 @@ jobs:
       if: branch = master
       node_js: lts/*
       before_install: skip
+      script: yarn workspaces run build
       deploy:
         provider: script
         skip_cleanup: true
         script:
-          - yarn workspaces run build
           - yarn lerna exec --concurrency 1 "npx --no-install semantic-release -e semantic-release-monorepo" && node -e "require('semantic-release-monorepo-hooks').hookAfterAll()"
