@@ -1,0 +1,22 @@
+sudo: false
+language: node_js
+node_js:
+  - '10'
+cahse:
+  directories:
+    - '$HOME/.npm'
+    - node_modules
+
+jobs:
+  include:
+    - stage: test
+      script: yarn test
+    - stage: release
+      if: branch = master
+      node_js: lts/*
+      before_install: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - yarn lerna exec --concurrency 1 "npx --no-install semantic-release -e semantic-release-monorepo" && node -e "require('semantic-release-monorepo-hooks').hookAfterAll()"
