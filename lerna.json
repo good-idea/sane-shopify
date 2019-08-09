@@ -3,7 +3,8 @@
   "version": "0.2.2",
   "command": {
     "publish": {
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "allowBranch": "master"
     }
   }
 }
