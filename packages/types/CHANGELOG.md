@@ -1,3 +1,10 @@
+# [@sane-shopify/types-v0.3.5](https://github.com/good-idea/sane-shopify/compare/v0.3.4...v0.3.5) (2019-08-09)
+
+
+### Bug Fixes
+
+* **types:** temp file for test fix + publish ([88a646a](https://github.com/good-idea/sane-shopify/commit/88a646a))
+
 # [@sane-shopify/types-v0.3.3](https://github.com/good-idea/sane-shopify.git/compare/v0.3.2...v0.3.3) (2019-08-09)
 
 
