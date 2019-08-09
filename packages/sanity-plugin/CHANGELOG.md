@@ -1,3 +1,12 @@
+# [@sane-shopify/sanity-plugin-v0.3.7](https://github.com/good-idea/sane-shopify/compare/v0.3.6...v0.3.7) (2019-08-09)
+
+
+### Bug Fixes
+
+* **sanity-plugin:** another test fix ([c05d832](https://github.com/good-idea/sane-shopify/commit/c05d832))
+* **sanity-plugin:** is travis awake ([8d489fb](https://github.com/good-idea/sane-shopify/commit/8d489fb))
+* **sanity-plugin:** one more test fix ([689a082](https://github.com/good-idea/sane-shopify/commit/689a082))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
