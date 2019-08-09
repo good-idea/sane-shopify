@@ -1,3 +1,10 @@
+# [@sane-shopify/sync-utils-v0.3.1](https://github.com/good-idea/sane-shopify.git/compare/v0.3.0...v0.3.1) (2019-08-09)
+
+
+### Bug Fixes
+
+* **sync-utils:** test fix for test release ([2332a09](https://github.com/good-idea/sane-shopify.git/commit/2332a09))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
