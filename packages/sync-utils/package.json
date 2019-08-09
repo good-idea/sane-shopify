@@ -45,7 +45,7 @@
 	},
 	"dependencies": {
 		"@good-idea/unwind-edges": "^1.1.3",
-		"@sane-shopify/types": "^0.3.0",
+		"@sane-shopify/types": "^0.3.3",
 		"@sanity/client": "^0.141.6",
 		"es6-promise": "^4.2.8",
 		"isomorphic-fetch": "^2.2.1",
