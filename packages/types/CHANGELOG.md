@@ -1,3 +1,10 @@
+# [@sane-shopify/types-v0.3.3](https://github.com/good-idea/sane-shopify.git/compare/v0.3.2...v0.3.3) (2019-08-09)
+
+
+### Bug Fixes
+
+* **types:** test fix for types publish ([b2b1748](https://github.com/good-idea/sane-shopify.git/commit/b2b1748))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
