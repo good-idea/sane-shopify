@@ -20,7 +20,11 @@
     "experimentalDecorators": true,
     "lib": ["esnext", "dom"],
     "types": ["jest", "node"],
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": "./packages",
+    "paths": {
+      "@sane-shopify/*": ["./*/src"]
+    }
   },
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
