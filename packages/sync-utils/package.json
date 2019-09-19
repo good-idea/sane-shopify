@@ -4,7 +4,7 @@
 	"description": "Syncing utility for Node & the browser",
 	"author": "Joseph Thomas | Good Idea Studio",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
-	"license": "ISC",
+	"license": "MIT",
 	"scripts": {
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",

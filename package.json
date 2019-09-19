@@ -1,6 +1,7 @@
 {
-	"name": "root",
+	"name": "sane-shopify-monorepo-root",
 	"private": true,
+	"license": "MIT",
 	"scripts": {
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",

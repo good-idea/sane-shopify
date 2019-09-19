@@ -4,7 +4,7 @@
 	"description": "A server and lambdas to serve & sync data between Shopify and Sanity",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
-	"license": "ISC",
+	"license": "MIT",
 	"scripts": {
 		"build": "rollup -c",
 		"watch": "rollup -cw",

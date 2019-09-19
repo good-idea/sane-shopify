@@ -4,7 +4,7 @@
 	"description": "Common typescript typings for @sane-shopify projects",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
-	"license": "ISC",
+	"license": "MIT",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -20,6 +20,13 @@
 	"keywords": [
 		"sanity",
 		"shopify"
+	],
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"lib"
 	],
 	"repository": {
 		"type": "git",
