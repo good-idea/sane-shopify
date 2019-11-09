@@ -9,6 +9,8 @@
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.ts",
+		"linky": "yalc publish",
+		"linky:watch": "nodemon -w ./lib --delay 250ms -x yalc publish --push",
 		"test": "run-s build test:lint test:unit",
 		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest --collectCoverage",
@@ -16,8 +18,7 @@
 		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
 		"test:coverage:send": "codecov",
 		"build": "rollup -c",
-		"watch": "rollup -cw",
-		"prepare": "npm run build"
+		"watch": "rollup -cw"
 	},
 	"keywords": [
 		"shopify",
@@ -44,21 +45,22 @@
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
 	"dependencies": {
-		"@good-idea/unwind-edges": "^1.1.3",
+		"@good-idea/unwind-edges": "^1.2.0",
 		"@sane-shopify/types": "^0.4.0",
-		"@sanity/client": "^0.141.6",
+		"@sanity/client": "^0.144.0",
 		"es6-promise": "^4.2.8",
 		"isomorphic-fetch": "^2.2.1",
 		"lodash-es": "^4.17.15",
-		"rxjs": "^6.5.2"
+		"rxjs": "^6.5.3"
 	},
 	"devDependencies": {
 		"@types/lodash-es": "^4.17.3",
 		"eslint": "^6.6.0",
+		"nodemon": "^1.19.4",
 		"npm-run-all": "^4.1.5",
-		"react-hot-loader": "^4.12.10",
 		"prettier": "^1.19.1",
-		"rollup": "^1.19.4"
+		"react-hot-loader": "^4.12.16",
+		"rollup": "^1.26.4"
 	},
 	"gitHead": "26ed458ab898470e7fcd2cd9050f5759546d7623"
 }

@@ -6,10 +6,14 @@
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",
 		"fix": "lerna run fix",
+    "bootstrap": "lerna bootstrap",
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"build": "lerna run --parallel build",
 		"watch": "lerna run --parallel watch"
 	},
+  "workspaces": [
+    "packages/*"
+  ],
 	"devDependencies": {
 		"@commitlint/cli": "^8.2.0",
 		"@commitlint/config-conventional": "^8.2.0",
