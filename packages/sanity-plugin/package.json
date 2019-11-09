@@ -31,6 +31,8 @@
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:tslint": "tslint --fix --project .",
+		"linky": "yalc publish",
+		"linky:watch": "nodemon -w ./lib --delay 250ms -x yalc publish --push --changed",
 		"test": "run-s build test:lint test:unit",
 		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest --collectCoverage",
@@ -38,8 +40,7 @@
 		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
 		"test:coverage:send": "codecov",
 		"build": "rollup -c",
-		"watch": "rollup -cw",
-		"prepare": "npm run build"
+		"watch": "rollup -cw"
 	},
 	"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"
@@ -66,6 +67,7 @@
 		"@types/react-dom": "16.8.5",
 		"@types/rimraf": "^2.0.2",
 		"babel-polyfill": "^6.26.0",
+		"nodemon": "^1.19.4",
 		"npm-run-all": "^4.1.5",
 		"react": "16.9",
 		"react-dom": "16.9",
