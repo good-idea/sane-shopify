@@ -38,11 +38,11 @@ class SyncBase extends React.Component<Props, State> {
   }
 
   public reset = async () => {
-    await this.setState(initialState)
+    this.setState(initialState)
   }
 
   public _syncProducts = async () => {
-    await this.props.syncingClient.syncProducts({
+    this.props.syncingClient.syncProducts({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
           fetchedProducts: [...prevState.fetchedProducts, ...nodes]
@@ -57,7 +57,7 @@ class SyncBase extends React.Component<Props, State> {
   }
 
   public _syncCollections = async () => {
-    await this.props.syncingClient.syncCollections({
+    this.props.syncingClient.syncCollections({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
           fetchedCollections: [...prevState.fetchedProducts, ...nodes]
@@ -76,14 +76,14 @@ class SyncBase extends React.Component<Props, State> {
   public syncProductByHandle = async (handle: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this.props.syncingClient.syncProductByHandle(handle)
+    this.props.syncingClient.syncProductByHandle(handle)
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
   public syncCollectionByHandle = async (handle: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this.props.syncingClient.syncProductByHandle(handle)
+    this.props.syncingClient.syncProductByHandle(handle)
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
@@ -104,12 +104,13 @@ class SyncBase extends React.Component<Props, State> {
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await Promise.all([this._syncCollections(), this._syncProducts()])
+    await this._syncProducts()
+    await this._syncCollections()
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
   public render() {
-    const { children, ready, valid } = this.props
+    const { children } = this.props
     const {
       syncProductByHandle,
       syncCollectionByHandle,

@@ -36,7 +36,11 @@ interface FetchedItemsAction {
 interface CompletedAction {
   type: typeof COMPLETED
 }
-type Action = StartAction | FetchedTotalAction | FetchedItemsAction | CompletedAction
+type Action =
+  | StartAction
+  | FetchedTotalAction
+  | FetchedItemsAction
+  | CompletedAction
 
 const reducer = (prevState: FetchingState, action: Action) => {
   switch (action.type) {
@@ -55,7 +59,10 @@ const reducer = (prevState: FetchingState, action: Action) => {
       return {
         ...prevState,
         fetched: newFetchedCount,
-        status: newFetchedCount === prevState.total ? ('complete' as 'complete') : prevState.status
+        status:
+          newFetchedCount === prevState.total
+            ? ('complete' as 'complete')
+            : prevState.status
       }
     case COMPLETED:
       return {
@@ -82,13 +89,18 @@ const createUpdaters = (prevState: FetchingState): Updaters => {
   const update = (action: Action) => {
     const newState = reducer(prevState, action)
     const updaters = createUpdaters(newState)
-    const returned: FetchingStateAndUpdaters = [newState as FetchingState, updaters as Updaters]
+    const returned: FetchingStateAndUpdaters = [
+      newState as FetchingState,
+      updaters as Updaters
+    ]
     return returned
   }
 
   const start = () => update({ type: STARTED })
-  const fetchedTotal = (count: number) => update({ type: FETCHED_TOTAL, payload: { count } })
-  const fetchedItems = (count: number) => update({ type: FETCHED_ITEMS, payload: { count } })
+  const fetchedTotal = (count: number) =>
+    update({ type: FETCHED_TOTAL, payload: { count } })
+  const fetchedItems = (count: number) =>
+    update({ type: FETCHED_ITEMS, payload: { count } })
   const complete = () => update({ type: COMPLETED })
 
   return {

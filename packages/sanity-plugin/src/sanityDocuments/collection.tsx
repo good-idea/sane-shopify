@@ -1,9 +1,14 @@
 import * as React from 'react'
 import { SanityDocumentConfig } from '../types'
 
-export const createCollectionDocument = ({ fields, ...rest }: SanityDocumentConfig = {}) => {
+export const createCollectionDocument = ({
+  fields,
+  ...rest
+}: SanityDocumentConfig = {}) => {
   if (rest && rest.name && rest.name !== 'shopifyCollection')
-    throw new Error('The document name for a collection must be "shopifyCollection"')
+    throw new Error(
+      'The document name for a collection must be "shopifyCollection"'
+    )
   if (rest && rest.type && rest.type !== 'document')
     throw new Error('The type for a Shopify collection must be "document"')
   const additionalFields = fields || []
@@ -38,6 +43,24 @@ export const createCollectionDocument = ({ fields, ...rest }: SanityDocumentConf
         readOnly: true,
         type: 'shopifyCollectionSource'
       },
+
+      {
+        title: 'Products',
+        name: 'products',
+        type: 'array',
+        description:
+          'Synced from Shopify. Update collection products in the Shopify dashboard.',
+        readOnly: true,
+        of: [
+          {
+            title: 'product',
+            name: 'Product',
+            type: 'reference',
+            to: [{ type: 'shopifyProduct' }]
+          }
+        ]
+      },
+
       ...additionalFields
     ],
     preview: {
@@ -51,7 +74,12 @@ export const createCollectionDocument = ({ fields, ...rest }: SanityDocumentConf
         const media =
           sourceData && sourceData.image ? (
             <div style={imageWrapperStyles}>
-              <img style={imageStyles} src={sourceData.image.w100} alt={`Image for ${itemTitle}`} />
+              <img
+                // @ts-ignore
+                style={imageStyles}
+                src={sourceData.image.w100}
+                alt={`Image for ${itemTitle}`}
+              />
             </div>
           ) : (
             undefined
@@ -69,7 +97,7 @@ export const createCollectionDocument = ({ fields, ...rest }: SanityDocumentConf
 const imageStyles = {
   width: '100%',
   height: '100%',
-  'object-fit': 'cover'
+  objectFit: 'cover'
 }
 
 const imageWrapperStyles = {
