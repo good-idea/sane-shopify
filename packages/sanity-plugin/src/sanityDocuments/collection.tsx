@@ -1,6 +1,20 @@
 import * as React from 'react'
 import { SanityDocumentConfig } from '../types'
 
+const imageStyles = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover'
+}
+
+const imageWrapperStyles = {
+  height: 'calc(100% - 4px)',
+  background: '#d0cfcf',
+  overflow: 'hidden',
+  borderRadius: '3px',
+  padding: '2px'
+}
+
 export const createCollectionDocument = ({
   fields,
   ...rest
@@ -43,24 +57,11 @@ export const createCollectionDocument = ({
         readOnly: true,
         type: 'shopifyCollectionSource'
       },
-
       {
         title: 'Products',
         name: 'products',
-        type: 'array',
-        description:
-          'Synced from Shopify. Update collection products in the Shopify dashboard.',
-        readOnly: true,
-        of: [
-          {
-            title: 'product',
-            name: 'Product',
-            type: 'reference',
-            to: [{ type: 'shopifyProduct' }]
-          }
-        ]
+        type: 'products'
       },
-
       ...additionalFields
     ],
     preview: {
@@ -71,6 +72,7 @@ export const createCollectionDocument = ({
       prepare: (props) => {
         const { title, sourceData } = props
         const itemTitle = sourceData ? title || sourceData.title : title
+        const alt = `Image for ${itemTitle}`
         const media =
           sourceData && sourceData.image ? (
             <div style={imageWrapperStyles}>
@@ -78,7 +80,7 @@ export const createCollectionDocument = ({
                 // @ts-ignore
                 style={imageStyles}
                 src={sourceData.image.w100}
-                alt={`Image for ${itemTitle}`}
+                alt={alt}
               />
             </div>
           ) : (
@@ -92,18 +94,4 @@ export const createCollectionDocument = ({
     },
     ...rest
   }
-}
-
-const imageStyles = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover'
-}
-
-const imageWrapperStyles = {
-  height: 'calc(100% - 4px)',
-  background: '#d0cfcf',
-  overflow: 'hidden',
-  borderRadius: '3px',
-  padding: '2px'
 }
