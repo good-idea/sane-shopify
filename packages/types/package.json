@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/types",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "Common typescript typings for @sane-shopify projects",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -16,7 +16,7 @@
 		"fix:tslint": "tslint --fix --project .",
 		"test": "run-s test:lint",
 		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
-    "prepare": "npm run build"
+		"prepare": "npm run build"
 	},
 	"keywords": [
 		"sanity",
