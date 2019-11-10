@@ -15,3 +15,5 @@ package-lock.json
 
 .yalc
 yalc.lock
+
+coverage

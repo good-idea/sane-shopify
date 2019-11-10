@@ -6,14 +6,14 @@
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",
 		"fix": "lerna run fix",
-    "bootstrap": "lerna bootstrap",
+		"bootstrap": "lerna bootstrap",
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"build": "lerna run --parallel build",
 		"watch": "lerna run --parallel watch"
 	},
-  "workspaces": [
-    "packages/*"
-  ],
+	"workspaces": [
+		"packages/*"
+	],
 	"devDependencies": {
 		"@commitlint/cli": "^8.2.0",
 		"@commitlint/config-conventional": "^8.2.0",
@@ -26,6 +26,7 @@
 		"eslint-plugin-prettier": "^3.1.1",
 		"eslint-plugin-react": "^7.16.0",
 		"husky": "^3.0.9",
+		"jest": "^24.9.0",
 		"lerna": "^3.18.4",
 		"npm-check-updates": "^3.2.1",
 		"npm-run-all": "^4.1.5",
@@ -34,6 +35,7 @@
 		"rollup": "^1.26.4",
 		"rollup-plugin-ts-paths": "^1.0.3",
 		"rollup-plugin-typescript2": "^0.25.2",
+		"ts-jest": "^24.1.0",
 		"typescript": "^3.7.2",
 		"typesync": "^0.6.1",
 		"yalc": "^1.0.0-pre.34"

@@ -12,7 +12,7 @@
 		"linky": "yalc publish",
 		"linky:watch": "nodemon -w ./lib --delay 250ms -x yalc publish --push",
 		"test": "run-s build test:lint test:unit",
-		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest --collectCoverage",
 		"test:watch": "jest --watch",
 		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
@@ -54,6 +54,7 @@
 		"rxjs": "^6.5.3"
 	},
 	"devDependencies": {
+		"@types/jest": "^24.0.22",
 		"@types/lodash-es": "^4.17.3",
 		"eslint": "^6.6.0",
 		"nodemon": "^1.19.4",
