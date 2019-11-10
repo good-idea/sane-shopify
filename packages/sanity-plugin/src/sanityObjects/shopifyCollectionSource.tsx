@@ -1,7 +1,3 @@
-import * as React from 'react'
-import { unwindEdges } from '@good-idea/unwind-edges'
-import { SanityDocumentConfig } from '../types'
-
 export const shopifyCollectionSource = {
   title: 'Shopify Data',
   readOnly: true,
@@ -12,7 +8,8 @@ export const shopifyCollectionSource = {
     {
       title: 'Handle',
       name: 'handle',
-      type: 'string'
+      type: 'string',
+      hidden: true
     },
     {
       title: 'Description',
@@ -29,7 +26,8 @@ export const shopifyCollectionSource = {
     {
       title: 'Image',
       name: 'image',
-      type: 'shopifySourceImage'
+      type: 'shopifySourceImage',
+      hidden: true
     }
   ]
 }

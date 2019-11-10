@@ -6,36 +6,45 @@
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",
 		"fix": "lerna run fix",
+		"bootstrap": "lerna bootstrap",
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"build": "lerna run --parallel build",
 		"watch": "lerna run --parallel watch"
 	},
+	"workspaces": [
+		"packages/*"
+	],
 	"devDependencies": {
-		"@commitlint/cli": "^7.6.1",
-		"@commitlint/config-conventional": "^7.6.0",
-		"@types/jest": "^24.0.13",
-		"@types/node": "^12.0.3",
-		"husky": "^2.3.0",
-		"lerna": "^3.14.1",
-		"npm-check-updates": "^3.1.9",
+		"@commitlint/cli": "^8.2.0",
+		"@commitlint/config-conventional": "^8.2.0",
+		"@types/jest": "^24.0.22",
+		"@types/node": "^12.12.7",
+		"@typescript-eslint/eslint-plugin": "^2.6.1",
+		"@typescript-eslint/parser": "^2.6.1",
+		"eslint": "^6.6.0",
+		"eslint-config-prettier": "^6.5.0",
+		"eslint-plugin-prettier": "^3.1.1",
+		"eslint-plugin-react": "^7.16.0",
+		"husky": "^3.0.9",
+		"jest": "^24.9.0",
+		"lerna": "^3.18.4",
+		"npm-check-updates": "^3.2.1",
 		"npm-run-all": "^4.1.5",
-		"prettier": "^1.17.1",
-		"pretty-quick": "^1.11.0",
-		"rollup": "^1.12.4",
+		"prettier": "^1.19.1",
+		"pretty-quick": "^2.0.1",
+		"rollup": "^1.26.4",
 		"rollup-plugin-ts-paths": "^1.0.3",
-		"rollup-plugin-typescript2": "^0.21.1",
-		"tslint": "^5.16.0",
-		"tslint-config-airbnb": "^5.11.1",
-		"tslint-config-prettier": "^1.18.0",
-		"tslint-react": "^4.0.0",
-		"typescript": "^3.5.1",
-		"typescript-tslint-plugin": "^0.4.0",
-		"typesync": "^0.5.1"
+		"rollup-plugin-typescript2": "^0.25.2",
+		"ts-jest": "^24.1.0",
+		"typescript": "^3.7.2",
+		"typesync": "^0.6.1",
+		"yalc": "^1.0.0-pre.34"
 	},
 	"husky": {
 		"hooks": {
 			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
 			"pre-commit": "pretty-quick --staged"
 		}
-	}
+	},
+	"dependencies": {}
 }

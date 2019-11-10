@@ -9,6 +9,11 @@ npm-debug.log
 packages/*/lib
 .rpt2_cache
 
-# use npm, not yarn
-yarn.lock
+# use yarn, not npm
+package-lock.json
 *.log
+
+.yalc
+yalc.lock
+
+coverage

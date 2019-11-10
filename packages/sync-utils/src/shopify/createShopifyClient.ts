@@ -10,9 +10,7 @@ const getErrorMessage = (r: Response): string => {
     case 403:
       return 'Authentication failed. Please make sure you have entered the correct Storefront name and API Key.'
     default:
-      return `There was an error connecting to Shopify (${r.status}: ${
-        r.statusText
-      })`
+      return `There was an error connecting to Shopify (${r.status}: ${r.statusText})`
   }
 }
 
