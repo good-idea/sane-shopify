@@ -15,8 +15,7 @@ import {
   delay,
   expand,
   map,
-  mergeMap,
-  take
+  mergeMap
 } from 'rxjs/operators'
 import createSanityClient from '@sanity/client'
 import { createShopifyClient } from '../shopify'
@@ -24,6 +23,8 @@ import { createShopifyClient } from '../shopify'
 import {
   NODE_QUERY,
   NodeQueryResult,
+  COLLECTION_QUERY,
+  CollectionQueryResult,
   COLLECTIONS_QUERY,
   CollectionsQueryResult,
   PRODUCT_QUERY,
@@ -31,7 +32,7 @@ import {
   PRODUCTS_QUERY,
   ProductsQueryResult
 } from './shopifyQueries'
-import { prepareImages } from './utils'
+import { buildProductReferences, prepareSourceData } from './utils'
 
 export interface SyncingClient {
   syncProducts: (cbs?: SubscriptionCallbacks<Product>) => void
@@ -85,24 +86,35 @@ export const mergeClients = (
    * If there everything is the same, skips the update.
    * If the data is different, patches the existing document.
    */
-  const syncSanityDocument = <ExpectedResult>(
+  const syncSanityDocument = async <ExpectedResult>(
     item: Product | Collection,
     doc?: SanityShopifyDocument
   ) => {
     const _type = getItemType(item)
-    const docInfo = {
-      _type,
-      title: item.title,
-      shopifyId: item.id,
-      handle: item.handle,
-      sourceData: prepareImages(item)
-    }
+    const sourceData = prepareSourceData(item)
+    const docInfo =
+      item.__typename === 'Collection'
+        ? {
+            _type,
+            title: item.title,
+            shopifyId: item.id,
+            handle: item.handle,
+            products: await buildProductReferences(sanityClient, item.products),
+            sourceData
+          }
+        : {
+            _type,
+            title: item.title,
+            shopifyId: item.id,
+            handle: item.handle,
+            sourceData
+          }
     if (!doc)
       return from(sanityClient.create<ExpectedResult>(docInfo)).pipe(
         map((newDoc) => ({ operation: 'create', doc: newDoc, [_type]: item }))
       )
 
-    return isMatch(doc, docInfo)
+    return isMatch(doc, docInfo) && item.__typename !== 'Collection'
       ? of(doc).pipe(
           map((existingDoc) => ({
             operation: 'skip',
@@ -126,14 +138,6 @@ export const mergeClients = (
 
   const syncItem = (item: Product | Collection) => {
     const _type = getItemType(item)
-    const z = sanityClient.fetch<SanityShopifyDocument>(
-      '*[_type == $_type && shopifyId == $shopifyId][0]',
-      {
-        _type,
-        shopifyId: item.id
-      }
-    )
-
     const sync$ = from(
       sanityClient.fetch<SanityShopifyDocument>(
         '*[_type == $_type && shopifyId == $shopifyId][0]',
@@ -166,21 +170,75 @@ export const mergeClients = (
   const fetchItemById = async <ItemType = Product | Collection>(id: string) =>
     shopifyClient.query<NodeQueryResult<ItemType>>(NODE_QUERY, { id })
 
+  /* Merges in multiple pages of child products */
+  const mergeCollectionProducts = (
+    c1: Collection,
+    c2: Collection
+  ): Collection => ({
+    ...c1,
+    products: {
+      pageInfo: {
+        hasPreviousPage: c1.products.pageInfo.hasPreviousPage,
+        hasNextPage: c2.products.pageInfo.hasNextPage
+      },
+      edges: [...c1.products.edges, ...c2.products.edges]
+    }
+  })
+
+  /* Takes a fetched collection and continues to fetch all of its paginated products,
+   * returning a single collection with all edges merged in */
+  const fetchLaterProducts = async (
+    collection: Collection
+  ): Promise<Collection> => {
+    if (!collection.products) return collection
+    if (collection.products.pageInfo.hasNextPage === false) return collection
+    const { handle } = collection
+    const [_, { lastCursor }] = unwindEdges(collection.products)
+    const response = await shopifyClient.query<CollectionQueryResult>(
+      COLLECTION_QUERY,
+      {
+        handle,
+        productsFirst: 20,
+        productsAfter: lastCursor
+      }
+    )
+    const nextPage = response.data.collectionByHandle
+
+    const withLaterPages = await fetchLaterProducts(nextPage)
+    return mergeCollectionProducts(collection, withLaterPages)
+  }
+
   const fetchAll = <T extends ProductsQueryResult | CollectionsQueryResult>(
     type: 'products' | 'collections',
     onFetchedItems?: (nodes: any[]) => void
   ) => {
     const query = type === 'products' ? PRODUCTS_QUERY : COLLECTIONS_QUERY
-    const fetchPage = (after?: string) =>
-      from(shopifyClient.query<T>(query, { after, first: 100 })).pipe(
-        map((response) => {
+    const fetchPage = (after?: string, productsAfter?: string) =>
+      from(
+        shopifyClient.query<T>(query, {
+          after,
+          first: 100,
+          productsAfter,
+          productsFirst: 20
+        })
+      ).pipe(
+        mergeMap(async (response) => {
           if (response.errors) throw new Error(response.errors[0].message)
-          const [nodes, { pageInfo, lastCursor }] = unwindEdges(
-            response.data[type]
-          )
+
+          const [nodes, { pageInfo, lastCursor }] = unwindEdges<
+            Product | Collection
+          >(response.data[type])
           if (onFetchedItems) onFetchedItems(nodes)
+
+          /* If fetching collections, recursively fetch *all* paginated products */
+          const recursivelyFetchedNodes =
+            type === 'collections'
+              ? //
+                // @ts-ignore --- not sure how to tell ts that these will always be collections
+                await Promise.all(nodes.map(fetchLaterProducts))
+              : nodes
           return {
-            nodes,
+            nodes: recursivelyFetchedNodes,
             next: pageInfo.hasNextPage ? () => fetchPage(lastCursor) : empty
           }
         }),
@@ -193,7 +251,10 @@ export const mergeClients = (
       /* continue calling the next() function. If there are no more pages, this will run emtpy() */
       expand(({ next }) => next()),
       /* Turn each node result into an event */
-      concatMap(({ nodes }) => nodes)
+      concatMap(({ nodes }) => nodes),
+      catchError((error) => {
+        return of(error)
+      })
     )
 
     return allItemsStream
@@ -208,9 +269,12 @@ export const mergeClients = (
     onComplete
   }: SubscriptionCallbacks<ItemType> = {}) =>
     new Promise((resolve) => {
-      const products$ = fetchAll(itemType, onFetchedItems)
+      const items$ = fetchAll(itemType, onFetchedItems)
         .pipe(
-          mergeMap((node: Product) => syncItem(node), undefined, 25)
+          mergeMap((node: Product) => syncItem(node), undefined, 25),
+          catchError((err) => {
+            return of(err)
+          })
           // take(5) // Uncomment for debugging
         )
         .subscribe(
@@ -221,16 +285,17 @@ export const mergeClients = (
             resolve()
           }
         )
-      return products$
+      return items$
     })
 
   const syncItemByHandle = <ItemType = Product | Collection>(
+    // TODO this only handles products right now
     itemType: 'product' | 'collection'
   ) => (
-    handle,
+    handle: string,
     { onProgress, onError, onComplete }: SubscriptionCallbacks<ItemType> = {}
   ) => {
-    const product$ = from(fetchProduct(handle))
+    const item$ = from(fetchProduct(handle))
       .pipe(map((response) => response.data.productByHandle))
       .pipe(mergeMap((node: Product) => syncItem(node)))
       .subscribe(
@@ -239,6 +304,7 @@ export const mergeClients = (
         (error) => onError && onError(error),
         () => onComplete && onComplete()
       )
+    return item$
   }
 
   const syncItemByID = <ItemType = Product | Collection>(
@@ -255,6 +321,7 @@ export const mergeClients = (
         (error) => onError && onError(error),
         () => onComplete && onComplete()
       )
+    return item$
   }
 
   /**

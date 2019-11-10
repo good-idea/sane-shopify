@@ -27,14 +27,17 @@ interface TestResponse {
   message?: string
 }
 
-export const testSecrets = async (secrets?: ShopifySecrets): Promise<TestResponse> => {
+export const testSecrets = async (
+  secrets?: ShopifySecrets
+): Promise<TestResponse> => {
   if (!secrets)
     return {
       valid: false,
       message: 'You must provide an API Key and Storefront Name'
     }
   const { storefrontName, storefrontApiKey } = secrets
-  if (!storefrontName.length) return { valid: false, message: 'You must provide a Storefront name' }
+  if (!storefrontName.length)
+    return { valid: false, message: 'You must provide a Storefront name' }
   if (!storefrontApiKey.length)
     return { valid: false, message: 'You must provide a Storefront API Key' }
   const response = await createShopifyClient(secrets)

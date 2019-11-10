@@ -99,12 +99,29 @@ const collectionFragment = /* GraphQL */ `
     image {
       ...ImageFragment
     }
+    products(first: $productsFirst, after: $productsAfter) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        cursor
+        node {
+          id
+          handle
+        }
+      }
+    }
   }
 `
 
 export const COLLECTION_QUERY = /* GraphQL */ `
-  query CollectionQuery($handle: String!) {
-    collectionByHandle {
+  query CollectionQuery(
+    $handle: String!
+    $productsFirst: Int!
+    $productsAfter: String
+  ) {
+    collectionByHandle(handle: $handle) {
       ...CollectionFragment
     }
   }
@@ -120,7 +137,12 @@ export interface CollectionQueryResult {
 }
 
 export const COLLECTIONS_QUERY = /* GraphQL */ `
-  query CollectionsQuery($first: Int!, $after: String) {
+  query CollectionsQuery(
+    $first: Int!
+    $after: String
+    $productsFirst: Int!
+    $productsAfter: String
+  ) {
     collections(first: $first, after: $after) {
       pageInfo {
         hasNextPage
