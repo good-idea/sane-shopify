@@ -14,7 +14,7 @@
 		"test": "run-s build test:lint test:unit",
 		"test:lint": "eslint --project ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",
-		"prepare": "yarn build"
+		"prepublishOnly": "yarn build"
 	},
 	"keywords": [
 		"sanity",

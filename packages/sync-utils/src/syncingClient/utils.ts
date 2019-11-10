@@ -16,7 +16,7 @@ export const buildProductReferences = async (
   const query = '*[_type == "shopifyProduct" && shopifyId in $productIds]'
   const productDocuments = await sanityClient.fetch(query, { productIds })
   const productRefs = productDocuments.map((doc) => ({
-    _type: 'Product',
+    _type: 'reference',
     _ref: doc._id,
     _key: `${doc._rev}-${doc._id}`
   }))

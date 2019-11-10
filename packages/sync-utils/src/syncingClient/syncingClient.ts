@@ -99,7 +99,12 @@ export const mergeClients = (
             title: item.title,
             shopifyId: item.id,
             handle: item.handle,
-            products: await buildProductReferences(sanityClient, item.products),
+            products: {
+              products: await buildProductReferences(
+                sanityClient,
+                item.products
+              )
+            },
             sourceData
           }
         : {
@@ -114,7 +119,7 @@ export const mergeClients = (
         map((newDoc) => ({ operation: 'create', doc: newDoc, [_type]: item }))
       )
 
-    return isMatch(doc, docInfo) && item.__typename !== 'Collection'
+    return isMatch(doc, docInfo)
       ? of(doc).pipe(
           map((existingDoc) => ({
             operation: 'skip',

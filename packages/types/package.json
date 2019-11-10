@@ -16,7 +16,7 @@
 		"fix:tslint": "tslint --fix --project .",
 		"test": "run-s test:lint",
 		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
-		"prepare": "npm run build"
+		"prepublishOnly": "npm run build"
 	},
 	"keywords": [
 		"sanity",
