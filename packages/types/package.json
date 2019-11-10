@@ -15,7 +15,8 @@
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:tslint": "tslint --fix --project .",
 		"test": "run-s test:lint",
-		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different"
+		"test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+    "prepare": "npm run build"
 	},
 	"keywords": [
 		"sanity",

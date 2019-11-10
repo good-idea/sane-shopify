@@ -12,9 +12,9 @@
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.ts",
 		"test": "run-s build test:lint test:unit",
-		"test:lint": "eslint --project . && prettier \"src/**/*.ts\" --list-different",
-		"test:unit": "jest --collectCoverage",
-		"prepare": "npm run build"
+		"test:lint": "eslint --project ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
+		"test:unit": "jest",
+		"prepare": "yarn build"
 	},
 	"keywords": [
 		"sanity",
