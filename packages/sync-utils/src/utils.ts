@@ -1,6 +1,40 @@
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import { Collection, Product, SanityClient } from '@sane-shopify/types'
 
+// TODO: the use of 'shopifyProduct' and 'shopifyCollection' should
+// use constants shared throughout sane-shopify
+export const getItemType = (item: Product | Collection) => {
+  switch (item.__typename) {
+    case 'Product':
+      return 'shopifyProduct'
+    case 'Collection':
+      return 'shopifyCollection'
+    case undefined:
+      throw new Error('The supplied item does not have a __typename')
+    default:
+      throw new Error(
+        // @ts-ignore
+        `The __typename '${item.__typename}' is not currently supported`
+      )
+  }
+}
+
+export const getLastCursor = <NodeType>(connection: Paginated<NodeType>) =>
+  connection.edges && connection.edges.length > 0
+    ? connection.edges[connection.edges.length - 1].cursor
+    : null
+
+export const mergePaginatedResults = <NodeType>(
+  p1: Paginated<NodeType>,
+  p2: Paginated<NodeType>
+) => ({
+  pageInfo: {
+    hasPreviousPage: p1.pageInfo.hasPreviousPage,
+    hasNextPage: p2.pageInfo.hasNextPage
+  },
+  edges: [...p1.edges, ...p2.edges]
+})
+
 interface ProductRef {
   _type: 'Product'
   _ref: string
@@ -28,6 +62,11 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
     // Add keys to product images
     return {
       ...item,
+      // @ts-ignore
+      options: item.options.map(({ id, ...option }) => ({
+        ...option,
+        _key: id
+      })),
       images: {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         ...item.images,

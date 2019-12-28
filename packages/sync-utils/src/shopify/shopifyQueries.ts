@@ -1,8 +1,16 @@
+import gql from 'graphql-tag'
 import { Collection, Paginated, Product } from '@sane-shopify/types'
 
 /**
  * Shared
  */
+
+const moneyFragment = /* GraphQL */ `
+  fragment MoneyV2Fragment on MoneyV2 {
+    amount
+    currencyCode
+  }
+`
 
 interface ShopifyError {
   message: string
@@ -24,14 +32,30 @@ const imageFragment = /* GraphQL */ `
  * Product Queries
  */
 
-const productFragment = /* GraphQL */ `
+export const productFragment = gql`
   fragment ProductFragment on Product {
     __typename
     id
     handle
     title
     description
-    images(first: 1) {
+    availableForSale
+    productType
+    tags
+    options {
+      id
+      name
+      values
+    }
+    priceRange {
+      minVariantPrice {
+        ...MoneyV2Fragment
+      }
+      maxVariantPrice {
+        ...MoneyV2Fragment
+      }
+    }
+    images(first: 100) {
       edges {
         cursor
         node {
@@ -40,10 +64,16 @@ const productFragment = /* GraphQL */ `
       }
     }
   }
+  ${moneyFragment}
+  ${imageFragment}
 `
 
 export const PRODUCT_QUERY = /* GraphQL */ `
-  query ProductQuery($handle: String!) {
+  query ProductQuery(
+    $handle: String!
+    $collectionsFirst: Int!
+    $collectionsAfter: String
+  ) {
     productByHandle(handle: $handle) {
       ...ProductFragment
     }
@@ -89,7 +119,7 @@ export interface ProductsQueryResult {
  * Collection Queries
  */
 
-const collectionFragment = /* GraphQL */ `
+export const collectionFragment = /* GraphQL */ `
   fragment CollectionFragment on Collection {
     id
     handle
@@ -99,33 +129,7 @@ const collectionFragment = /* GraphQL */ `
     image {
       ...ImageFragment
     }
-    products(first: $productsFirst, after: $productsAfter) {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
-      edges {
-        cursor
-        node {
-          id
-          handle
-        }
-      }
-    }
   }
-`
-
-export const COLLECTION_QUERY = /* GraphQL */ `
-  query CollectionQuery(
-    $handle: String!
-    $productsFirst: Int!
-    $productsAfter: String
-  ) {
-    collectionByHandle(handle: $handle) {
-      ...CollectionFragment
-    }
-  }
-  ${collectionFragment}
   ${imageFragment}
 `
 
