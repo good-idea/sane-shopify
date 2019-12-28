@@ -1,5 +1,4 @@
 import * as React from 'react'
-import InputComponent from './InputComponent'
 
 export default {
   title: 'Shopify Item',
@@ -9,54 +8,53 @@ export default {
     {
       name: 'itemId',
       title: 'Item ID',
-      type: 'string',
+      type: 'string'
     },
     {
       name: 'title',
       type: 'string',
-      readOnly: true,
+      readOnly: true
     },
     {
       name: 'itemType',
       type: 'string',
-      readOnly: true,
+      readOnly: true
     },
     {
       name: 'handle',
       type: 'string',
-      readOnly: true,
+      readOnly: true
     },
     {
       name: 'description',
       type: 'string',
-      readOnly: true,
+      readOnly: true
     },
     {
       name: 'originalImage',
       type: 'string',
-      readOnly: true,
+      readOnly: true
     },
     {
       name: 'previewImage',
       type: 'string',
-      readOnly: true,
-    },
+      readOnly: true
+    }
   ],
-  inputComponent: InputComponent,
 
   preview: {
     select: {
       title: 'title',
       subtitle: 'description',
-      previewImage: 'previewImage',
+      previewImage: 'previewImage'
     },
     prepare: (values) => {
       const { title, description, previewImage } = values
       return {
         title,
         subtitle: description,
-        media: <img alt={title} src={previewImage} />,
+        media: <img alt={title} src={previewImage} />
       }
-    },
-  },
+    }
+  }
 }

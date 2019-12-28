@@ -9,8 +9,8 @@ const TextInput = require('part:@sanity/components/textinputs/default').default
 /* tslint:enable */
 
 interface State {
-  storefrontName: string
-  storefrontApiKey: string
+  shopName: string
+  accessToken: string
   loading: boolean
   error: boolean
   message: string
@@ -32,23 +32,23 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public keyInputId = uniqueId('storefrontKeyInput')
 
   public state = {
-    storefrontName: this.props.secrets.storefrontName || '',
-    storefrontApiKey: this.props.secrets.storefrontApiKey || '',
+    shopName: this.props.secrets.shopName || '',
+    accessToken: this.props.secrets.accessToken || '',
     loading: false,
     success: false,
     error: undefined,
     message: undefined
   }
 
-  public handleInputChange = (field: 'storefrontName' | 'storefrontApiKey') => (e) => {
-    if (field === 'storefrontName') this.setState({ storefrontName: e.target.value })
-    if (field === 'storefrontApiKey') this.setState({ storefrontApiKey: e.target.value })
+  public handleInputChange = (field: 'shopName' | 'accessToken') => (e) => {
+    if (field === 'shopName') this.setState({ shopName: e.target.value })
+    if (field === 'accessToken') this.setState({ accessToken: e.target.value })
   }
 
   public clear = () => {
     this.setState({
-      storefrontName: this.props.secrets.storefrontName || '',
-      storefrontApiKey: this.props.secrets.storefrontApiKey || '',
+      shopName: this.props.secrets.shopName || '',
+      accessToken: this.props.secrets.accessToken || '',
       error: false,
       message: undefined
     })
@@ -57,10 +57,10 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public handleSubmit = async () => {
     await this.setState({ loading: true })
     const { testSecrets, saveSecrets } = this.props
-    const { storefrontName, storefrontApiKey } = this.state
+    const { shopName, accessToken } = this.state
     const { valid, data, message } = await testSecrets({
-      storefrontName,
-      storefrontApiKey
+      shopName,
+      accessToken
     })
     if (!valid) {
       this.setState({
@@ -70,7 +70,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
       })
       return
     }
-    await saveSecrets({ storefrontName, storefrontApiKey })
+    await saveSecrets({ shopName, accessToken })
     await this.setState({
       message,
       loading: false,
@@ -86,14 +86,22 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   }
 
   public render() {
-    const { storefrontName, storefrontApiKey, loading, error, message, success } = this.state
+    const {
+      shopName,
+      accessToken,
+      loading,
+      error,
+      message,
+      success
+    } = this.state
 
     if (!this.props.ready) return null
     if (this.props.valid) {
       return (
         <Fieldset legend="Account Setup" level={1} description="">
           <p>
-            Connected to shopify storefront <strong>{this.props.secrets.storefrontName}</strong>
+            Connected to shopify storefront{' '}
+            <strong>{this.props.secrets.shopName}</strong>
           </p>
 
           <Button color="danger" disabled={loading} onClick={this.handleUnlink}>
@@ -101,9 +109,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
           </Button>
           <h5>
             <em>
-              Unlinking your Shopify account will not remove any data in Sanity. But, it may cause
-              syncing issues if you add new credentials later. Be sure to back up your content
-              before unlinking.
+              Unlinking your Shopify account will not remove any data in Sanity.
+              But, it may cause syncing issues if you add new credentials later.
+              Be sure to back up your content before unlinking.
             </em>
           </h5>
         </Fieldset>
@@ -117,7 +125,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
         description="You need to provide your Shopify info before you can use this
 					field. These credentials will be stored safely in a hidden document only available to editors."
       >
-        {message ? <p style={error ? { color: 'red' } : {}}>{message}</p> : null}
+        {message ? (
+          <p style={error ? { color: 'red' } : {}}>{message}</p>
+        ) : null}
         {!success && (
           <React.Fragment>
             <FormField
@@ -129,10 +139,10 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
             >
               <TextInput
                 id={this.urlInputId}
-                onChange={this.handleInputChange('storefrontName')}
+                onChange={this.handleInputChange('shopName')}
                 type="text"
                 disabled={success || loading}
-                value={storefrontName}
+                value={shopName}
               />
             </FormField>
             <FormField
@@ -145,8 +155,8 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
               <TextInput
                 id={this.keyInputId}
                 disabled={success || loading}
-                onChange={this.handleInputChange('storefrontApiKey')}
-                value={storefrontApiKey}
+                onChange={this.handleInputChange('accessToken')}
+                value={accessToken}
                 type="password"
               />
             </FormField>
@@ -169,4 +179,6 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   }
 }
 
-export const Setup = () => <Provider>{(clientProps) => <SetupBase {...clientProps} />}</Provider>
+export const Setup = () => (
+  <Provider>{(clientProps) => <SetupBase {...clientProps} />}</Provider>
+)

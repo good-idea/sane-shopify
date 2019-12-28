@@ -1,5 +1,4 @@
-import { SyncingClient } from '@sane-shopify/sync-utils'
-import { SanityClient, ShopifyClient } from '@sane-shopify/types'
+import { SyncUtils } from '@sane-shopify/sync-utils'
 import * as React from 'react'
 import { ClientContextValue, Provider } from '../../Provider'
 
@@ -20,7 +19,7 @@ export interface SyncRenderProps extends State {
 }
 
 interface Props extends ClientContextValue {
-  syncingClient: SyncingClient
+  syncingClient: SyncUtils
   children?: ((props: SyncRenderProps) => React.ReactNode) | React.ReactNode
 }
 
@@ -41,7 +40,7 @@ class SyncBase extends React.Component<Props, State> {
     this.setState(initialState)
   }
 
-  public _syncProducts = async () => {
+  _syncProducts = async () => {
     this.props.syncingClient.syncProducts({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
@@ -56,7 +55,7 @@ class SyncBase extends React.Component<Props, State> {
     })
   }
 
-  public _syncCollections = async () => {
+  _syncCollections = async () => {
     this.props.syncingClient.syncCollections({
       onFetchedItems: (nodes) => {
         this.setState((prevState) => ({
