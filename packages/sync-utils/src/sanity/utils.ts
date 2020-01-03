@@ -19,7 +19,9 @@ const getItemType = (item: Product | Collection) => {
   }
 }
 
+// Pretty much just adds keys to arrays
 const prepareSourceData = <T extends Product | Collection>(item: T) => {
+  // TODO: Left off here. cannot map edges that don't exist
   if (item.__typename === 'Product') {
     // Add keys to product images
     return {
@@ -29,6 +31,16 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
         ...option,
         _key: id
       })),
+      collections: {
+        // @ts-ignore
+        ...item.collections,
+        // @ts-ignore
+        edges: item.collections.edges.map(({ cursor, node }) => ({
+          cursor,
+          node,
+          _key: cursor
+        }))
+      },
       images: {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         ...item.images,
@@ -49,7 +61,17 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
       // @ts-ignore omfg
       ...item,
       // @ts-ignore -- not sure how to tell typescript that this is definitely a Collection
-      image: item.image || {}
+      image: item.image || {},
+      products: {
+        // @ts-ignore
+        ...item.products,
+        // @ts-ignore
+        edges: item.products.edges.map(({ cursor, node }) => ({
+          cursor,
+          node,
+          _key: cursor
+        }))
+      }
     }
   }
   throw new Error('prepareImages can only be used for Products and Collections')

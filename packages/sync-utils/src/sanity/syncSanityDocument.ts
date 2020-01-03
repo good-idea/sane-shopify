@@ -24,7 +24,6 @@ export const createSyncSanityDocument = (client: SanityClient) => async (
 
     /* If the document exists and is up to date, skip */
     if (existingDoc && isMatch(existingDoc, docInfo)) {
-      console.log('skip')
       return {
         operation: 'skip',
         sanityDocument: existingDoc,
@@ -38,8 +37,6 @@ export const createSyncSanityDocument = (client: SanityClient) => async (
     /* Create a new document if none exists */
     if (!existingDoc) {
       const newDoc = await client.create<SanityShopifyDocument>(docInfo)
-
-      console.log('create')
       return {
         operation: 'create',
         sanityDocument: newDoc,
@@ -54,7 +51,6 @@ export const createSyncSanityDocument = (client: SanityClient) => async (
       .set(docInfo)
       .commit()
 
-    console.log('update')
     return {
       operation: 'update',
       sanityDocument: updatedDoc,

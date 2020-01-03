@@ -6,28 +6,31 @@ import {
   Product,
   SanityClient,
   ShopifyClient,
-  SaneShopifyConfig
+  SyncResult,
+  SaneShopifyConfig,
+  RelatedPair,
+  RelatedPairPartial
 } from '@sane-shopify/types'
 import { createShopifyClient, shopifyUtils } from './shopify'
 import { sanityUtils } from './sanity'
 
 export interface SyncUtils {
   /* Syncs all products */
-  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void[]>
+  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<any>
   /* Syncs all collections */
-  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void[]>
+  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<any>
   /* Syncs a product by handle*/
   syncProductByHandle: (
     handle: string,
     cbs?: SubscriptionCallbacks
-  ) => Promise<void>
+  ) => Promise<any>
   /* Syncs a collection by handle*/
   syncCollectionByHandle: (
     handle: string,
     cbs?: SubscriptionCallbacks
-  ) => Promise<void>
+  ) => Promise<any>
   /* Syncs a collection or product by storefront id */
-  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
+  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<any>
 }
 
 interface SubscriptionCallbacks {
@@ -54,7 +57,7 @@ interface SubscriptionCallbacks {
 export const syncUtils = (
   shopifyClient: ShopifyClient,
   sanityClient: SanityClient
-) => {
+): SyncUtils => {
   /**
    * Client Setup
    */
@@ -66,7 +69,12 @@ export const syncUtils = (
     fetchAllShopifyCollections
   } = shopifyUtils(shopifyClient)
 
-  const { syncSanityDocument } = sanityUtils(sanityClient)
+  const {
+    syncSanityDocument,
+    syncRelationships,
+    fetchRelatedDocs,
+    documentByShopifyId
+  } = sanityUtils(sanityClient)
 
   /**
    * Private Methods
@@ -85,6 +93,66 @@ export const syncUtils = (
     return { op, related }
   }
 
+  const completePair = async (
+    partialPair: RelatedPairPartial
+  ): Promise<RelatedPair> => {
+    const { shopifyNode, sanityDocument } = partialPair
+    if (shopifyNode && sanityDocument) return partialPair
+    if (!shopifyNode && !sanityDocument) {
+      throw new Error(
+        'A partial pair must have either a shopifyNode or a sanityDocument'
+      )
+    }
+
+    if (!shopifyNode) {
+      const fetchedShopifyItem = await fetchItemById(sanityDocument.shopifyId)
+      return { shopifyNode: fetchedShopifyItem, sanityDocument }
+    }
+
+    if (!sanityDocument) {
+      const existingDoc = await documentByShopifyId(shopifyNode.id)
+      if (existingDoc) {
+        return {
+          shopifyNode,
+          sanityDocument: existingDoc
+        }
+      }
+      const completeShopifyItem = await fetchItemById(shopifyNode.id)
+      const op = await syncSanityDocument(completeShopifyItem)
+      return {
+        shopifyNode,
+        sanityDocument: op.sanityDocument
+      }
+    }
+    throw new Error('how did we get here?')
+  }
+
+  const makeRelationships = async ({ op, related }: SyncResult) => {
+    const initialPairs = await fetchRelatedDocs(related)
+    const pairQueue = new PQueue({ concurrency: 1 })
+
+    const completePairs = await pairQueue.addAll(
+      initialPairs.map((pair) => () => completePair(pair))
+    )
+    // At this point we have the already-synced document,
+    // and all of the documents that it should be related to
+
+    const relatedDocs = completePairs.map(
+      ({ sanityDocument }) => sanityDocument
+    )
+
+    const relationshipSyncs = await syncRelationships(
+      op.sanityDocument,
+      relatedDocs
+    )
+
+    return relationshipSyncs
+  }
+
+  /**
+   * Public API methods
+   */
+
   /* Syncs a product and any collections it is related to */
   const syncProductByHandle = async (
     handle: string,
@@ -94,7 +162,8 @@ export const syncUtils = (
     if (cbs.onFetchedItems) {
       cbs.onFetchedItems([shopifyProduct], 'fetched initial product')
     }
-    const { related } = await syncProduct(shopifyProduct)
+    const syncResult = await syncProduct(shopifyProduct)
+    await makeRelationships(syncResult)
   }
 
   /* Syncs a collection and any products it is related to */
@@ -106,7 +175,8 @@ export const syncUtils = (
     if (cbs.onFetchedItems) {
       cbs.onFetchedItems([shopifyCollection], 'fetched initial collection')
     }
-    const { related } = await syncCollection(shopifyCollection)
+    const syncResult = await syncCollection(shopifyCollection)
+    await makeRelationships(syncResult)
   }
 
   /* Sync an item by ID */
@@ -116,10 +186,12 @@ export const syncUtils = (
       cbs.onFetchedItems([shopifyItem], 'fetched initial item')
     }
     if (shopifyItem.__typename === 'Product') {
-      const { related } = await syncProduct(shopifyItem)
+      const syncResult = await syncProduct(shopifyItem)
+      await makeRelationships(syncResult)
     }
     if (shopifyItem.__typename === 'Collection') {
-      const { related } = await syncCollection(shopifyItem)
+      const syncResult = await syncCollection(shopifyItem)
+      await makeRelationships(syncResult)
     }
     // @ts-ignore
     throw new Error(`Item type ${shopifyItem.__typename} is not supported`)
@@ -132,13 +204,19 @@ export const syncUtils = (
       cbs.onFetchedItems(allProducts, 'fetched initial products')
     }
     const queue = new PQueue({ concurrency: 1 })
-    const results = queue.addAll(
+    const results = await queue.addAll(
       allProducts.map((product) => async () => {
         const result = await syncProduct(product)
         if (cbs.onProgress) cbs.onProgress(product)
         return result
       })
     )
+
+    const relationshipQueue = new PQueue({ concurrency: 1 })
+    await relationshipQueue.addAll(
+      results.map((result) => () => makeRelationships(result))
+    )
+
     return results
   }
 
@@ -150,13 +228,19 @@ export const syncUtils = (
     }
     const queue = new PQueue({ concurrency: 1 })
 
-    const results = queue.addAll(
+    const results = await queue.addAll(
       allCollections.map((collection) => async () => {
         const result = await syncCollection(collection)
         if (cbs.onProgress) cbs.onProgress(collection)
         return result
       })
     )
+
+    const relationshipQueue = new PQueue({ concurrency: 1 })
+    await relationshipQueue.addAll(
+      results.map((result) => () => makeRelationships(result))
+    )
+
     return results
   }
 
@@ -164,10 +248,8 @@ export const syncUtils = (
   // create public versions of each method.
   // The private ones should:
   //  - round 1 sync - initial doc / documents
-  //  - store a cache of synced documents
-  //  - compare related items to the cache
-  //  - sync items not in the cache
   //  - link all sanity documents
+  //   -
   //  - fire the onComplete callback
 
   return {

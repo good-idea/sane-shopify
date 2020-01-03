@@ -22,6 +22,13 @@ export const COLLECTIONS_QUERY = gql`
               hasNextPage
               hasPreviousPage
             }
+            edges {
+              cursor
+              node {
+                id
+                handle
+              }
+            }
           }
         }
       }
