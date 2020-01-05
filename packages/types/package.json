@@ -9,6 +9,8 @@
 		"access": "public"
 	},
 	"scripts": {
+    "linky": "yalc publish",
+    "linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
 		"build": "rollup -c",
 		"watch": "rollup -cw",
 		"fix": "run-s fix:*",
