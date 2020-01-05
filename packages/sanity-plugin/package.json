@@ -32,7 +32,7 @@
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.ts",
 		"linky": "yalc publish",
-		"linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
+		"linky:watch": "nodemon -w src -w node_modules --delay 250ms -e ts,tsx -x yalc publish --push",
 		"test": "run-s build test:lint test:unit",
 		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",

@@ -60,8 +60,21 @@ export const createCollectionDocument = ({
       {
         title: 'Products',
         name: 'products',
-        type: 'products'
+        type: 'array',
+        description: 'Synced from Shopify',
+        readOnly: true,
+        of: [
+          {
+            type: 'reference',
+            to: [
+              {
+                type: 'shopifyProduct'
+              }
+            ]
+          }
+        ]
       },
+
       ...additionalFields
     ],
     preview: {

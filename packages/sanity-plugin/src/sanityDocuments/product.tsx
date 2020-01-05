@@ -2,7 +2,10 @@ import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
 
-export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig = {}) => {
+export const createProductDocument = ({
+  fields,
+  ...rest
+}: SanityDocumentConfig = {}) => {
   if (rest && rest.name && rest.name !== 'shopifyProduct')
     throw new Error('The document name for a product must be "shopifyProduct"')
   if (rest && rest.type && rest.type !== 'document')
@@ -38,6 +41,23 @@ export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig 
         name: 'sourceData',
         readOnly: true,
         type: 'shopifyProductSource'
+      },
+      {
+        title: 'Collections',
+        name: 'collections',
+        type: 'array',
+        readOnly: true,
+        description: 'Synced from Shopify',
+        of: [
+          {
+            type: 'reference',
+            to: [
+              {
+                type: 'shopifyCollection'
+              }
+            ]
+          }
+        ]
       },
       ...additionalFields
     ],

@@ -28,28 +28,54 @@ export const shopifyCollectionSource = {
       name: 'image',
       type: 'shopifySourceImage',
       hidden: true
-    }
-  ]
-}
-
-export const shopifyCollectionProducts = {
-  title: 'Products',
-  name: 'products',
-  type: 'object',
-  description:
-    'Synced from Shopify. Update collection products in the Shopify dashboard.',
-  readOnly: true,
-  fields: [
+    },
     {
       title: 'Products',
       name: 'products',
-      type: 'array',
-      of: [
+      hidden: true,
+      type: 'object',
+      fields: [
         {
-          type: 'reference',
-          to: [
+          name: 'pageInfo',
+          type: 'object',
+          fields: [
             {
-              type: 'shopifyProduct'
+              name: 'hasNextPage',
+              type: 'boolean'
+            },
+            {
+              name: 'hasPreviousPage',
+              type: 'boolean'
+            }
+          ]
+        },
+        {
+          name: 'edges',
+          type: 'array',
+          of: [
+            {
+              name: 'edge',
+              type: 'object',
+              fields: [
+                {
+                  name: 'cursor',
+                  type: 'string'
+                },
+                {
+                  name: 'node',
+                  type: 'object',
+                  fields: [
+                    {
+                      name: 'handle',
+                      type: 'string'
+                    },
+                    {
+                      name: 'id',
+                      type: 'string'
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

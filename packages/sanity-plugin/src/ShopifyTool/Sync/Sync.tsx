@@ -1,4 +1,5 @@
 import { SyncUtils } from '@sane-shopify/sync-utils'
+import { Operation } from '@sane-shopify/types'
 import * as React from 'react'
 import { ClientContextValue, Provider } from '../../Provider'
 
@@ -40,33 +41,19 @@ class SyncBase extends React.Component<Props, State> {
     this.setState(initialState)
   }
 
+  _handleProgress = (op: Operation) => {
+    console.log('progress', op)
+  }
+
   _syncProducts = async () => {
-    this.props.syncingClient.syncProducts({
-      onFetchedItems: (nodes) => {
-        this.setState((prevState) => ({
-          fetchedProducts: [...prevState.fetchedProducts, ...nodes]
-        }))
-      },
-      onProgress: (product) => {
-        this.setState((prevState) => ({
-          productsSynced: [...prevState.productsSynced, product]
-        }))
-      }
+    await this.props.syncingClient.syncProducts({
+      onProgress: this._handleProgress
     })
   }
 
   _syncCollections = async () => {
-    this.props.syncingClient.syncCollections({
-      onFetchedItems: (nodes) => {
-        this.setState((prevState) => ({
-          fetchedCollections: [...prevState.fetchedProducts, ...nodes]
-        }))
-      },
-      onProgress: (collection) => {
-        this.setState((prevState) => ({
-          collectionsSynced: [...prevState.collectionsSynced, collection]
-        }))
-      }
+    await this.props.syncingClient.syncCollections({
+      onProgress: this._handleProgress
     })
   }
 
@@ -103,7 +90,7 @@ class SyncBase extends React.Component<Props, State> {
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this._syncProducts()
+    // await this._syncProducts()
     await this._syncCollections()
     this.setState({ syncState: 'complete' as 'complete' })
   }

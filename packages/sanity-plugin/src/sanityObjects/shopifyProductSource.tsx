@@ -101,6 +101,58 @@ export const shopifyProductSource = {
       name: 'images',
       type: 'shopifySourceImages',
       hidden: true
+    },
+    {
+      title: 'Collections',
+      name: 'collections',
+      // hidden: true,
+      type: 'object',
+      fields: [
+        {
+          name: 'pageInfo',
+          type: 'object',
+          fields: [
+            {
+              name: 'hasNextPage',
+              type: 'boolean'
+            },
+            {
+              name: 'hasPreviousPage',
+              type: 'boolean'
+            }
+          ]
+        },
+        {
+          name: 'edges',
+          type: 'array',
+          of: [
+            {
+              name: 'edge',
+              type: 'object',
+              fields: [
+                {
+                  name: 'cursor',
+                  type: 'string'
+                },
+                {
+                  name: 'node',
+                  type: 'object',
+                  fields: [
+                    {
+                      name: 'handle',
+                      type: 'string'
+                    },
+                    {
+                      name: 'id',
+                      type: 'string'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
