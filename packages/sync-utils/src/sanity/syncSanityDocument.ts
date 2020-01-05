@@ -2,7 +2,7 @@ import {
   Collection,
   Product,
   SanityClient,
-  Operation,
+  SyncOperation,
   SanityShopifyDocument
 } from '@sane-shopify/types'
 import { isMatch } from 'lodash-es'
@@ -10,7 +10,7 @@ import { prepareDocument, sleep } from './utils'
 
 export const createSyncSanityDocument = (client: SanityClient) => async (
   item: Product | Collection
-): Promise<Operation> => {
+): Promise<SyncOperation> => {
   const getSanityDocByShopifyId = async (
     shopifyId: string
   ): Promise<SanityShopifyDocument | void> =>
@@ -18,27 +18,29 @@ export const createSyncSanityDocument = (client: SanityClient) => async (
       shopifyId
     })
 
-  const syncItem = async (item: Product | Collection): Promise<Operation> => {
+  const syncItem = async (
+    item: Product | Collection
+  ): Promise<SyncOperation> => {
     const docInfo = prepareDocument(item)
     const existingDoc = await getSanityDocByShopifyId(item.id)
 
     /* If the document exists and is up to date, skip */
     if (existingDoc && isMatch(existingDoc, docInfo)) {
       return {
-        operation: 'skip',
+        type: 'skip' as 'skip',
         sanityDocument: existingDoc,
         shopifySource: item
       }
     }
 
     /* Rate limit */
-    await sleep(200)
+    await sleep(201)
 
     /* Create a new document if none exists */
     if (!existingDoc) {
       const newDoc = await client.create<SanityShopifyDocument>(docInfo)
       return {
-        operation: 'create',
+        type: 'create' as 'create',
         sanityDocument: newDoc,
         shopifySource: item
       }
@@ -52,7 +54,7 @@ export const createSyncSanityDocument = (client: SanityClient) => async (
       .commit()
 
     return {
-      operation: 'update',
+      type: 'update' as 'update',
       sanityDocument: updatedDoc,
       shopifySource: item
     }

@@ -1,7 +1,7 @@
 import {
-  SanityDocument,
   SanityClient,
-  NodeWithShopifyId,
+  SanityShopifyDocument,
+  ShopifyItem,
   RelatedPairPartial,
   SanityUtils
 } from '@sane-shopify/types'
@@ -9,10 +9,10 @@ import {
 export const createFetchRelatedDocs = (
   client: SanityClient
 ): SanityUtils['fetchRelatedDocs'] => async (
-  relatedNodes: NodeWithShopifyId[]
+  relatedNodes: ShopifyItem[]
 ): Promise<RelatedPairPartial[]> => {
   const relatedIds = relatedNodes.map((r) => r.id)
-  const relatedDocs = await client.fetch<SanityDocument[]>(
+  const relatedDocs = await client.fetch<SanityShopifyDocument[]>(
     `
     *[shopifyId in $relatedIds]{
       _id,

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import { mergePaginatedResults, getLastCursor } from '../utils'
-import { ShopifyClient, ProductParams, Product } from '@sane-shopify/types'
+import { ShopifyClient, ShopifyItemParams, Product } from '@sane-shopify/types'
 import { productFragment } from './shopifyQueries'
 
 export const PRODUCT_BY_HANDLE = gql`
@@ -129,7 +129,7 @@ export const fetchAllProductCollections = async (
 
 export const createFetchShopifyProduct = (
   query: ShopifyClient['query']
-) => async (params: ProductParams): Promise<Product | null> => {
+) => async (params: ShopifyItemParams): Promise<Product | null> => {
   const { id, handle } = params
   if (!id && !handle) {
     debugger

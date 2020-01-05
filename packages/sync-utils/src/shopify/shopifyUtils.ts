@@ -13,7 +13,7 @@ type Variables = object
 export const shopifyUtils = (client: ShopifyClient): ShopifyUtils => {
   const { query } = client
   return {
-    query,
+    client,
     fetchItemById: createFetchItemById(query),
     fetchShopifyProduct: createFetchShopifyProduct(query),
     fetchShopifyCollection: createFetchShopifyCollection(query),

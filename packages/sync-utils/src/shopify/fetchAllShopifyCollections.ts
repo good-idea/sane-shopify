@@ -66,9 +66,10 @@ export const createFetchAllShopifyCollections = (
   const allCollections = await fetchCollections()
 
   const queue = new PQueue({ concurrency: 1 })
-  return queue.addAll(
+  const r = queue.addAll(
     allCollections.map((collection) => () =>
       fetchAllCollectionProducts(query, collection)
     )
   )
+  return r
 }

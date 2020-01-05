@@ -6,9 +6,10 @@ import {
   Product,
   SanityClient,
   ShopifyClient,
-  SyncResult,
+  SyncOperationResult,
   SaneShopifyConfig,
   RelatedPair,
+  Operation,
   RelatedPairPartial
 } from '@sane-shopify/types'
 import { createShopifyClient, shopifyUtils } from './shopify'
@@ -34,13 +35,9 @@ export interface SyncUtils {
 }
 
 interface SubscriptionCallbacks {
-  onFetchedItems?: (
-    nodes: Array<Product | Collection>,
-    message?: string
-  ) => void
-  onProgress?: (node: Product | Collection, message?: string) => void
+  onProgress?: (operation: Operation, message?: string) => void
   onError?: (err: Error) => void
-  onComplete?: (payload?: any, message?: string) => void
+  onComplete?: (operation: Operation, message?: string) => void
 }
 
 /**
@@ -81,16 +78,20 @@ export const syncUtils = (
    */
 
   /* Syncs a single document and returns related nodes to sync */
-  const syncCollection = async (shopifyCollection: Collection) => {
+  const syncCollection = async (
+    shopifyCollection: Collection
+  ): Promise<SyncOperationResult> => {
     const [related] = unwindEdges(shopifyCollection.products)
-    const op = await syncSanityDocument(shopifyCollection)
-    return { op, related }
+    const operation = await syncSanityDocument(shopifyCollection)
+    return { operation, related }
   }
 
-  const syncProduct = async (shopifyProduct: Product) => {
+  const syncProduct = async (
+    shopifyProduct: Product
+  ): Promise<SyncOperationResult> => {
     const [related] = unwindEdges(shopifyProduct.collections)
-    const op = await syncSanityDocument(shopifyProduct)
-    return { op, related }
+    const operation = await syncSanityDocument(shopifyProduct)
+    return { operation, related }
   }
 
   const completePair = async (
@@ -119,6 +120,7 @@ export const syncUtils = (
       }
       const completeShopifyItem = await fetchItemById(shopifyNode.id)
       const op = await syncSanityDocument(completeShopifyItem)
+
       return {
         shopifyNode,
         sanityDocument: op.sanityDocument
@@ -127,7 +129,10 @@ export const syncUtils = (
     throw new Error('how did we get here?')
   }
 
-  const makeRelationships = async ({ op, related }: SyncResult) => {
+  const makeRelationships = async ({
+    operation,
+    related
+  }: SyncOperationResult) => {
     const initialPairs = await fetchRelatedDocs(related)
     const pairQueue = new PQueue({ concurrency: 1 })
 
@@ -142,7 +147,7 @@ export const syncUtils = (
     )
 
     const relationshipSyncs = await syncRelationships(
-      op.sanityDocument,
+      operation.sanityDocument,
       relatedDocs
     )
 
@@ -159,9 +164,6 @@ export const syncUtils = (
     cbs: SubscriptionCallbacks = {}
   ) => {
     const shopifyProduct = await fetchShopifyProduct({ handle })
-    if (cbs.onFetchedItems) {
-      cbs.onFetchedItems([shopifyProduct], 'fetched initial product')
-    }
     const syncResult = await syncProduct(shopifyProduct)
     await makeRelationships(syncResult)
   }
@@ -172,9 +174,9 @@ export const syncUtils = (
     cbs: SubscriptionCallbacks = {}
   ) => {
     const shopifyCollection = await fetchShopifyCollection({ handle })
-    if (cbs.onFetchedItems) {
-      cbs.onFetchedItems([shopifyCollection], 'fetched initial collection')
-    }
+    // if (cbs.onFetchedItems) {
+    //   cbs.onFetchedItems([shopifyCollection], 'fetched initial collection')
+    // }
     const syncResult = await syncCollection(shopifyCollection)
     await makeRelationships(syncResult)
   }
@@ -182,9 +184,9 @@ export const syncUtils = (
   /* Sync an item by ID */
   const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
     const shopifyItem = await fetchItemById(id)
-    if (cbs.onFetchedItems) {
-      cbs.onFetchedItems([shopifyItem], 'fetched initial item')
-    }
+    // if (cbs.onFetchedItems) {
+    //   cbs.onFetchedItems([shopifyItem], 'fetched initial item')
+    // }
     if (shopifyItem.__typename === 'Product') {
       const syncResult = await syncProduct(shopifyItem)
       await makeRelationships(syncResult)
@@ -200,21 +202,24 @@ export const syncUtils = (
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
     const allProducts = await fetchAllShopifyProducts()
-    if (cbs.onFetchedItems) {
-      cbs.onFetchedItems(allProducts, 'fetched initial products')
-    }
+    // if (cbs.onFetchedItems) {
+    //   cbs.onFetchedItems(allProducts, 'fetched initial products')
+    // }
     const queue = new PQueue({ concurrency: 1 })
     const results = await queue.addAll(
       allProducts.map((product) => async () => {
         const result = await syncProduct(product)
-        if (cbs.onProgress) cbs.onProgress(product)
+        if (cbs.onProgress) cbs.onProgress(result.operation)
         return result
       })
     )
 
     const relationshipQueue = new PQueue({ concurrency: 1 })
+    console.log(results)
     await relationshipQueue.addAll(
-      results.map((result) => () => makeRelationships(result))
+      results.map((result) => async () => {
+        await makeRelationships(result)
+      })
     )
 
     return results
@@ -223,20 +228,22 @@ export const syncUtils = (
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
     const allCollections = await fetchAllShopifyCollections()
-    if (cbs.onFetchedItems) {
-      cbs.onFetchedItems(allCollections, 'fetched initial collections')
-    }
+    console.log('all collections', allCollections)
+    // if (cbs.onFetchedItems) {
+    //   cbs.onFetchedItems(allCollections, 'fetched initial collections')
+    // }
     const queue = new PQueue({ concurrency: 1 })
 
     const results = await queue.addAll(
       allCollections.map((collection) => async () => {
         const result = await syncCollection(collection)
-        if (cbs.onProgress) cbs.onProgress(collection)
+        if (cbs.onProgress) cbs.onProgress(result.operation)
         return result
       })
     )
 
     const relationshipQueue = new PQueue({ concurrency: 1 })
+    console.log('collections', results)
     await relationshipQueue.addAll(
       results.map((result) => () => makeRelationships(result))
     )
