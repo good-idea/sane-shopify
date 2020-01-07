@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { SanityDocumentConfig } from '../types'
+import { MissingImage } from '../icons/MissingImage'
 
 const imageStyles = {
   width: '100%',
@@ -86,16 +87,23 @@ export const createCollectionDocument = ({
         const { title, sourceData } = props
         const itemTitle = sourceData ? title || sourceData.title : title
         const alt = `Image for ${itemTitle}`
+        const src = sourceData?.image?.w100
         const media =
           sourceData && sourceData.image ? (
-            <div style={imageWrapperStyles}>
-              <img
-                // @ts-ignore
-                style={imageStyles}
-                src={sourceData.image.w100}
-                alt={alt}
-              />
-            </div>
+            <>
+              {src ? (
+                <div style={imageWrapperStyles}>
+                  <img
+                    // @ts-ignore
+                    style={imageStyles}
+                    src={sourceData.image.w100}
+                    alt={alt}
+                  />
+                </div>
+              ) : (
+                <MissingImage />
+              )}
+            </>
           ) : (
             undefined
           )

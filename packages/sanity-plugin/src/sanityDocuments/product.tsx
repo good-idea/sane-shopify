@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
+import { MissingImage } from '../icons/MissingImage'
 
 export const createProductDocument = ({
   fields,
@@ -71,12 +72,16 @@ export const createProductDocument = ({
         const { shopifyItem, title, sourceData } = props
         const itemTitle = shopifyItem ? title || shopifyItem.title : title
         const [images] = unwindEdges(sourceData.images)
-        const src = images[0].w100
+        const src = images[0]?.w100
         return {
           title: itemTitle,
           media: (
             <div style={imageWrapperStyles}>
-              <img style={imageStyles} src={src} alt={`Image for ${title}`} />
+              {src ? (
+                <img style={imageStyles} src={src} alt={`Image for ${title}`} />
+              ) : (
+                <MissingImage />
+              )}
             </div>
           )
         }
