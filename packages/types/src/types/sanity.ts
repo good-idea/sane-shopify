@@ -1,3 +1,4 @@
+import { Paginated } from '@good-idea/unwind-edges'
 import { Product, Collection, ShopifyItem } from './shopify'
 
 /**
@@ -17,9 +18,37 @@ export interface SanityDocument {
   [key: string]: any
 }
 
-export interface SanityShopifyDocument extends SanityDocument {
+interface SanityReference {
+  _key: string
+  _ref: string
+  _type: 'reference'
+}
+
+interface SanityShopifyDocumentNode extends SanityDocument {
   shopifyId: string
 }
+
+export interface SanityShopifyProductDocument
+  extends SanityShopifyDocumentNode {
+  _type: 'shopifyProduct'
+  title: string
+  handle: string
+  sourceData: Product
+  collections: SanityShopifyDocumentNode[]
+}
+
+export interface SanityShopifyCollectionDocument
+  extends SanityShopifyDocumentNode {
+  _type: 'shopifyCollection'
+  title: string
+  handle: string
+  sourceData: Collection
+  products: SanityShopifyDocumentNode[]
+}
+
+export type SanityShopifyDocument =
+  | SanityShopifyProductDocument
+  | SanityShopifyCollectionDocument
 
 interface Patch<ExpectedResult = any> {
   set: (

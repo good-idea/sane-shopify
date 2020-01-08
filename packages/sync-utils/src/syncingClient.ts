@@ -215,7 +215,6 @@ export const syncUtils = (
     )
 
     const relationshipQueue = new PQueue({ concurrency: 1 })
-    console.log(results)
     await relationshipQueue.addAll(
       results.map((result) => async () => {
         await makeRelationships(result)
@@ -228,7 +227,6 @@ export const syncUtils = (
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
     const allCollections = await fetchAllShopifyCollections()
-    console.log('all collections', allCollections)
     // if (cbs.onFetchedItems) {
     //   cbs.onFetchedItems(allCollections, 'fetched initial collections')
     // }
@@ -243,7 +241,7 @@ export const syncUtils = (
     )
 
     const relationshipQueue = new PQueue({ concurrency: 1 })
-    console.log('collections', results)
+
     await relationshipQueue.addAll(
       results.map((result) => () => makeRelationships(result))
     )

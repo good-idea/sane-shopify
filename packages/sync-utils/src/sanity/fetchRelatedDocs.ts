@@ -20,12 +20,8 @@ export const createFetchRelatedDocs = (
       _rev,
       shopifyId,
       handle,
-      products {
-        _ref,
-      },
-      collections {
-        _ref,
-      },
+      products[]->,
+      collections[]->,
     }`,
     { relatedIds }
   )

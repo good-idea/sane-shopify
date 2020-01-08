@@ -14,9 +14,16 @@ export const createSyncSanityDocument = (client: SanityClient) => async (
   const getSanityDocByShopifyId = async (
     shopifyId: string
   ): Promise<SanityShopifyDocument | void> =>
-    client.fetch<SanityShopifyDocument>('*[shopifyId == $shopifyId][0]', {
-      shopifyId
-    })
+    client.fetch<SanityShopifyDocument>(
+      `*[shopifyId == $shopifyId]{
+        products[]->,
+        collections[]->,
+        ...
+      }[0]`,
+      {
+        shopifyId
+      }
+    )
 
   const syncItem = async (
     item: Product | Collection

@@ -50,6 +50,7 @@
 		"@sane-shopify/types": "^0.5.2",
 		"@sanity/client": "^0.144.0",
 		"es6-promise": "^4.2.8",
+		"graphql-tag": "^2.10.1",
 		"isomorphic-fetch": "^2.2.1",
 		"lodash-es": "^4.17.15",
 		"p-queue": "^6.2.1"
