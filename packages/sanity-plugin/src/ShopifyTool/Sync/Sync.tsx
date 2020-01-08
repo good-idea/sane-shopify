@@ -90,7 +90,7 @@ class SyncBase extends React.Component<Props, State> {
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    // await this._syncProducts()
+    await this._syncProducts()
     await this._syncCollections()
     this.setState({ syncState: 'complete' as 'complete' })
   }
