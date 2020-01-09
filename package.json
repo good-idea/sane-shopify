@@ -5,14 +5,14 @@
 	"scripts": {
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",
-    "test": "echo 'No tests yet, write some tests!'",
-    "test:coverage:send": "echo 'No tests yet, write some tests!'",
+		"test": "echo 'No tests yet, write some tests!'",
+		"test:coverage:send": "echo 'No tests yet, write some tests!'",
 		"fix": "lerna run fix",
 		"bootstrap": "lerna bootstrap",
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"build": "lerna run --parallel build",
 		"watch": "lerna run --parallel watch",
-    "release": "lerna publish --yes"
+		"release": "lerna publish --yes"
 	},
 	"workspaces": [
 		"packages/*"
@@ -31,6 +31,7 @@
 		"husky": "^3.0.9",
 		"jest": "^24.9.0",
 		"lerna": "^3.18.4",
+		"markdown-toc": "^1.2.0",
 		"npm-check-updates": "^3.2.1",
 		"npm-run-all": "^4.1.5",
 		"prettier": "^1.19.1",
