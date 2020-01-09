@@ -1,8 +1,12 @@
 import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
+import { MissingImage } from '../icons/MissingImage'
 
-export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig = {}) => {
+export const createProductDocument = ({
+  fields,
+  ...rest
+}: SanityDocumentConfig = {}) => {
   if (rest && rest.name && rest.name !== 'shopifyProduct')
     throw new Error('The document name for a product must be "shopifyProduct"')
   if (rest && rest.type && rest.type !== 'document')
@@ -39,6 +43,11 @@ export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig 
         readOnly: true,
         type: 'shopifyProductSource'
       },
+      {
+        title: 'Collections',
+        name: 'collections',
+        type: 'linkedCollections'
+      },
       ...additionalFields
     ],
     preview: {
@@ -51,12 +60,16 @@ export const createProductDocument = ({ fields, ...rest }: SanityDocumentConfig 
         const { shopifyItem, title, sourceData } = props
         const itemTitle = shopifyItem ? title || shopifyItem.title : title
         const [images] = unwindEdges(sourceData.images)
-        const src = images[0].w100
+        const src = images[0]?.w100
         return {
           title: itemTitle,
           media: (
             <div style={imageWrapperStyles}>
-              <img style={imageStyles} src={src} alt={`Image for ${title}`} />
+              {src ? (
+                <img style={imageStyles} src={src} alt={`Image for ${title}`} />
+              ) : (
+                <MissingImage />
+              )}
             </div>
           )
         }

@@ -1,4 +1,4 @@
-import { ShopifyClient, ShopifySecrets } from '@sane-shopify/types'
+import { ShopifyClient, ShopifyClientConfig } from '@sane-shopify/types'
 import { testSecrets } from './Provider/utils'
 
 /**
@@ -27,7 +27,7 @@ interface SecretUtils {
 }
 
 export interface ClientContextValue extends SecretUtils {
-  secrets: ShopifySecrets
+  secrets: ShopifyClientConfig
   valid: boolean
   ready: boolean
   shopifyClient: ShopifyClient

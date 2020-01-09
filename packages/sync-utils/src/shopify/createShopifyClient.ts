@@ -1,8 +1,9 @@
-import { ShopifyClient, ShopifySecrets } from '@sane-shopify/types'
-require('es6-promise').polyfill()
-require('isomorphic-fetch')
-
-type Variables = object
+import gql from 'graphql-tag'
+import {
+  ShopifyClient,
+  ShopifyClientConfig,
+  Variables
+} from '@sane-shopify/types'
 
 const getErrorMessage = (r: Response): string => {
   switch (r.status) {
@@ -14,29 +15,41 @@ const getErrorMessage = (r: Response): string => {
   }
 }
 
-export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
-  const { storefrontName, storefrontApiKey } = secrets
-  const url = `https://${storefrontName}.myshopify.com/api/graphql`
+interface GraphQLAST {
+  loc: {
+    source: {
+      body: string
+    }
+  }
+}
+
+export const createShopifyClient = (
+  secrets: ShopifyClientConfig
+): ShopifyClient => {
+  const { shopName, accessToken } = secrets
+  const url = `https://${shopName}.myshopify.com/api/graphql`
   const headers = {
     'Content-Type': 'application/json',
-    'X-Shopify-Storefront-Access-Token': storefrontApiKey
+    'X-Shopify-Storefront-Access-Token': accessToken
   }
 
   const query = async <ResponseType>(
-    queryString: string,
+    q: string | GraphQLAST,
     variables?: Variables
-  ): Promise<ResponseType> =>
-    fetch(url, {
+  ): Promise<ResponseType> => {
+    const queryString = typeof q === 'string' ? q : q?.loc.source.body
+    return fetch(url, {
       headers,
       method: 'POST',
-      body: JSON.stringify({ variables, query: queryString })
+      body: JSON.stringify({
+        variables,
+        query: queryString
+      })
     }).then(async (r) => {
       if (!r.ok) throw new Error(getErrorMessage(r))
       const json = await r.json()
       return json
     })
-
-  return {
-    query
   }
+  return { query }
 }

@@ -1,7 +1,8 @@
-import { SyncingClient } from '@sane-shopify/sync-utils'
-import { SanityClient, ShopifyClient } from '@sane-shopify/types'
+import { SyncUtils } from '@sane-shopify/sync-utils'
+import { Operation } from '@sane-shopify/types'
 import * as React from 'react'
-import { ClientContextValue, Provider } from '../../Provider'
+import { ClientContextValue, SaneConsumer } from '../../Provider'
+import { uniqueBy } from './utils'
 
 interface State {
   syncState: 'ready' | 'syncing' | 'complete'
@@ -20,7 +21,7 @@ export interface SyncRenderProps extends State {
 }
 
 interface Props extends ClientContextValue {
-  syncingClient: SyncingClient
+  syncingClient: SyncUtils
   children?: ((props: SyncRenderProps) => React.ReactNode) | React.ReactNode
 }
 
@@ -41,33 +42,48 @@ class SyncBase extends React.Component<Props, State> {
     this.setState(initialState)
   }
 
-  public _syncProducts = async () => {
-    this.props.syncingClient.syncProducts({
-      onFetchedItems: (nodes) => {
-        this.setState((prevState) => ({
-          fetchedProducts: [...prevState.fetchedProducts, ...nodes]
+  _handleProgress = (op: Operation) => {
+    if (op.type === 'fetched') {
+      const docs = op.shopifyDocuments
+      const fetchedProducts = docs.filter((d) => d.__typename === 'Product')
+      const fetchedCollections = docs.filter(
+        (d) => d.__typename === 'Collection'
+      )
+      this.setState((initialState) => ({
+        fetchedProducts: uniqueBy('id', [
+          ...initialState.fetchedProducts,
+          ...fetchedProducts
+        ]),
+        fetchedCollections: uniqueBy('id', [
+          ...initialState.fetchedCollections,
+          ...fetchedCollections
+        ])
+      }))
+    }
+
+    if (op.type === 'link') {
+      const { sourceDoc } = op
+      if (sourceDoc._type === 'shopifyProduct') {
+        this.setState((initialState) => ({
+          productsSynced: [...initialState.productsSynced, sourceDoc]
         }))
-      },
-      onProgress: (product) => {
-        this.setState((prevState) => ({
-          productsSynced: [...prevState.productsSynced, product]
+      } else {
+        this.setState((initialState) => ({
+          collectionsSynced: [...initialState.collectionsSynced, sourceDoc]
         }))
       }
+    }
+  }
+
+  _syncProducts = async () => {
+    await this.props.syncingClient.syncProducts({
+      onProgress: this._handleProgress
     })
   }
 
-  public _syncCollections = async () => {
-    this.props.syncingClient.syncCollections({
-      onFetchedItems: (nodes) => {
-        this.setState((prevState) => ({
-          fetchedCollections: [...prevState.fetchedProducts, ...nodes]
-        }))
-      },
-      onProgress: (collection) => {
-        this.setState((prevState) => ({
-          collectionsSynced: [...prevState.collectionsSynced, collection]
-        }))
-      }
+  _syncCollections = async () => {
+    await this.props.syncingClient.syncCollections({
+      onProgress: this._handleProgress
     })
   }
 
@@ -104,8 +120,11 @@ class SyncBase extends React.Component<Props, State> {
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this._syncProducts()
-    await this._syncCollections()
+    await Promise.all([
+      //
+      this._syncProducts(),
+      this._syncCollections()
+    ])
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
@@ -118,6 +137,7 @@ class SyncBase extends React.Component<Props, State> {
       syncCollections,
       syncAll
     } = this
+
     const renderProps = {
       ...this.state,
       syncProductByHandle,
@@ -136,9 +156,11 @@ class SyncBase extends React.Component<Props, State> {
 }
 
 export const Sync = (props: { children: React.ReactNode }) => (
-  <Provider>
+  <SaneConsumer>
     {(providerProps) =>
-      providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null
+      providerProps && providerProps.ready ? (
+        <SyncBase {...props} {...providerProps} />
+      ) : null
     }
-  </Provider>
+  </SaneConsumer>
 )

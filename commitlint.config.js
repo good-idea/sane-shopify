@@ -19,7 +19,7 @@ module.exports = {
     'scope-enum': [
       2,
       'always',
-      ['repo', 'server', 'sanity-plugin', 'sync-utils', 'types']
+      ['release', 'repo', 'server', 'sanity-plugin', 'sync-utils', 'types']
     ]
   }
 }

@@ -19,10 +19,11 @@ const SyncPaneBase = ({
     <Fieldset legend="Sync" level={1}>
       {fetchedCollections.length ? (
         <p>
-          synced {collectionsSynced.length}/{fetchedCollections.length} collections
+          synced {collectionsSynced.length}/{fetchedCollections.length}{' '}
+          collections
         </p>
       ) : null}
-      {productsSynced.length ? (
+      {fetchedProducts.length ? (
         <p>
           synced {productsSynced.length}/{fetchedProducts.length} products
         </p>
@@ -34,8 +35,8 @@ const SyncPaneBase = ({
       ) : null}
       {syncState === 'syncing' ? (
         <p>
-          This will take a few minutes. Do not navigate away from this tab until syncing is
-          complete.
+          This will take a few minutes. Do not navigate away from this tab until
+          syncing is complete.
         </p>
       ) : null}
       <Button
@@ -50,4 +51,6 @@ const SyncPaneBase = ({
   )
 }
 
-export const SyncPane = () => <Sync>{(syncProps) => <SyncPaneBase {...syncProps} />}</Sync>
+export const SyncPane = () => (
+  <Sync>{(syncProps) => <SyncPaneBase {...syncProps} />}</Sync>
+)

@@ -1,4 +1,4 @@
-import { ShopifySecrets } from '@sane-shopify/types'
+import { ShopifyClientConfig } from '@sane-shopify/types'
 import { createShopifyClient } from './createShopifyClient'
 
 /**
@@ -28,17 +28,17 @@ interface TestResponse {
 }
 
 export const testSecrets = async (
-  secrets?: ShopifySecrets
+  secrets?: ShopifyClientConfig
 ): Promise<TestResponse> => {
   if (!secrets)
     return {
       valid: false,
       message: 'You must provide an API Key and Storefront Name'
     }
-  const { storefrontName, storefrontApiKey } = secrets
-  if (!storefrontName.length)
+  const { shopName, accessToken } = secrets
+  if (!shopName || !shopName.length)
     return { valid: false, message: 'You must provide a Storefront name' }
-  if (!storefrontApiKey.length)
+  if (!accessToken || !accessToken.length)
     return { valid: false, message: 'You must provide a Storefront API Key' }
   const response = await createShopifyClient(secrets)
     .query<TestData>(testQuery)

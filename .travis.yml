@@ -1,0 +1,26 @@
+sudo: false
+language: node_js
+node_js:
+  - '10'
+cache:
+  directories:
+    - '$HOME/.npm'
+    - node_modules
+jobs:
+  include:
+    - stage: test
+      script: yarn test
+    - stage: release
+      if: branch = master
+      node_js: lts/*
+      before_install: skip
+      before_script:
+        - yarn run lerna run prepublish
+      script:
+        # Update Tables of Content in the relevant `.md` files
+        - markdown-toc -i CONTRIBUTING.md
+        - markdown-toc -i README.md
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: yarn test && yarn build && yarn release && yarn test:coverage:send

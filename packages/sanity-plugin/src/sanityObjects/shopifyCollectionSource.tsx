@@ -1,3 +1,18 @@
+export const productsConnection = {
+  name: 'productsConnection',
+  type: 'object',
+  fields: [
+    {
+      name: 'pageInfo',
+      type: 'pageInfo'
+    },
+    {
+      name: 'edges',
+      type: 'shopifyEdges'
+    }
+  ]
+}
+
 export const shopifyCollectionSource = {
   title: 'Shopify Data',
   readOnly: true,
@@ -28,32 +43,7 @@ export const shopifyCollectionSource = {
       name: 'image',
       type: 'shopifySourceImage',
       hidden: true
-    }
-  ]
-}
-
-export const shopifyCollectionProducts = {
-  title: 'Products',
-  name: 'products',
-  type: 'object',
-  description:
-    'Synced from Shopify. Update collection products in the Shopify dashboard.',
-  readOnly: true,
-  fields: [
-    {
-      title: 'Products',
-      name: 'products',
-      type: 'array',
-      of: [
-        {
-          type: 'reference',
-          to: [
-            {
-              type: 'shopifyProduct'
-            }
-          ]
-        }
-      ]
-    }
+    },
+    { title: 'Products', name: 'products', type: 'productsConnection' }
   ]
 }

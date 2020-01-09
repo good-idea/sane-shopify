@@ -5,7 +5,7 @@ export interface ShopifyClientConfig {
   accessToken: string
 }
 
-type Variables = object
+export type Variables = { [key: string]: any }
 
 export interface ShopifyItem {
   id: string
@@ -70,9 +70,22 @@ export interface Product extends ShopifyItem {
   productType?: string
   priceRange?: ProductPriceRange
   availableForSale?: boolean
-  collections?: Collection[]
+  collections?: Paginated<Collection>
   images: Paginated<ShopifyImage>
   variants: Paginated<Variant>
   __typename: 'Product'
-  /* Extended by Sanity */
+}
+
+export interface ShopifyItemParams {
+  id?: string
+  handle?: string
+}
+
+export interface ShopifyUtils {
+  client: ShopifyClient
+  fetchItemById: (id: string) => Promise<Product | Collection>
+  fetchShopifyProduct: (args: ShopifyItemParams) => Promise<Product>
+  fetchShopifyCollection: (args: ShopifyItemParams) => Promise<Collection>
+  fetchAllShopifyProducts: () => Promise<Product[]>
+  fetchAllShopifyCollections: () => Promise<Collection[]>
 }

@@ -1,5 +1,6 @@
 {
   "extends": "../../tsconfig.json",
+  "references": [{ "path": "../types" }],
   "compilerOptions": {
     "declarationDir": "./lib",
     "outDir": "./lib",

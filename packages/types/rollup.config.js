@@ -11,7 +11,6 @@ export default {
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependnencies || {}),
-    'rxjs/operators',
     'lodash-es/isMatch'
   ],
   plugins: [

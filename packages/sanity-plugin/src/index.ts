@@ -1,4 +1,4 @@
-import { ShopifyIcon } from './ShopifyIcon'
+import { ShopifyIcon } from './icons/ShopifyIcon'
 import { ShopifyTool } from './ShopifyTool'
 export * from './sanityDocuments'
 export * from './sanityObjects'

@@ -1,13 +1,13 @@
 import {
   SanityClient,
   ShopifyClient,
-  ShopifySecrets
+  ShopifyClientConfig
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
   createShopifyClient,
-  mergeClients,
-  SyncingClient,
+  syncUtils,
+  SyncUtils,
   testSecrets
 } from '@sane-shopify/sync-utils'
 // import { createShopifyClient } from '../shopifyClient'
@@ -20,8 +20,8 @@ const defaultSanityClient = require('part:@sanity/base/client')
  */
 
 const emptySecrets = {
-  storefrontName: '',
-  storefrontApiKey: ''
+  shopName: '',
+  accessToken: ''
 }
 
 const KEYS_ID = 'secrets.sane-shopify'
@@ -33,24 +33,29 @@ const KEYS_TYPE = 'sane-shopify.keys'
 
 const ClientContext = React.createContext<ClientContextValue | void>(undefined)
 
-export const ClientConsumer = ClientContext.Consumer
+export const SaneConsumer = ClientContext.Consumer
+
+export const useSaneContext = () => {
+  const ctx = React.useContext(ClientContext)
+  if (!ctx) throw new Error('useSaneContext must be used within a SaneProvider')
+  return ctx
+}
 
 /**
  * ClientProvider
  */
 
 interface SecretUtils {
-  saveSecrets: (secrets: ShopifySecrets) => Promise<boolean>
-
+  saveSecrets: (secrets: ShopifyClientConfig) => Promise<boolean>
   testSecrets: typeof testSecrets
   clearSecrets: () => Promise<boolean>
 }
 
 export interface ClientContextValue extends SecretUtils {
-  secrets: ShopifySecrets
+  secrets: ShopifyClientConfig
   valid: boolean
   ready: boolean
-  syncingClient: SyncingClient
+  syncingClient: SyncUtils
   shopifyClient: ShopifyClient
   sanityClient: SanityClient
 }
@@ -60,7 +65,7 @@ interface ClientContextProps {
 }
 
 interface ClientContextState {
-  secrets?: ShopifySecrets
+  secrets?: ShopifyClientConfig
   valid: boolean
   ready: boolean
 }
@@ -79,22 +84,22 @@ export class Provider extends React.Component<
 
   public sanityClient: SanityClient = defaultSanityClient
 
-  public syncingClient?: SyncingClient = undefined
+  public syncingClient?: SyncUtils = undefined
 
   public async componentDidMount() {
     const secrets = await this.fetchSecrets()
     const { valid } = await testSecrets(secrets)
     if (valid) {
       this.shopifyClient = createShopifyClient(secrets)
-      this.syncingClient = mergeClients(this.shopifyClient, defaultSanityClient)
+      this.syncingClient = syncUtils(this.shopifyClient, defaultSanityClient)
       this.setState({ secrets, valid: true, ready: true })
     } else {
       this.setState({ valid: false, ready: true, secrets: emptySecrets })
     }
   }
 
-  public fetchSecrets = async (): Promise<ShopifySecrets | null> => {
-    const results: ShopifySecrets[] = await this.sanityClient.fetch(
+  public fetchSecrets = async (): Promise<ShopifyClientConfig | null> => {
+    const results: ShopifyClientConfig[] = await this.sanityClient.fetch(
       `*[_id == "${KEYS_ID}"]`
     )
     if (results.length) return results[0]
@@ -104,7 +109,9 @@ export class Provider extends React.Component<
   /**
    * Returns true on success, false otherwise
    */
-  public saveSecrets = async (secrets: ShopifySecrets): Promise<boolean> => {
+  public saveSecrets = async (
+    secrets: ShopifyClientConfig
+  ): Promise<boolean> => {
     const valid = await testSecrets(secrets)
     if (!valid) return false
     const doc = {
@@ -112,12 +119,13 @@ export class Provider extends React.Component<
       _type: KEYS_TYPE,
       ...secrets
     }
+    //
     await this.sanityClient.createIfNotExists(doc)
     await this.sanityClient
       .patch(KEYS_ID)
       .set({ ...secrets })
       .commit()
-    await this.setState({ secrets })
+    this.setState({ valid: true, secrets })
     return true
   }
 
@@ -128,7 +136,7 @@ export class Provider extends React.Component<
         ...emptySecrets
       })
       .commit()
-    await this.setState({ valid: false })
+    this.setState({ valid: false })
     return true
   }
 
@@ -156,9 +164,7 @@ export class Provider extends React.Component<
     }
 
     return (
-      <ClientContext.Provider value={value}>
-        {children instanceof Function ? children(value) : children}
-      </ClientContext.Provider>
+      <ClientContext.Provider value={value}>{children}</ClientContext.Provider>
     )
   }
 }
