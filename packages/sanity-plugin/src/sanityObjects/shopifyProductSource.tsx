@@ -44,6 +44,21 @@ export const saneProductPriceRange = {
   ]
 }
 
+export const collectionsConnection = {
+  name: 'collectionsConnection',
+  type: 'object',
+  fields: [
+    {
+      name: 'pageInfo',
+      type: 'pageInfo'
+    },
+    {
+      name: 'edges',
+      type: 'shopifyEdges'
+    }
+  ]
+}
+
 export const shopifyProductSource = {
   title: 'Shopify Product Data',
   name: 'shopifyProductSource',
@@ -105,54 +120,8 @@ export const shopifyProductSource = {
     {
       title: 'Collections',
       name: 'collections',
-      // hidden: true,
-      type: 'object',
-      fields: [
-        {
-          name: 'pageInfo',
-          type: 'object',
-          fields: [
-            {
-              name: 'hasNextPage',
-              type: 'boolean'
-            },
-            {
-              name: 'hasPreviousPage',
-              type: 'boolean'
-            }
-          ]
-        },
-        {
-          name: 'edges',
-          type: 'array',
-          of: [
-            {
-              name: 'edge',
-              type: 'object',
-              fields: [
-                {
-                  name: 'cursor',
-                  type: 'string'
-                },
-                {
-                  name: 'node',
-                  type: 'object',
-                  fields: [
-                    {
-                      name: 'handle',
-                      type: 'string'
-                    },
-                    {
-                      name: 'id',
-                      type: 'string'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      type: 'collectionsConnection',
+      hidden: true
     }
   ]
 }

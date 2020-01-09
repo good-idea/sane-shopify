@@ -1,3 +1,18 @@
+export const productsConnection = {
+  name: 'productsConnection',
+  type: 'object',
+  fields: [
+    {
+      name: 'pageInfo',
+      type: 'pageInfo'
+    },
+    {
+      name: 'edges',
+      type: 'shopifyEdges'
+    }
+  ]
+}
+
 export const shopifyCollectionSource = {
   title: 'Shopify Data',
   readOnly: true,
@@ -29,57 +44,6 @@ export const shopifyCollectionSource = {
       type: 'shopifySourceImage',
       hidden: true
     },
-    {
-      title: 'Products',
-      name: 'products',
-      hidden: true,
-      type: 'object',
-      fields: [
-        {
-          name: 'pageInfo',
-          type: 'object',
-          fields: [
-            {
-              name: 'hasNextPage',
-              type: 'boolean'
-            },
-            {
-              name: 'hasPreviousPage',
-              type: 'boolean'
-            }
-          ]
-        },
-        {
-          name: 'edges',
-          type: 'array',
-          of: [
-            {
-              name: 'edge',
-              type: 'object',
-              fields: [
-                {
-                  name: 'cursor',
-                  type: 'string'
-                },
-                {
-                  name: 'node',
-                  type: 'object',
-                  fields: [
-                    {
-                      name: 'handle',
-                      type: 'string'
-                    },
-                    {
-                      name: 'id',
-                      type: 'string'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+    { title: 'Products', name: 'products', type: 'productsConnection' }
   ]
 }

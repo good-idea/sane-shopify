@@ -46,19 +46,7 @@ export const createProductDocument = ({
       {
         title: 'Collections',
         name: 'collections',
-        type: 'array',
-        readOnly: true,
-        description: 'Synced from Shopify',
-        of: [
-          {
-            type: 'reference',
-            to: [
-              {
-                type: 'shopifyCollection'
-              }
-            ]
-          }
-        ]
+        type: 'linkedCollections'
       },
       ...additionalFields
     ],

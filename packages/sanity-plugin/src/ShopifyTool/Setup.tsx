@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash-es'
 import * as React from 'react'
-import { ClientContextValue, Provider } from '../Provider'
+import { ClientContextValue, SaneConsumer } from '../Provider'
 /* tslint:disable */
 const Button = require('part:@sanity/components/buttons/default').default
 const Fieldset = require('part:@sanity/components/fieldsets/default').default
@@ -148,7 +148,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
             <FormField
               description="In the 'App' section of your shopify settings,
               create a new private app with the Storefront API enabled."
-              label="Storefront API Key"
+              label="Storefront Access Token"
               labelFor={this.keyInputId}
               level={0}
             >
@@ -180,5 +180,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 }
 
 export const Setup = () => (
-  <Provider>{(clientProps) => <SetupBase {...clientProps} />}</Provider>
+  <SaneConsumer>
+    {(clientProps) => (clientProps ? <SetupBase {...clientProps} /> : null)}
+  </SaneConsumer>
 )

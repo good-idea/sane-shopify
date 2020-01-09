@@ -1,7 +1,7 @@
 import { SyncUtils } from '@sane-shopify/sync-utils'
 import { Operation } from '@sane-shopify/types'
 import * as React from 'react'
-import { ClientContextValue, Provider } from '../../Provider'
+import { ClientContextValue, SaneConsumer } from '../../Provider'
 import { uniqueBy } from './utils'
 
 interface State {
@@ -156,9 +156,11 @@ class SyncBase extends React.Component<Props, State> {
 }
 
 export const Sync = (props: { children: React.ReactNode }) => (
-  <Provider>
+  <SaneConsumer>
     {(providerProps) =>
-      providerProps.ready ? <SyncBase {...props} {...providerProps} /> : null
+      providerProps && providerProps.ready ? (
+        <SyncBase {...props} {...providerProps} />
+      ) : null
     }
-  </Provider>
+  </SaneConsumer>
 )

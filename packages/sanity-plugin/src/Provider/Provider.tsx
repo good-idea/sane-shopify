@@ -33,7 +33,13 @@ const KEYS_TYPE = 'sane-shopify.keys'
 
 const ClientContext = React.createContext<ClientContextValue | void>(undefined)
 
-export const ClientConsumer = ClientContext.Consumer
+export const SaneConsumer = ClientContext.Consumer
+
+export const useSaneContext = () => {
+  const ctx = React.useContext(ClientContext)
+  if (!ctx) throw new Error('useSaneContext must be used within a SaneProvider')
+  return ctx
+}
 
 /**
  * ClientProvider
@@ -119,7 +125,7 @@ export class Provider extends React.Component<
       .patch(KEYS_ID)
       .set({ ...secrets })
       .commit()
-    await this.setState({ secrets })
+    this.setState({ valid: true, secrets })
     return true
   }
 
@@ -130,7 +136,7 @@ export class Provider extends React.Component<
         ...emptySecrets
       })
       .commit()
-    await this.setState({ valid: false })
+    this.setState({ valid: false })
     return true
   }
 
@@ -158,9 +164,7 @@ export class Provider extends React.Component<
     }
 
     return (
-      <ClientContext.Provider value={value}>
-        {children instanceof Function ? children(value) : children}
-      </ClientContext.Provider>
+      <ClientContext.Provider value={value}>{children}</ClientContext.Provider>
     )
   }
 }
