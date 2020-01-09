@@ -32,6 +32,7 @@ export type SyncOperationResult = SyncResult<SyncOperation>
 
 export interface LinkOperation {
   type: 'link'
+  sourceDoc: SanityShopifyDocument
   pairs: SanityPair[]
 }
 

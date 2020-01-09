@@ -141,12 +141,8 @@ export const syncUtils = (
       ({ sanityDocument }) => sanityDocument
     )
 
-    const relationshipSyncs = await syncRelationships(
-      operation.sanityDocument,
-      relatedDocs
-    )
-
-    return relationshipSyncs
+    const r = await syncRelationships(operation.sanityDocument, relatedDocs)
+    return r
   }
 
   /**
@@ -217,7 +213,8 @@ export const syncUtils = (
     await relationshipQueue.addAll(
       results.map((result) => async () => {
         const pairs = await makeRelationships(result)
-        logger.logLinked(pairs)
+        logger.logLinked(result.operation.sanityDocument, pairs)
+        return pairs
       })
     )
 
@@ -245,7 +242,7 @@ export const syncUtils = (
     await relationshipQueue.addAll(
       results.map((result) => async () => {
         const linked = await makeRelationships(result)
-        logger.logLinked(linked)
+        logger.logLinked(result.operation.sanityDocument, linked)
       })
     )
 

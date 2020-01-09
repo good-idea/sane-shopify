@@ -6,6 +6,8 @@ export interface SanityPair {
   to: SanityShopifyDocument
 }
 
+export const foo = 'bar'
+
 /**
  * Types that are shared between the plugin, the hooks server, and the syncing client.
  *

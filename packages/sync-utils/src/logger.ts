@@ -2,6 +2,7 @@ import {
   Product,
   Collection,
   SubscriptionCallbacks,
+  SanityShopifyDocument,
   SyncOperation,
   SanityPair,
   OperationComplete
@@ -15,7 +16,7 @@ interface Logger {
     fetchedItems: Product | Collection | Array<Product | Collection>
   ) => void
   logSynced: (op: SyncOperation) => void
-  logLinked: (pairs: SanityPair[]) => void
+  logLinked: (sourceDoc: SanityShopifyDocument, pairs: SanityPair[]) => void
   logComplete: (op: OperationComplete | OperationComplete[]) => void
 }
 
@@ -39,10 +40,11 @@ export const createLogger = (cbs: SubscriptionCallbacks = {}): Logger => {
     cbs.onProgress(op)
   }
 
-  const logLinked = (pairs: SanityPair[]) => {
+  const logLinked = (sourceDoc: SanityShopifyDocument, pairs: SanityPair[]) => {
     log('linked documents:', pairs)
     cbs.onProgress({
       type: 'link',
+      sourceDoc,
       pairs
     })
   }

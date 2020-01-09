@@ -16,7 +16,6 @@ export default {
   plugins: [
     typescript({
       typescript: require('typescript')
-      // check: true
     })
   ]
 }
