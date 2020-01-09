@@ -9,9 +9,10 @@ import {
   SyncOperationResult,
   SaneShopifyConfig,
   RelatedPair,
-  Operation,
+  SubscriptionCallbacks,
   RelatedPairPartial
 } from '@sane-shopify/types'
+import { createLogger } from './logger'
 import { createShopifyClient, shopifyUtils } from './shopify'
 import { sanityUtils } from './sanity'
 
@@ -32,12 +33,6 @@ export interface SyncUtils {
   ) => Promise<any>
   /* Syncs a collection or product by storefront id */
   syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<any>
-}
-
-interface SubscriptionCallbacks {
-  onProgress?: (operation: Operation, message?: string) => void
-  onError?: (err: Error) => void
-  onComplete?: (operation: Operation, message?: string) => void
 }
 
 /**
@@ -156,6 +151,10 @@ export const syncUtils = (
 
   /**
    * Public API methods
+   *
+   * These are responsible for:
+   * - coordinating the fetching, syncing, and linking of docs
+   * - logging the events
    */
 
   /* Syncs a product and any collections it is related to */
@@ -163,7 +162,9 @@ export const syncUtils = (
     handle: string,
     cbs: SubscriptionCallbacks = {}
   ) => {
+    const logger = createLogger(cbs)
     const shopifyProduct = await fetchShopifyProduct({ handle })
+    logger.logFetched(shopifyProduct)
     const syncResult = await syncProduct(shopifyProduct)
     await makeRelationships(syncResult)
   }
@@ -173,20 +174,18 @@ export const syncUtils = (
     handle: string,
     cbs: SubscriptionCallbacks = {}
   ) => {
+    const logger = createLogger(cbs)
     const shopifyCollection = await fetchShopifyCollection({ handle })
-    // if (cbs.onFetchedItems) {
-    //   cbs.onFetchedItems([shopifyCollection], 'fetched initial collection')
-    // }
+    logger.logFetched(shopifyCollection)
     const syncResult = await syncCollection(shopifyCollection)
     await makeRelationships(syncResult)
   }
 
   /* Sync an item by ID */
   const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
+    const logger = createLogger(cbs)
     const shopifyItem = await fetchItemById(id)
-    // if (cbs.onFetchedItems) {
-    //   cbs.onFetchedItems([shopifyItem], 'fetched initial item')
-    // }
+    logger.logFetched(shopifyItem)
     if (shopifyItem.__typename === 'Product') {
       const syncResult = await syncProduct(shopifyItem)
       await makeRelationships(syncResult)
@@ -201,15 +200,15 @@ export const syncUtils = (
 
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
+    const logger = createLogger(cbs)
     const allProducts = await fetchAllShopifyProducts()
-    // if (cbs.onFetchedItems) {
-    //   cbs.onFetchedItems(allProducts, 'fetched initial products')
-    // }
+    logger.logFetched(allProducts)
+
     const queue = new PQueue({ concurrency: 1 })
     const results = await queue.addAll(
       allProducts.map((product) => async () => {
         const result = await syncProduct(product)
-        if (cbs.onProgress) cbs.onProgress(result.operation)
+        logger.logSynced(result.operation)
         return result
       })
     )
@@ -217,7 +216,8 @@ export const syncUtils = (
     const relationshipQueue = new PQueue({ concurrency: 1 })
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        await makeRelationships(result)
+        const pairs = await makeRelationships(result)
+        logger.logLinked(pairs)
       })
     )
 
@@ -226,16 +226,16 @@ export const syncUtils = (
 
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
+    const logger = createLogger(cbs)
     const allCollections = await fetchAllShopifyCollections()
-    // if (cbs.onFetchedItems) {
-    //   cbs.onFetchedItems(allCollections, 'fetched initial collections')
-    // }
+    logger.logFetched(allCollections)
+
     const queue = new PQueue({ concurrency: 1 })
 
     const results = await queue.addAll(
       allCollections.map((collection) => async () => {
         const result = await syncCollection(collection)
-        if (cbs.onProgress) cbs.onProgress(result.operation)
+        logger.logSynced(result.operation)
         return result
       })
     )
@@ -243,7 +243,10 @@ export const syncUtils = (
     const relationshipQueue = new PQueue({ concurrency: 1 })
 
     await relationshipQueue.addAll(
-      results.map((result) => () => makeRelationships(result))
+      results.map((result) => async () => {
+        const linked = await makeRelationships(result)
+        logger.logLinked(linked)
+      })
     )
 
     return results

@@ -2,7 +2,7 @@ import PQueue from 'p-queue'
 import {
   SanityClient,
   SanityUtils,
-  LinkOperation,
+  SanityPair,
   SanityShopifyDocument
 } from '@sane-shopify/types'
 
@@ -11,7 +11,7 @@ export const createSyncRelationships = (
 ): SanityUtils['syncRelationships'] => async (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
-): Promise<LinkOperation[]> => {
+): Promise<SanityPair[]> => {
   const toDocs = Array.isArray(to) ? to : [to]
 
   const aToBKey = from._type === 'shopifyProduct' ? 'collections' : 'products'
@@ -35,15 +35,14 @@ export const createSyncRelationships = (
     toDocs.map((toDoc) => async () => {
       const relationships =
         toDoc._type === 'shopifyCollection' ? toDoc.products : toDoc.collections
-      const op = {
-        type: 'link' as 'link',
+      const pair = {
         from: from,
         to: toDoc
       }
 
       if (relationships && relationships.find(({ _id }) => _id === from._id)) {
         // If the relationship is already set, just return as is
-        return op
+        return pair
       }
       await client
         // @ts-ignore
@@ -57,7 +56,7 @@ export const createSyncRelationships = (
             key: `${from._id}-${from._rev}`
           }
         ])
-      return op
+      return pair
     })
   )
 }
