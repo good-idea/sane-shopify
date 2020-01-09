@@ -2,6 +2,7 @@ import { SyncUtils } from '@sane-shopify/sync-utils'
 import { Operation } from '@sane-shopify/types'
 import * as React from 'react'
 import { ClientContextValue, Provider } from '../../Provider'
+import { uniqueBy } from './utils'
 
 interface State {
   syncState: 'ready' | 'syncing' | 'complete'
@@ -42,7 +43,36 @@ class SyncBase extends React.Component<Props, State> {
   }
 
   _handleProgress = (op: Operation) => {
-    console.log('progress', op)
+    if (op.type === 'fetched') {
+      const docs = op.shopifyDocuments
+      const fetchedProducts = docs.filter((d) => d.__typename === 'Product')
+      const fetchedCollections = docs.filter(
+        (d) => d.__typename === 'Collection'
+      )
+      this.setState((initialState) => ({
+        fetchedProducts: uniqueBy('id', [
+          ...initialState.fetchedProducts,
+          ...fetchedProducts
+        ]),
+        fetchedCollections: uniqueBy('id', [
+          ...initialState.fetchedCollections,
+          ...fetchedCollections
+        ])
+      }))
+    }
+
+    if (op.type === 'link') {
+      const { sourceDoc } = op
+      if (sourceDoc._type === 'shopifyProduct') {
+        this.setState((initialState) => ({
+          productsSynced: [...initialState.productsSynced, sourceDoc]
+        }))
+      } else {
+        this.setState((initialState) => ({
+          collectionsSynced: [...initialState.collectionsSynced, sourceDoc]
+        }))
+      }
+    }
   }
 
   _syncProducts = async () => {
@@ -90,8 +120,11 @@ class SyncBase extends React.Component<Props, State> {
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await this._syncProducts()
-    await this._syncCollections()
+    await Promise.all([
+      //
+      this._syncProducts(),
+      this._syncCollections()
+    ])
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
@@ -104,6 +137,7 @@ class SyncBase extends React.Component<Props, State> {
       syncCollections,
       syncAll
     } = this
+
     const renderProps = {
       ...this.state,
       syncProductByHandle,

@@ -23,7 +23,7 @@ const SyncPaneBase = ({
           collections
         </p>
       ) : null}
-      {productsSynced.length ? (
+      {fetchedProducts.length ? (
         <p>
           synced {productsSynced.length}/{fetchedProducts.length} products
         </p>
