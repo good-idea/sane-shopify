@@ -10,7 +10,7 @@
 		"fix": "lerna run fix",
 		"bootstrap": "lerna bootstrap",
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
-		"build": "lerna run --parallel build",
+		"build": "lerna run build",
 		"watch": "lerna run --parallel watch",
 		"release": "lerna publish --yes"
 	},
