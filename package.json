@@ -12,7 +12,7 @@
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"build": "lerna run build",
 		"watch": "lerna run --parallel watch",
-		"release": "lerna publish --yes"
+		"release": "lerna publish from-git --yes"
 	},
 	"workspaces": [
 		"packages/*"
