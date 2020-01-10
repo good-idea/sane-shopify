@@ -4,13 +4,13 @@
 
 To-do before major release:
 
-[x] - Create references between products & collections within Sanity
-[ ] - Set up webhooks to sync when data changes in Shopify
-[ ] - Archive Sanity documents when items have been deleted in Shopify
+- [x] Create references between products & collections within Sanity
+- [ ] Set up webhooks to sync when data changes in Shopify
+- [ ] Archive Sanity documents when items have been deleted in Shopify
 
 Coming up:
 
-[ ] - Extend fields on product variants
+- [ ] Extend fields on product variants
 
 This repo consists of several packages that connect [Sanity](https://www.sanity.io) and the [Shopify Storefront API](https://help.shopify.com/en/api/storefront-api).
 
