@@ -15,8 +15,6 @@ jobs:
       if: branch = master
       node_js: lts/*
       before_install: skip
-      before_script:
-        - yarn run lerna run prepublish
       script:
         # Update Tables of Content in the relevant `.md` files
         - markdown-toc -i CONTRIBUTING.md
@@ -24,4 +22,5 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        script: yarn test && yarn build && yarn release && yarn test:coverage:send
+        script: yarn test && yarn build
+        # script: yarn test && yarn build && yarn release && yarn test:coverage:send
