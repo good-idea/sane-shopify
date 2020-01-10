@@ -60,6 +60,7 @@ export const createProductDocument = ({
         const { shopifyItem, title, sourceData } = props
         const itemTitle = shopifyItem ? title || shopifyItem.title : title
         const [images] = unwindEdges(sourceData.images)
+        // @ts-ignore
         const src = images[0]?.w100
         return {
           title: itemTitle,
