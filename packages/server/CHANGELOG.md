@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/good-idea/sane-shopify/compare/v0.5.2...v0.6.0) (2020-01-10)
+
+### Features
+
+- **server:** remove proxy server ([e228d32](https://github.com/good-idea/sane-shopify/commit/e228d322262cb407a4e2c0da58988898cad34503))
+
 ## [0.5.2](https://github.com/good-idea/sane-shopify/compare/v0.5.1...v0.5.2) (2019-11-10)
 
 ### Bug Fixes

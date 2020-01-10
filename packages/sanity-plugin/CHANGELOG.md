@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/good-idea/sane-shopify/compare/v0.5.2...v0.6.0) (2020-01-10)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix type errors ([be10b50](https://github.com/good-idea/sane-shopify/commit/be10b50b9f2e8eed933ed291bfe37f954f24e26d))
+- **sanity-plugin:** make missing images icon ([ae2f537](https://github.com/good-idea/sane-shopify/commit/ae2f537f73a83ecab755fcce7d0dfd30250247bb))
+- **sanity-plugin:** make schema graphql compatible ([d5a928b](https://github.com/good-idea/sane-shopify/commit/d5a928b67cf645006b8855c285d68b2eb162ebb5)), closes [#24](https://github.com/good-idea/sane-shopify/issues/24)
+- **sanity-plugin:** update plugin for updated sync utils ([cf97051](https://github.com/good-idea/sane-shopify/commit/cf97051cc9553a3c804e54299beb98b6dbdb5a40))
+
+### Features
+
+- **sanity-plugin:** update logger and activity output ([51486ef](https://github.com/good-idea/sane-shopify/commit/51486ef24c5b977b58ec94d824337283854a9d28))
+
 ## [0.5.2](https://github.com/good-idea/sane-shopify/compare/v0.5.1...v0.5.2) (2019-11-10)
 
 ### Bug Fixes

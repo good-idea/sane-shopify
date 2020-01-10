@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/good-idea/sane-shopify/compare/v0.5.2...v0.6.0) (2020-01-10)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix relationship syncing ([3241e0f](https://github.com/good-idea/sane-shopify/commit/3241e0f7bb1fdd38c327e827bc18d213ff2200a1))
+- **sanity-plugin:** fix type errors ([be10b50](https://github.com/good-idea/sane-shopify/commit/be10b50b9f2e8eed933ed291bfe37f954f24e26d))
+- **sanity-plugin:** make missing images icon ([ae2f537](https://github.com/good-idea/sane-shopify/commit/ae2f537f73a83ecab755fcce7d0dfd30250247bb))
+- **sanity-plugin:** make schema graphql compatible ([d5a928b](https://github.com/good-idea/sane-shopify/commit/d5a928b67cf645006b8855c285d68b2eb162ebb5)), closes [#24](https://github.com/good-idea/sane-shopify/issues/24)
+- **sanity-plugin:** update plugin for updated sync utils ([cf97051](https://github.com/good-idea/sane-shopify/commit/cf97051cc9553a3c804e54299beb98b6dbdb5a40))
+- **types:** fix types for updated sync-utils ([62029e0](https://github.com/good-idea/sane-shopify/commit/62029e0906396d21d9fbb492e316a70a74164f84))
+
+### Features
+
+- **sanity-plugin:** update logger and activity output ([51486ef](https://github.com/good-idea/sane-shopify/commit/51486ef24c5b977b58ec94d824337283854a9d28))
+- **server:** remove proxy server ([e228d32](https://github.com/good-idea/sane-shopify/commit/e228d322262cb407a4e2c0da58988898cad34503))
+- **sync-utils:** improve logger output ([21a1f1d](https://github.com/good-idea/sane-shopify/commit/21a1f1db0bca693c8986dd7a93a5cfd634d065b8))
+- **sync-utils:** set up logger ([de193a8](https://github.com/good-idea/sane-shopify/commit/de193a82d801e44ff6761c7a2bf42558e5fca4ef))
+
 ## [0.5.2](https://github.com/good-idea/sane-shopify/compare/v0.5.1...v0.5.2) (2019-11-10)
 
 ### Bug Fixes

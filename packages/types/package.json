@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/types",
-	"version": "0.5.2",
+	"version": "0.6.0",
 	"description": "Common typescript typings for @sane-shopify projects",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -9,8 +9,8 @@
 		"access": "public"
 	},
 	"scripts": {
-    "linky": "yalc publish",
-    "linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
+		"linky": "yalc publish",
+		"linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
 		"build": "rollup -c",
 		"watch": "rollup -cw",
 		"fix": "run-s fix:*",
