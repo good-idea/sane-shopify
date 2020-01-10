@@ -1,10 +1,8 @@
 import { Handler, APIGatewayEvent } from 'aws-lambda'
 import { SaneShopifyConfig } from '@sane-shopify/types'
 import { createSyncingClient } from '@sane-shopify/sync-utils'
-import { createGraphQLHandler } from './graphql'
 
 interface SaneLambdas {
-  graphql: Handler
   productCreate: Handler
   productUpdate: Handler
   productDelete: Handler
@@ -30,8 +28,6 @@ export const createLambdas = (config: SaneShopifyConfig): SaneLambdas => {
       'You must provide a Sanity client auth token to use the Shopify webhooks. If you only want to use the GraphQL Lambda, use `createGraphQLHandler` instead. To find your Auth token, run `sanity debug --secrets`'
     )
   const client = createSyncingClient(config)
-
-  const graphql = createGraphQLHandler(config)
 
   const productCreateOrUpdate = (event: APIGatewayEvent) =>
     new Promise((resolve, reject) => {
@@ -78,7 +74,6 @@ export const createLambdas = (config: SaneShopifyConfig): SaneLambdas => {
   }
 
   return {
-    graphql,
     productDelete,
     collectionDelete,
     productCreate: productCreateOrUpdate,
