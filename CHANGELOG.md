@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/good-idea/sane-shopify/compare/v0.6.1...v0.6.2) (2020-01-14)
+
+### Bug Fixes
+
+- **repo:** fix release command ([ca51cba](https://github.com/good-idea/sane-shopify/commit/ca51cbabb4b727ade7f5951e8fe0589fa3f8bac2))
+- **sanity-plugin:** cleanup temp file from version bump commit ([4d8a1fa](https://github.com/good-idea/sane-shopify/commit/4d8a1fa42bce0d73b1262490aa82dae02ab57fc7))
+- **sanity-plugin:** fix for version bump ([1e7835f](https://github.com/good-idea/sane-shopify/commit/1e7835f492fce8d5b6ce69e8063d26669a697c5c))
+- **sanity-plugin:** fix problem with initial sync after adding secrets ([5f80b8a](https://github.com/good-idea/sane-shopify/commit/5f80b8ae6cd45e1011278d8221d32b0df74b5a21))
+- **sanity-plugin:** fix shopifyObjects exports ([7ba964a](https://github.com/good-idea/sane-shopify/commit/7ba964a3cd345e23b1c567ef0fca23a919829d9d))
+
 ## [0.6.1](https://github.com/good-idea/sane-shopify/compare/v0.6.0...v0.6.1) (2020-01-10)
 
 ### Bug Fixes
