@@ -47,8 +47,8 @@
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
 	"peerDependencies": {
-		"react": "16.11",
-		"react-dom": "16.11"
+		"react": "16.2",
+		"react-dom": "16.2"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.7.0",
