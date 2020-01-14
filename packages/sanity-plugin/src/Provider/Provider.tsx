@@ -15,6 +15,7 @@ import {
 /* tslint:disable-next-line */
 const defaultSanityClient = require('part:@sanity/base/client')
 
+console.log('hello?')
 /**
  * Constants & Defaults
  */
@@ -120,11 +121,13 @@ export class Provider extends React.Component<
       ...secrets
     }
     //
+    this.shopifyClient = createShopifyClient(secrets)
     await this.sanityClient.createIfNotExists(doc)
     await this.sanityClient
       .patch(KEYS_ID)
       .set({ ...secrets })
       .commit()
+    this.syncingClient = syncUtils(this.shopifyClient, defaultSanityClient)
     this.setState({ valid: true, secrets })
     return true
   }
