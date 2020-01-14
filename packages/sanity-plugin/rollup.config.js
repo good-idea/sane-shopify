@@ -12,6 +12,8 @@ export default {
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    'react-icons/ai',
+    'react-icons/md',
     'lodash-es/uniqueId'
   ],
   plugins: [
