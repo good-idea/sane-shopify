@@ -48,6 +48,51 @@ This project does not:
 - Many apps from the Shopify App store provide functionality to the frontend of websites by manipulating the liquid templates - these apps will not work. Other apps that enhance the admin dashboard will be unaffected.
 - Shopify's built-in product analytics will not work.
 
+---
+
+# Installation & Setup
+
+In your Sanity installation, install the plugin: `yarn add @sane-shopify/sanity-plugin`. Once installed, add `@sane-shopify/sanity-plugin` to the list of plugins in `sanity.json`.
+
+Add the Product and Collection documents to your schema:
+
+- Import the `sanityObjects` array
+- Import `createProductDocument` and `createCollectionDocument` from `@sane-shopify/sanity-plugin`. Use these to create the bare document types. (See more on these functions below)
+- Add all of the above to your schema. `sanityObjects` is required.
+
+```js
+import { createProductDocument, createCollectionDocument, saneShopifyObjects } from '@sane-shopify/sanity-plugin'
+
+const product = createProductDocument()
+const collection = createCollectionDocument()
+
+export default createSchema({
+  name: 'default',
+  types: schemaTypes.concat([
+    /* Your types here! */
+    ...saneShopifyObjects,
+    product,
+    collection
+  ]),
+}/)
+```
+
+To add additional fields to these documents, see the docs on `createProductDocument` and `createCollectionDocument` below.
+
+## Connecting to Shopify
+
+[Set up a new app in Shopify](https://help.shopify.com/en/api/storefront-api/getting-started#storefront-api-authentication) with permissions to access the Storefront API. You'll need the Storefront Access Token (note that this is different from the Admin API key).
+
+After you have installed the plugin and added the schema documents, open up Sanity. Click the new **🛍 Shopify** tab in the header.
+
+Enter your Shopify storefront name and your access token in the setup pane. Once this is set up, you can click the Sync button to import your collections and products.
+
+## Setting up Shopify webhooks
+
+#### TODO
+
+---
+
 # Usage
 
 Sane-shopify fetches your product and collection data from Shopify's [Storefront API](https://help.shopify.com/en/api/storefront-api), and stores up-to-date copies of this information within Sanity. This means you can query your Sanity endpoint directly for all of the data you need to display products and collections.
@@ -79,48 +124,9 @@ The two document types have a number of read-only fields:
 
 ## Working with the Cart
 
-This plugin does not manage orders or customer carts. You will need to use Shopify's storefront API (or another solution) to do this. But, the sanity documents will include all of the product & variant IDs you need to do this.
+This plugin does not manage orders or customer carts. You will need to use Shopify's storefront API (or another solution) to do this. But, the sanity documents will include all of the product & variant IDs you need.
 
-# Installation & Setup
-
-In your Sanity installation, install the plugin: `yarn add @sane-shopify/sanity-plugin`. Once installed, add `@sane-shopify/sanity-plugin` to the list of plugins in `sanity.json`.
-
-Add the Product and Collection documents to your schema:
-
-- Import the `sanityObjects` array
-- Import `createProductDocument` and `createCollectionDocument` from `@sane-shopify/sanity-plugin`. Use these to create the bare document types. (See more on these functions below)
-- Add all of the above to your schema. `sanityObjects` is required.
-
-```js
-import { createProductDocument, createCollectionDocument, saneShopifyObjects } from '@sane-shopify/sanity-plugin'
-
-const product = createProductDocument()
-const collection = createCollectionDocument()
-
-export default createSchema({
-  name: 'default',
-  types: schemaTypes.concat([
-    /* Your types here! */
-    ...SaneShopifyObjects,
-    product,
-    collection
-  ]),
-}/)
-```
-
-To add additional fields to these documents, see the docs on `createProductDocument` and `createCollectionDocument` below.
-
-## Connecting to Shopify
-
-[Set up a new app in Shopify](https://help.shopify.com/en/api/storefront-api/getting-started#storefront-api-authentication) with permissions to access the Storefront API. You'll need the Storefront Access Token (note that this is different from the Admin API key).
-
-After you have installed the plugin and added the schema documents, open up Sanity. Click the new **🛍 Shopify** tab in the header.
-
-Enter your Shopify storefront name and your access token in the setup pane. Once this is set up, you can click the Sync button to import your collections and products.
-
-## Setting up Shopify webhooks
-
-#### TODO
+---
 
 # API Reference
 
