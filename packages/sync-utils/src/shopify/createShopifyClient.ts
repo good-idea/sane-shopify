@@ -4,6 +4,7 @@ import {
   ShopifyClientConfig,
   Variables
 } from '@sane-shopify/types'
+import { STOREFRONT_API_VERSION } from './constants'
 
 const getErrorMessage = (r: Response): string => {
   switch (r.status) {
@@ -27,7 +28,7 @@ export const createShopifyClient = (
   secrets: ShopifyClientConfig
 ): ShopifyClient => {
   const { shopName, accessToken } = secrets
-  const url = `https://${shopName}.myshopify.com/api/graphql`
+  const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql`
   const headers = {
     'Content-Type': 'application/json',
     'X-Shopify-Storefront-Access-Token': accessToken
