@@ -56,9 +56,9 @@ In your Sanity installation, install the plugin: `yarn add @sane-shopify/sanity-
 
 Add the Product and Collection documents to your schema:
 
-- Import the `sanityObjects` array
+- Import the `saneShopifyObjects` array
 - Import `createProductDocument` and `createCollectionDocument` from `@sane-shopify/sanity-plugin`. Use these to create the bare document types. (See more on these functions below)
-- Add all of the above to your schema. `sanityObjects` is required.
+- Add all of the above to your schema. `saneShopifyObjects` is required.
 
 ```js
 import { createProductDocument, createCollectionDocument, saneShopifyObjects } from '@sane-shopify/sanity-plugin'
@@ -74,10 +74,10 @@ export default createSchema({
     product,
     collection
   ]),
-}/)
+})
 ```
 
-To add additional fields to these documents, see the docs on `createProductDocument` and `createCollectionDocument` below.
+To add additional fields to these documents, see the [documented example](https://github.com/good-idea/sane-shopify/#createproductdocument-and-createcollectiondocument) below.
 
 ## Connecting to Shopify
 
@@ -99,7 +99,7 @@ Sane-shopify fetches your product and collection data from Shopify's [Storefront
 
 ## Document Structure
 
-`shopifyProduct` & `shopifyProduct`
+`shopifyProduct` & `shopifyCollection`
 
 The two document types have a number of read-only fields:
 
@@ -107,10 +107,13 @@ The two document types have a number of read-only fields:
 {
   title: 'Product Title',
   handle: 'product-title',
+  
   /* The product's ID in the Storefront API */
   shopifyId: 'Zf5n....',
+  
   /* Other product data such as description, images, price, variants, etc */
   sourceData: { ... },
+  
   /* (shopifyProduct only) An array of references to the corresponding collection documents in sanity */
   collections: [ ... ],
 
@@ -118,7 +121,6 @@ The two document types have a number of read-only fields:
   products: [ ... ],
 
   /* Any additional custom fields you add to these document types */
-
 }
 ```
 
