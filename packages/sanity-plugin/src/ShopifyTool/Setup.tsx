@@ -157,7 +157,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
                 disabled={success || loading}
                 onChange={this.handleInputChange('accessToken')}
                 value={accessToken}
-                type="password"
+                type="text"
               />
             </FormField>
           </React.Fragment>
