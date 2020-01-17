@@ -15,7 +15,6 @@ import {
 /* tslint:disable-next-line */
 const defaultSanityClient = require('part:@sanity/base/client')
 
-console.log('hello?')
 /**
  * Constants & Defaults
  */
