@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/sanity-plugin",
-	"version": "0.6.7",
+	"version": "0.6.8",
 	"description": "A Sanity.io field for selecting products & collections from a Shopify storefront",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -80,8 +80,8 @@
 	},
 	"dependencies": {
 		"@good-idea/unwind-edges": "^1.2.0",
-		"@sane-shopify/sync-utils": "^0.6.7",
-		"@sane-shopify/types": "^0.6.0",
+		"@sane-shopify/sync-utils": "^0.6.8",
+		"@sane-shopify/types": "^0.6.8",
 		"@sanity/base": "^0.144.1",
 		"@sanity/components": "^0.144.2",
 		"@sanity/form-builder": "^0.144.2",
