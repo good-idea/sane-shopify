@@ -6,18 +6,69 @@ import {
 import { createSyncSanityDocument } from './syncSanityDocument'
 import { createFetchRelatedDocs } from './fetchRelatedDocs'
 import { createSyncRelationships } from './syncRelationships'
+import { createFetchAll } from './fetchAll'
 
-export const sanityUtils = (client: SanityClient): SanityUtils => {
-  const syncSanityDocument = createSyncSanityDocument(client)
-  const fetchRelatedDocs = createFetchRelatedDocs(client)
-  const syncRelationships = createSyncRelationships(client)
+interface StringCache<NodeType> {
+  [key: string]: NodeType | null
+}
 
-  const documentByShopifyId = (shopifyId: string) =>
-    client.fetch<SanityShopifyDocument>(`*[shopifyId == $shopifyId][0]`, {
-      shopifyId
-    })
+export interface SanityCache {
+  getById: (id: string) => SanityShopifyDocument | null
+  getByShopifyId: (id: string) => SanityShopifyDocument | null
+  set: (doc: SanityShopifyDocument) => void
+}
+
+const createCache = (): SanityCache => {
+  const ids: StringCache<SanityShopifyDocument> = {}
+  const shopifyIds: StringCache<SanityShopifyDocument> = {}
+
+  const getById = (id: string) => {
+    return ids[id] || null
+  }
+
+  const getByShopifyId = (shopifyId: string) => {
+    return shopifyIds[shopifyId] || null
+  }
+
+  const set = (doc: SanityShopifyDocument) => {
+    ids[doc._id] = doc
+    if (doc.shopifyId) shopifyIds[doc.shopifyId] = doc
+  }
 
   return {
+    getById,
+    getByShopifyId,
+    set
+  }
+}
+
+export const sanityUtils = (client: SanityClient): SanityUtils => {
+  const cache = createCache()
+
+  const fetchAllSanityDocuments = createFetchAll(client, cache)
+  const syncSanityDocument = createSyncSanityDocument(client, cache)
+  const fetchRelatedDocs = createFetchRelatedDocs(client, cache)
+  const syncRelationships = createSyncRelationships(client, cache)
+
+  const documentByShopifyId = async (shopifyId: string) => {
+    const cached = cache.getByShopifyId(shopifyId)
+    if (cached) return cached
+
+    const doc = await client.fetch<SanityShopifyDocument>(
+      `*[shopifyId == $shopifyId]{
+        products[]->,
+        collections[]->,
+        ...
+      }[0]`,
+      {
+        shopifyId
+      }
+    )
+    cache.set(doc)
+    return doc
+  }
+  return {
+    fetchAllSanityDocuments,
     syncSanityDocument,
     syncRelationships,
     fetchRelatedDocs,

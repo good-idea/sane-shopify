@@ -24,6 +24,8 @@ interface GraphQLAST {
   }
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 export const createShopifyClient = (
   secrets: ShopifyClientConfig
 ): ShopifyClient => {
@@ -35,11 +37,23 @@ export const createShopifyClient = (
     'X-Shopify-Storefront-Access-Token': accessToken
   }
 
+  let lastRequestTime = new Date().getTime()
+
   const query = async <ResponseType>(
     q: string | GraphQLAST,
     variables?: Variables
   ): Promise<ResponseType> => {
     const queryString = typeof q === 'string' ? q : q?.loc.source.body
+
+    // Rate limit to 2 requests per second.
+    // Shopify's limits are "leaky bucket" so this could be improved.
+    // https://help.shopify.com/en/api/storefront-api/getting-started#storefront-api-rate-limits
+    const now = new Date().getTime()
+    const timeSinceLastRequest = now - lastRequestTime
+    if (timeSinceLastRequest > 500) await sleep(timeSinceLastRequest)
+
+    lastRequestTime = now
+
     return fetch(url, {
       headers,
       method: 'POST',

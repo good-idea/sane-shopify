@@ -5,9 +5,11 @@ import {
   SanityPair,
   SanityShopifyDocument
 } from '@sane-shopify/types'
+import { SanityCache } from './sanityUtils'
 
 export const createSyncRelationships = (
-  client: SanityClient
+  client: SanityClient,
+  cache: SanityCache
 ): SanityUtils['syncRelationships'] => async (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
@@ -21,7 +23,26 @@ export const createSyncRelationships = (
     _key: `${toDoc._rev}-${toDoc._id}`
   }))
 
-  // Set up the A to B patch, but do not commit yet
+  // determine if the FROM doc already has the
+  // links in place. If so, skip the patch.
+  const existingLinks: SanityShopifyDocument[] = from[aToBKey]
+  const alreadyLinked = existingLinks
+    ? toDocs.reduce<boolean>(
+        (prev: boolean, current: SanityShopifyDocument) => {
+          if (prev === false) return false
+          return existingLinks.some((l) => l._id === current._id)
+        },
+        true
+      )
+    : false
+
+  if (alreadyLinked) {
+    return toDocs.map((toDoc) => ({
+      from: from,
+      to: toDoc
+    }))
+  }
+
   await client
     .patch(from._id)
     .set({ [aToBKey]: aToBRelationships })

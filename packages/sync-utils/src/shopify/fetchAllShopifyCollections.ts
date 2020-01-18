@@ -2,8 +2,9 @@ import gql from 'graphql-tag'
 import PQueue from 'p-queue'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
 import { ShopifyClient, Collection } from '@sane-shopify/types'
+import { ShopifyCache } from './shopifyUtils'
 import { mergePaginatedResults, getLastCursor } from '../utils'
-import { collectionFragment } from './shopifyQueries'
+import { collectionFragment } from './queryFragments'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
 
 export const COLLECTIONS_QUERY = gql`
@@ -44,7 +45,8 @@ interface QueryResult {
 }
 
 export const createFetchAllShopifyCollections = (
-  query: ShopifyClient['query']
+  query: ShopifyClient['query'],
+  cache: ShopifyCache
 ) => async (): Promise<Collection[]> => {
   const fetchCollections = async (
     prevPage?: Paginated<Collection>
@@ -60,6 +62,7 @@ export const createFetchAllShopifyCollections = (
       : fetchedCollections
     if (collections.pageInfo.hasNextPage) return fetchCollections(collections)
     const [unwound] = unwindEdges(fetchedCollections)
+    unwound.forEach((collection) => cache.set(collection))
     return unwound
   }
 

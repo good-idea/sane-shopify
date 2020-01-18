@@ -72,6 +72,7 @@ export interface SanityUtils {
     to: SanityShopifyDocument | SanityShopifyDocument[]
   ) => Promise<SanityPair[]>
   fetchRelatedDocs: (related: ShopifyItem[]) => Promise<RelatedPairPartial[]>
+  fetchAllSanityDocuments: () => Promise<SanityShopifyDocument[]>
   documentByShopifyId: (shopifyId: string) => Promise<SanityShopifyDocument>
 }
 

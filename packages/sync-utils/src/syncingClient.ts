@@ -62,6 +62,7 @@ export const syncUtils = (
   } = shopifyUtils(shopifyClient)
 
   const {
+    fetchAllSanityDocuments,
     syncSanityDocument,
     syncRelationships,
     fetchRelatedDocs,
@@ -197,6 +198,8 @@ export const syncUtils = (
 
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
+    await fetchAllSanityDocuments()
+
     const logger = createLogger(cbs)
     const allProducts = await fetchAllShopifyProducts()
     logger.logFetched(allProducts)
@@ -224,6 +227,7 @@ export const syncUtils = (
 
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
+    await fetchAllSanityDocuments()
     const logger = createLogger(cbs)
     const allCollections = await fetchAllShopifyCollections()
     logger.logFetched(allCollections)

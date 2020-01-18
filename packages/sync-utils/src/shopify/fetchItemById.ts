@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
-import { productFragment, collectionFragment } from './shopifyQueries'
 import { ShopifyClient, Product, Collection } from '@sane-shopify/types'
+import { ShopifyCache } from './shopifyUtils'
+import { productFragment, collectionFragment } from './queryFragments'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
 
@@ -49,9 +50,12 @@ interface NodeResult {
   node: Product | Collection
 }
 
-export const createFetchItemById = (query: ShopifyClient['query']) => async (
-  id: string
-): Promise<Product | Collection> => {
+export const createFetchItemById = (
+  query: ShopifyClient['query'],
+  cache: ShopifyCache
+) => async (id: string): Promise<Product | Collection> => {
+  const cached = cache.getCollectionById(id) || cache.getProductById(id)
+  if (cached) return cached
   const result = await query<NodeResult>(NODE_QUERY, { id })
   const item = result.node
   if (item.__typename === 'Product') {

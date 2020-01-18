@@ -3,8 +3,9 @@ import PQueue from 'p-queue'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
 import { ShopifyClient, Product } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
-import { productFragment } from './shopifyQueries'
+import { productFragment } from './queryFragments'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
+import { ShopifyCache } from './shopifyUtils'
 
 export const PRODUCTS_QUERY = gql`
   query ProductsQuery($first: Int!, $after: String) {
@@ -44,7 +45,8 @@ interface QueryResult {
 }
 
 export const createFetchAllShopifyProducts = (
-  query: ShopifyClient['query']
+  query: ShopifyClient['query'],
+  cache: ShopifyCache
 ) => async (): Promise<Product[]> => {
   const fetchProducts = async (
     prevPage?: Paginated<Product>
@@ -60,6 +62,7 @@ export const createFetchAllShopifyProducts = (
       : fetchedProducts
     if (products.pageInfo.hasNextPage) return fetchProducts(products)
     const [unwound] = unwindEdges(products)
+    unwound.forEach((product) => cache.set(product))
     return unwound
   }
 

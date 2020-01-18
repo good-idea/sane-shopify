@@ -1,11 +1,12 @@
 import gql from 'graphql-tag'
-import { mergePaginatedResults, getLastCursor } from '../utils'
 import {
   ShopifyClient,
   ShopifyItemParams,
   Collection
 } from '@sane-shopify/types'
-import { collectionFragment } from './shopifyQueries'
+import { mergePaginatedResults, getLastCursor } from '../utils'
+import { collectionFragment } from './queryFragments'
+import { ShopifyCache } from './shopifyUtils'
 
 const COLLECTION_BY_HANDLE = gql`
   query CollectionQuery(
@@ -130,16 +131,29 @@ export const fetchAllCollectionProducts = async (
  */
 
 export const createFetchShopifyCollection = (
-  query: ShopifyClient['query']
+  query: ShopifyClient['query'],
+  cache: ShopifyCache
 ) => async (params: ShopifyItemParams): Promise<Collection | null> => {
   const { id, handle } = params
   if (!id && !handle) {
     throw new Error('You must provide either an id or handle')
   }
 
+  const cachedCollection = id
+    ? cache.getCollectionById(id)
+    : handle
+    ? cache.getCollectionByHandle(handle)
+    : null
+
+  if (cachedCollection) {
+    return fetchAllCollectionProducts(query, cachedCollection)
+  }
+
   const fetchedCollection = id
     ? await getById(query, id)
     : await getByHandle(query, handle)
 
-  return fetchAllCollectionProducts(query, fetchedCollection)
+  const collection = await fetchAllCollectionProducts(query, fetchedCollection)
+  cache.set(collection)
+  return collection
 }
