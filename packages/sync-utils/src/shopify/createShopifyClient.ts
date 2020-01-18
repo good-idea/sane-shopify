@@ -28,7 +28,8 @@ export const createShopifyClient = (
   secrets: ShopifyClientConfig
 ): ShopifyClient => {
   const { shopName, accessToken } = secrets
-  const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql`
+  // const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql`
+  const url = `https://${shopName}.myshopify.com/api/graphql`
   const headers = {
     'Content-Type': 'application/json',
     'X-Shopify-Storefront-Access-Token': accessToken
