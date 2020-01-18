@@ -121,6 +121,7 @@ export const syncUtils = (
         sanityDocument: op.sanityDocument
       }
     }
+    // typescript should know better
     throw new Error('how did we get here?')
   }
 

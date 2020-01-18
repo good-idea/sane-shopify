@@ -13,7 +13,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
   const syncRelationships = createSyncRelationships(client)
 
   const documentByShopifyId = (shopifyId: string) =>
-    client.fetch<SanityShopifyDocument>(`*[shopifyId = $shopifyId][0]`, {
+    client.fetch<SanityShopifyDocument>(`*[shopifyId == $shopifyId][0]`, {
       shopifyId
     })
 
