@@ -83,14 +83,12 @@ export const shopifyProductSource = {
     {
       name: 'productType',
       title: 'Product Type',
-      hidden: true,
       type: 'string'
     },
     {
       name: 'tags',
       title: 'Tags',
       type: 'array',
-      hidden: true,
       of: [{ type: 'string' }]
     },
     {

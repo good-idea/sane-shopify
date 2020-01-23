@@ -1,7 +1,38 @@
 import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
-import { SanityDocumentConfig } from '../types'
+import { SanityDocumentConfig, SanityField } from '../types'
 import { MissingImage } from '../icons/MissingImage'
+
+export const createProductVariantFields = (variantFields?: SanityField[]) => {
+  return {
+    title: 'Product Variant',
+    name: 'productVariant',
+    type: 'object',
+    readOnly: true,
+    fields: [
+      {
+        name: 'id',
+        title: 'Variant ID',
+        type: 'string',
+        readOnly: true
+        // hidden: true
+      },
+      {
+        name: 'title',
+        title: 'Variant Title',
+        type: 'string'
+        // readOnly: true
+      },
+      {
+        title: 'Shopify Data',
+        name: 'sourceData',
+        readOnly: true,
+        type: 'shopifyProductVariantSource'
+      },
+      ...variantFields
+    ]
+  }
+}
 
 export const createProductDocument = ({
   fields,
@@ -47,6 +78,12 @@ export const createProductDocument = ({
         title: 'Collections',
         name: 'collections',
         type: 'linkedCollections'
+      },
+      {
+        title: 'Variants',
+        name: 'variants',
+        type: 'array',
+        of: [{ type: 'productVariant' }]
       },
       ...additionalFields
     ],
