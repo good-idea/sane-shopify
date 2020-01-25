@@ -33,6 +33,13 @@ export const shopifyCollectionSource = {
       rows: 3
     },
     {
+      title: 'Description (HTML)',
+      name: 'descriptionHtml',
+      type: 'text',
+      rows: 3,
+      hidden: true
+    },
+    {
       title: 'ID',
       name: 'id',
       type: 'string',
@@ -44,6 +51,11 @@ export const shopifyCollectionSource = {
       type: 'shopifySourceImage',
       hidden: true
     },
-    { title: 'Products', name: 'products', type: 'productsConnection' }
+    {
+      title: 'Products',
+      name: 'products',
+      type: 'productsConnection',
+      hidden: true
+    }
   ]
 }
