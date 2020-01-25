@@ -3,7 +3,7 @@ import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
 import { MissingImage } from '../icons/MissingImage'
 
-export const createProductVariantFields = ({
+export const createProductVariant = ({
   fields,
   ...rest
 }: SanityDocumentConfig = {}) => {
