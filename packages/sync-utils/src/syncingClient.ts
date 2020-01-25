@@ -198,6 +198,7 @@ export const syncUtils = (
 
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
+    // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
 
     const logger = createLogger(cbs)
@@ -227,6 +228,7 @@ export const syncUtils = (
 
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
+    // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
     const logger = createLogger(cbs)
     const allCollections = await fetchAllShopifyCollections()
@@ -253,14 +255,6 @@ export const syncUtils = (
 
     return results
   }
-
-  // TODO:
-  // create public versions of each method.
-  // The private ones should:
-  //  - round 1 sync - initial doc / documents
-  //  - link all sanity documents
-  //   -
-  //  - fire the onComplete callback
 
   return {
     syncCollectionByHandle,

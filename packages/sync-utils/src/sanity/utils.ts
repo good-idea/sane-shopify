@@ -1,3 +1,4 @@
+import { unwindEdges, Edge } from '@good-idea/unwind-edges'
 import { Collection, Product } from '@sane-shopify/types'
 
 export const sleep = (ms: number) =>
@@ -19,9 +20,15 @@ const getItemType = (item: Product | Collection) => {
   }
 }
 
+const addKeyByCursor = <T extends Edge<any>>(edges: T[]) =>
+  edges.map(({ cursor, node }) => ({
+    cursor,
+    node,
+    _key: cursor
+  }))
+
 // Pretty much just adds keys to arrays
 const prepareSourceData = <T extends Product | Collection>(item: T) => {
-  // TODO: Left off here. cannot map edges that don't exist
   if (item.__typename === 'Product') {
     // Add keys to product images
     return {
@@ -35,23 +42,19 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
         // @ts-ignore
         ...item.collections,
         // @ts-ignore
-        edges: item.collections.edges.map(({ cursor, node }) => ({
-          cursor,
-          node,
-          _key: cursor
-        }))
+        edges: addKeyByCursor(item.collections.edges)
+      },
+      variants: {
+        // @ts-ignore
+        ...item.variants,
+        // @ts-ignore
+        edges: addKeyByCursor(item.variants.edges)
       },
       images: {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         ...item.images,
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
-        edges: item.images.edges.map(({ cursor, node }) => {
-          return {
-            cursor,
-            node,
-            _key: cursor
-          }
-        })
+        edges: addKeyByCursor(item.images.edges)
       }
     }
   }
@@ -77,6 +80,26 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
   throw new Error('prepareImages can only be used for Products and Collections')
 }
 
+const createProductVariantObjects = (item: Product) => {
+  const [variants] = unwindEdges(item.variants)
+  return (
+    variants.map((v) => ({
+      _type: 'productVariant',
+      _key: v.id,
+      id: v.id,
+      title: v.title,
+      sourceData: {
+        ...v,
+        selectedOptions: v.selectedOptions.map(({ name, value }) => ({
+          _key: `${name}_${value}`.replace(/\s/, '_'),
+          name,
+          value
+        }))
+      }
+    })) || []
+  )
+}
+
 export const prepareDocument = <T extends Product | Collection>(item: T) => {
   const _type = getItemType(item)
   const sourceData = prepareSourceData(item)
@@ -87,5 +110,14 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
     handle: item.handle,
     sourceData
   }
-  return docInfo
+  switch (item.__typename) {
+    case 'Product':
+      return {
+        ...docInfo,
+        // @ts-ignore
+        variants: createProductVariantObjects(item)
+      }
+    default:
+      return docInfo
+  }
 }

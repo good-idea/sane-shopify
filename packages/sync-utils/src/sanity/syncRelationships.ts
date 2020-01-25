@@ -7,6 +7,13 @@ import {
 } from '@sane-shopify/types'
 import { SanityCache } from './sanityUtils'
 
+const arrayify = <T>(i: T | T[]) => (Array.isArray(i) ? i : [i])
+
+const removeDraftId = (doc: SanityShopifyDocument): SanityShopifyDocument => ({
+  ...doc,
+  _id: doc._id.replace(/^drafts\./, '')
+})
+
 export const createSyncRelationships = (
   client: SanityClient,
   cache: SanityCache
@@ -14,7 +21,7 @@ export const createSyncRelationships = (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
 ): Promise<SanityPair[]> => {
-  const toDocs = Array.isArray(to) ? to : [to]
+  const toDocs = arrayify(to).map(removeDraftId)
 
   const aToBKey = from._type === 'shopifyProduct' ? 'collections' : 'products'
   const aToBRelationships = toDocs.map((toDoc) => ({
