@@ -3,6 +3,56 @@ import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
 import { MissingImage } from '../icons/MissingImage'
 
+export const createProductVariant = ({
+  fields,
+  ...rest
+}: SanityDocumentConfig = {}) => {
+  if (rest && rest.name && rest.name !== 'shopifyProduct')
+    throw new Error('The object name for a product must be "productVariant"')
+  if (rest && rest.type && rest.type !== 'object')
+    throw new Error('The type for a Product Variant must be "variant"')
+  const additionalFields = fields || []
+  return {
+    title: 'Product Variant',
+    name: 'productVariant',
+    type: 'object',
+    fields: [
+      {
+        name: 'id',
+        title: 'Variant ID',
+        type: 'string',
+        readOnly: true,
+        hidden: true
+      },
+      {
+        name: 'title',
+        title: 'Variant Title',
+        type: 'string',
+        readOnly: true
+      },
+      {
+        title: 'Shopify Data',
+        name: 'sourceData',
+        readOnly: true,
+        hidden: true,
+        type: 'shopifyProductVariantSource'
+      },
+      ...additionalFields
+    ],
+    preview: {
+      select: {
+        title: 'title'
+      }
+      // prepare: ({ title }) => {
+      //   console.log(title)
+      //   return {
+      //     title
+      //   }
+      // }
+    }
+  }
+}
+
 export const createProductDocument = ({
   fields,
   ...rest
@@ -40,30 +90,37 @@ export const createProductDocument = ({
       {
         title: 'Shopify Data',
         name: 'sourceData',
-        readOnly: true,
-        type: 'shopifyProductSource'
+        type: 'shopifyProductSource',
+        readOnly: true
       },
       {
         title: 'Collections',
         name: 'collections',
-        type: 'linkedCollections'
+        type: 'linkedCollections',
+        hidden: true,
+        readOnly: true
+      },
+      {
+        title: 'Variants',
+        name: 'variants',
+        type: 'array',
+        // readOnly: true,
+        of: [{ type: 'productVariant' }]
       },
       ...additionalFields
     ],
     preview: {
       select: {
-        shopifyItem: 'shopifyItem',
         title: 'title',
         sourceData: 'sourceData'
       },
       prepare: (props) => {
-        const { shopifyItem, title, sourceData } = props
-        const itemTitle = shopifyItem ? title || shopifyItem.title : title
+        const { title, sourceData } = props
         const [images] = unwindEdges(sourceData.images)
         // @ts-ignore
         const src = images[0]?.w100
         return {
-          title: itemTitle,
+          title,
           media: (
             <div style={imageWrapperStyles}>
               {src ? (

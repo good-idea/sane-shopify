@@ -22,7 +22,7 @@ export interface SanityDocumentConfig {
  */
 
 interface SecretUtils {
-  saveSecrets: (Secrets) => Promise<boolean>
+  saveSecrets: (secrets: ShopifyClientConfig) => Promise<boolean>
   testSecrets: typeof testSecrets
 }
 

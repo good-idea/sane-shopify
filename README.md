@@ -2,15 +2,9 @@
 
 🚨 very alpha! in active development. 🚨
 
-To-do before major release:
+All minor version changes (`0.X.0`) are likely to have breaking changes. If you are updating and have issues, see the [alpha changelog](#alpha-changelog) below.
 
-- [x] Create references between products & collections within Sanity
-- [ ] Set up webhooks to sync when data changes in Shopify
-- [ ] Archive Sanity documents when items have been deleted in Shopify
-
-Coming up:
-
-- [ ] Extend fields on product variants
+See [this issue](https://github.com/good-idea/sane-shopify/issues/40) for the 1.0 roadmap.
 
 This repo consists of several packages that connect [Sanity](https://www.sanity.io) and the [Shopify Storefront API](https://help.shopify.com/en/api/storefront-api).
 
@@ -61,10 +55,16 @@ Add the Product and Collection documents to your schema:
 - Add all of the above to your schema. `saneShopifyObjects` is required.
 
 ```js
-import { createProductDocument, createCollectionDocument, saneShopifyObjects } from '@sane-shopify/sanity-plugin'
+import {
+  createProductDocument,
+  createProductVariant,
+  createCollectionDocument,
+  saneShopifyObjects
+} from '@sane-shopify/sanity-plugin'
 
 const product = createProductDocument()
 const collection = createCollectionDocument()
+const productVariant = createProductVariant()
 
 export default createSchema({
   name: 'default',
@@ -72,8 +72,9 @@ export default createSchema({
     /* Your types here! */
     ...saneShopifyObjects,
     product,
+    productVariant,
     collection
-  ]),
+  ])
 })
 ```
 
@@ -107,13 +108,13 @@ The two document types have a number of read-only fields:
 {
   title: 'Product Title',
   handle: 'product-title',
-  
+
   /* The product's ID in the Storefront API */
   shopifyId: 'Zf5n....',
-  
+
   /* Other product data such as description, images, price, variants, etc */
   sourceData: { ... },
-  
+
   /* (shopifyProduct only) An array of references to the corresponding collection documents in sanity */
   collections: [ ... ],
 
@@ -150,3 +151,17 @@ const document = createProductDocument({
   ],
 })
 ```
+
+---
+
+# Alpha Changelog
+
+### 0.7.0
+
+New features:
+
+- Add fields to product variants
+
+**Migrating from 0.6.x**
+
+`@sane-shopify/sanity-plugin` now exports one more function, `createProductVariantFields`. Use it the same as the other exports - see the example in the usage instructions above.

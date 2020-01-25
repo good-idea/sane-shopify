@@ -1,8 +1,6 @@
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import { Collection, Product, SanityClient } from '@sane-shopify/types'
 
-// TODO: the use of 'shopifyProduct' and 'shopifyCollection' should
-// use constants shared throughout sane-shopify
 export const getItemType = (item: Product | Collection) => {
   switch (item.__typename) {
     case 'Product':

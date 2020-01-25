@@ -32,6 +32,28 @@ const imageFragment = /* GraphQL */ `
  * Product Queries
  */
 
+export const productVariantFragment = gql`
+  fragment ProductVariantFragment on ProductVariant {
+    availableForSale
+    id
+    image {
+      ...ImageFragment
+    }
+    priceV2 {
+      ...MoneyV2Fragment
+    }
+    selectedOptions {
+      value
+      name
+    }
+    requiresShipping
+    sku
+    title
+    weight
+    weightUnit
+  }
+`
+
 export const productFragment = gql`
   fragment ProductFragment on Product {
     __typename
@@ -39,6 +61,7 @@ export const productFragment = gql`
     handle
     title
     description
+    descriptionHtml
     availableForSale
     productType
     tags
@@ -46,6 +69,18 @@ export const productFragment = gql`
       id
       name
       values
+    }
+    variants(first: 200) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        cursor
+        node {
+          ...ProductVariantFragment
+        }
+      }
     }
     priceRange {
       minVariantPrice {
@@ -66,6 +101,7 @@ export const productFragment = gql`
   }
   ${moneyFragment}
   ${imageFragment}
+  ${productVariantFragment}
 `
 
 /**
@@ -78,6 +114,7 @@ export const collectionFragment = /* GraphQL */ `
     handle
     title
     description
+    descriptionHtml
     __typename
     image {
       ...ImageFragment

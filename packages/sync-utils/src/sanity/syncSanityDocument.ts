@@ -5,9 +5,28 @@ import {
   SyncOperation,
   SanityShopifyDocument
 } from '@sane-shopify/types'
-import { isMatch } from 'lodash-es'
+import { isMatch } from 'lodash'
 import { prepareDocument, sleep } from './utils'
 import { SanityCache } from './sanityUtils'
+
+const mergeVariantFields = (
+  docInfo: any,
+  existingDoc: SanityShopifyDocument
+) => {
+  if (!docInfo.variants) return docInfo
+  return {
+    ...docInfo,
+    variants: docInfo.variants.map((variant) => {
+      const existingVariant =
+        existingDoc.variants.find((v) => v.id === variant.id) || {}
+
+      return {
+        ...existingVariant,
+        ...variant
+      }
+    })
+  }
+}
 
 export const createSyncSanityDocument = (
   client: SanityClient,
@@ -66,7 +85,7 @@ export const createSyncSanityDocument = (
 
     const updatedDoc = await client
       .patch<SanityShopifyDocument>(existingDoc._id)
-      .set(docInfo)
+      .set(mergeVariantFields(docInfo, existingDoc))
       .commit()
 
     cache.set(updatedDoc)

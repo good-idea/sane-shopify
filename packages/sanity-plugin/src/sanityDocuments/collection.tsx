@@ -63,7 +63,7 @@ export const createCollectionDocument = ({
         name: 'products',
         type: 'array',
         description: 'Synced from Shopify',
-        readOnly: true,
+        // readOnly: true,
         of: [
           {
             type: 'reference',

@@ -6,7 +6,10 @@ export const createFetchAll = (
   cache: SanityCache
 ) => async (): Promise<SanityShopifyDocument[]> => {
   const allDocs = await client.fetch<SanityShopifyDocument[]>(`
-    *[shopifyId != null && _type == 'shopifyCollection' || _type == 'shopifyProduct']{
+  *[
+    shopifyId != null &&
+    (_type == 'shopifyCollection' || _type == 'shopifyProduct')
+   ]{
       collections[]->,
       products[]->,
       ...,
