@@ -18,7 +18,7 @@ export const PRODUCTS_QUERY = gql`
         cursor
         node {
           ...ProductFragment
-          collections(first: 200) {
+          collections(first: 20) {
             pageInfo {
               hasNextPage
               hasPreviousPage
@@ -53,9 +53,10 @@ export const createFetchAllShopifyProducts = (
   ): Promise<Product[]> => {
     const after = prevPage ? getLastCursor(prevPage) : undefined
     const result = await query<QueryResult>(PRODUCTS_QUERY, {
-      first: 200,
+      first: 50,
       after
     })
+    console.log(result)
     const fetchedProducts = result.data.products
     const products = prevPage
       ? mergePaginatedResults(prevPage, fetchedProducts)

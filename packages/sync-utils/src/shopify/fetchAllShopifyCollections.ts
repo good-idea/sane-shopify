@@ -18,7 +18,7 @@ export const COLLECTIONS_QUERY = gql`
         cursor
         node {
           ...CollectionFragment
-          products(first: 200) {
+          products(first: 50) {
             pageInfo {
               hasNextPage
               hasPreviousPage
@@ -53,7 +53,7 @@ export const createFetchAllShopifyCollections = (
   ): Promise<Collection[]> => {
     const after = prevPage ? getLastCursor(prevPage) : undefined
     const result = await query<QueryResult>(COLLECTIONS_QUERY, {
-      first: 200,
+      first: 50,
       after
     })
     const fetchedCollections = result.data.collections
