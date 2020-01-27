@@ -164,4 +164,4 @@ New features:
 
 **Migrating from 0.6.x**
 
-`@sane-shopify/sanity-plugin` now exports one more function, `createProductVariantFields`. Use it the same as the other exports - see the example in the usage instructions above.
+`@sane-shopify/sanity-plugin` now exports one more function, `createProductVariant`. Use it the same as the other exports - see the example in the usage instructions above.
