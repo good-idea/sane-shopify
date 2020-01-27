@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash-es'
+import { uniqueId } from 'lodash'
 import * as React from 'react'
 import { ClientContextValue, SaneConsumer } from '../Provider'
 /* tslint:disable */
@@ -55,10 +55,10 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   }
 
   public handleSubmit = async () => {
-    await this.setState({ loading: true })
+    this.setState({ loading: true })
     const { testSecrets, saveSecrets } = this.props
     const { shopName, accessToken } = this.state
-    const { valid, data, message } = await testSecrets({
+    const { valid, message } = await testSecrets({
       shopName,
       accessToken
     })
@@ -71,7 +71,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
       return
     }
     await saveSecrets({ shopName, accessToken })
-    await this.setState({
+    this.setState({
       message,
       loading: false,
       error: false,
@@ -80,9 +80,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   }
 
   public handleUnlink = async () => {
-    await this.setState({ loading: true })
+    this.setState({ loading: true })
     this.props.clearSecrets()
-    await this.setState({ loading: false })
+    this.setState({ loading: false })
   }
 
   public render() {

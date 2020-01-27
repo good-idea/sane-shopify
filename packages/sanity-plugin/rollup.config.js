@@ -6,19 +6,20 @@ export default {
   output: [
     {
       file: pkg.main,
-      format: 'cjs'
+      format: 'cjs',
+      sourcemap: true
     },
     {
       file: pkg.module,
-      format: 'es'
+      format: 'es',
+      sourcemap: true
     }
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     'react-icons/ai',
-    'react-icons/md',
-    'lodash-es/uniqueId'
+    'react-icons/md'
   ],
   plugins: [
     typescript({

@@ -87,7 +87,6 @@
 		"@sanity/components": "^0.144.2",
 		"@sanity/form-builder": "^0.144.2",
 		"lodash": "^4.17.15",
-		"lodash-es": "^4.17.15",
 		"react-icons": "^3.8.0"
 	},
 	"gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
