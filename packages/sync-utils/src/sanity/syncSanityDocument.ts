@@ -17,8 +17,9 @@ const mergeVariantFields = (
   return {
     ...docInfo,
     variants: docInfo.variants.map((variant) => {
-      const existingVariant =
-        existingDoc.variants.find((v) => v.id === variant.id) || {}
+      const existingVariant = existingDoc.variants
+        ? existingDoc.variants.find((v) => v.id === variant.id) || {}
+        : {}
 
       return {
         ...existingVariant,
