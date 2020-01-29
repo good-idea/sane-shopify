@@ -248,8 +248,9 @@ export const syncUtils = (
 
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        const linked = await makeRelationships(result)
-        logger.logLinked(result.operation.sanityDocument, linked)
+        const pairs = await makeRelationships(result)
+        logger.logLinked(result.operation.sanityDocument, pairs)
+        return pairs
       })
     )
 

@@ -30,7 +30,8 @@ const createCache = (): SanityCache => {
     return shopifyIds[shopifyId] || null
   }
 
-  const set = (doc: SanityShopifyDocument) => {
+  const set = (doc?: SanityShopifyDocument) => {
+    if (!doc) return
     ids[doc._id] = doc
     if (doc.shopifyId) shopifyIds[doc.shopifyId] = doc
   }
@@ -64,7 +65,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
         shopifyId
       }
     )
-    cache.set(doc)
+    if (doc) cache.set(doc)
     return doc
   }
   return {

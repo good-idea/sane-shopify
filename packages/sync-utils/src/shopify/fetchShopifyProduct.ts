@@ -89,7 +89,7 @@ const getById = async (
 ) => {
   const result = await query<ByIdResult>(PRODUCT_BY_ID, {
     id,
-    collectionsFirst: 200,
+    collectionsFirst: 20,
     collectionsAfter
   })
   return result?.data?.node

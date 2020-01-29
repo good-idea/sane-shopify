@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import { Collection } from '@sane-shopify/types'
 
 /**
  * Shared
@@ -70,7 +69,7 @@ export const productFragment = gql`
       name
       values
     }
-    variants(first: 200) {
+    variants(first: 20) {
       pageInfo {
         hasNextPage
         hasPreviousPage
@@ -90,7 +89,7 @@ export const productFragment = gql`
         ...MoneyV2Fragment
       }
     }
-    images(first: 100) {
+    images(first: 50) {
       edges {
         cursor
         node {

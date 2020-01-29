@@ -49,7 +49,7 @@ export const createSyncSanityDocument = (
         shopifyId
       }
     )
-    cache.set(doc)
+    if (doc) cache.set(doc)
     return doc
   }
 

@@ -10,7 +10,7 @@ export const NODE_QUERY = gql`
     node(id: $id) {
       ... on Product {
         ...ProductFragment
-        collections(first: 200) {
+        collections(first: 20) {
           pageInfo {
             hasNextPage
             hasPreviousPage
@@ -26,7 +26,7 @@ export const NODE_QUERY = gql`
       }
       ... on Collection {
         ...CollectionFragment
-        products(first: 200) {
+        products(first: 50) {
           pageInfo {
             hasNextPage
             hasPreviousPage

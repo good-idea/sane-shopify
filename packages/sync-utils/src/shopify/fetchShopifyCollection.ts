@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import Debug from 'debug'
 import {
   ShopifyClient,
   ShopifyItemParams,
@@ -7,6 +8,8 @@ import {
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { collectionFragment } from './queryFragments'
 import { ShopifyCache } from './shopifyUtils'
+
+const log = Debug('sane-shopify:fetching')
 
 const COLLECTION_BY_HANDLE = gql`
   query CollectionQuery(
@@ -46,7 +49,7 @@ const getByHandle = async (
 ) => {
   const result = await query<ByHandleResult>(COLLECTION_BY_HANDLE, {
     handle,
-    productsFirst: 200,
+    productsFirst: 50,
     productsAfter
   })
   return result?.data?.collectionByHandle
@@ -99,12 +102,20 @@ export const fetchAllCollectionProducts = async (
   query: ShopifyClient['query'],
   prevCollection: Collection
 ): Promise<Collection> => {
-  if (!prevCollection) {
-    debugger
+  if (!prevCollection.products?.pageInfo.hasNextPage) {
+    log(
+      `Fetched all products for collection ${prevCollection.handle}`,
+      prevCollection
+    )
+    return prevCollection
   }
-  if (!prevCollection.products?.pageInfo.hasNextPage) return prevCollection
 
   const productsAfter = getLastCursor(prevCollection.products)
+
+  log(
+    `Fetching further products for collection ${prevCollection.handle}`,
+    prevCollection
+  )
   const nextCollection = await getByHandle(
     query,
     prevCollection.handle,
@@ -121,8 +132,12 @@ export const fetchAllCollectionProducts = async (
   }
 
   if (collection.products.pageInfo.hasNextPage) {
-    return fetchAllCollectionProducts(query, prevCollection)
+    return fetchAllCollectionProducts(query, collection)
   }
+  log(
+    `Fetched all products for collection ${prevCollection.handle}`,
+    prevCollection
+  )
   return collection
 }
 
