@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.4](https://github.com/good-idea/sane-shopify/compare/v0.7.3...v0.7.4) (2020-02-01)
+
+### Bug Fixes
+
+- **sanity-plugin:** update product variant id field name ([c45201b](https://github.com/good-idea/sane-shopify/commit/c45201b6cb898031626719f50725992484e087ce))
+
 ## [0.7.3](https://github.com/good-idea/sane-shopify/compare/v0.7.2...v0.7.3) (2020-01-29)
 
 **Note:** Version bump only for package @sane-shopify/sanity-plugin
