@@ -18,7 +18,7 @@ export const createProductVariant = ({
     type: 'object',
     fields: [
       {
-        name: 'id',
+        name: 'shopifyVariantID',
         title: 'Variant ID',
         type: 'string',
         readOnly: true,
@@ -43,12 +43,6 @@ export const createProductVariant = ({
       select: {
         title: 'title'
       }
-      // prepare: ({ title }) => {
-      //   console.log(title)
-      //   return {
-      //     title
-      //   }
-      // }
     }
   }
 }
