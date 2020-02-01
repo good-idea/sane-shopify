@@ -87,6 +87,7 @@ const createProductVariantObjects = (item: Product) => {
       _type: 'productVariant',
       _key: v.id,
       id: v.id,
+      shopifyVariantId: v.id,
       title: v.title,
       sourceData: {
         ...v,
