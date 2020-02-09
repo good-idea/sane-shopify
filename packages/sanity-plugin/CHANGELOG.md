@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.2](https://github.com/good-idea/sane-shopify/compare/v0.8.1...v0.8.2) (2020-02-09)
+
+### Bug Fixes
+
+- **sync-utils:** fix collection sourceProduct edges ([2572b5a](https://github.com/good-idea/sane-shopify/commit/2572b5aad182c976c91dc293ca98b11e98f9a2d7))
+
 ## [0.8.1](https://github.com/good-idea/sane-shopify/compare/v0.8.0...v0.8.1) (2020-02-09)
 
 ### Bug Fixes
