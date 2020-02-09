@@ -8,7 +8,7 @@ interface Fields {
 }
 
 export const getFieldConfig = (
-  fields: SanityDocumentConfig['fields'],
+  fields: SanityDocumentConfig['fields'] = [],
   fieldNames: string[] = []
 ): Fields => {
   const namedFields = fieldNames.reduce((acc, name) => {

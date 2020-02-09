@@ -11,7 +11,6 @@ import {
 import { saneShopifyObjects } from './sanityObjects'
 
 export const saneShopify = (config: SaneShopifyPluginConfig) => {
-  console.log(config)
   return [
     createProductDocument(config.product),
     createProductVariant(config.productVariant),

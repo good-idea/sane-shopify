@@ -96,7 +96,6 @@ export const createProductVariant = ({
   if (rest && rest.type && rest.type !== 'object')
     throw new Error('The type for a Product Variant must be "object"')
   const additionalFields = fields || []
-  console.log('variant', rest)
   return {
     title: 'Product Variant',
     name: 'shopifyProductVariant',
