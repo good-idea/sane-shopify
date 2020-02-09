@@ -1,7 +1,26 @@
 import { ShopifyIcon } from './icons/ShopifyIcon'
 import { ShopifyTool } from './ShopifyTool'
-export * from './sanityDocuments'
-export * from './sanityObjects'
+import { SaneShopifyConfig } from './types'
+import {
+  createCollectionDocument,
+  createProductDocument,
+  createProductOption,
+  createProductOptionValue,
+  createProductVariant
+} from './sanityDocuments'
+import { saneShopifyObjects } from './sanityObjects'
+
+export const saneShopify = (config: SaneShopifyConfig) => {
+  console.log(config)
+  return [
+    createProductDocument(config.product),
+    createProductVariant(config.productVariant),
+    createProductOption(config.productOption),
+    createProductOptionValue(config.productOptionValue),
+    createCollectionDocument(config.collection),
+    ...saneShopifyObjects
+  ]
+}
 
 export default {
   title: 'Shopify',

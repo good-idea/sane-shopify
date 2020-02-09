@@ -56,7 +56,7 @@ export const createCollectionDocument = ({
         title: 'Shopify Data',
         name: 'sourceData',
         readOnly: true,
-        type: 'shopifyCollectionSource'
+        type: 'shopifySourceCollection'
       },
       {
         title: 'Products',

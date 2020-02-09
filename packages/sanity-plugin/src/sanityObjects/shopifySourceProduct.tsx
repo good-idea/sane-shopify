@@ -1,5 +1,5 @@
-export const saneProductOption = {
-  name: 'saneProductOption',
+export const shopifySourceProductOption = {
+  name: 'shopifySourceProductOption',
   type: 'object',
   fields: [
     {
@@ -14,8 +14,8 @@ export const saneProductOption = {
   ]
 }
 
-export const saneMoney = {
-  name: 'saneMoney',
+export const shopifyMoneyV2 = {
+  name: 'shopifyMoneyV2',
   type: 'object',
   fields: [
     {
@@ -29,23 +29,54 @@ export const saneMoney = {
   ]
 }
 
-export const saneProductPriceRange = {
-  name: 'saneProductPriceRange',
+export const shopifySourceProductPriceRange = {
+  name: 'shopifySourceProductPriceRange',
   type: 'object',
   fields: [
     {
       name: 'minVariantPrice',
-      type: 'saneMoney'
+      type: 'shopifyMoneyV2'
     },
     {
       name: 'maxVariantPrice',
-      type: 'saneMoney'
+      type: 'shopifyMoneyV2'
     }
   ]
 }
 
-export const collectionsConnection = {
-  name: 'collectionsConnection',
+export const shopifySourceCollectionNode = {
+  name: 'shopifySourceCollectionNode',
+  type: 'object',
+  fields: [
+    {
+      name: 'handle',
+      type: 'string'
+    },
+    {
+      name: 'id',
+      type: 'string'
+    }
+  ]
+}
+
+export const shopifySourceCollectionEdge = {
+  name: 'shopifySourceCollectionEdge',
+  type: 'object',
+  fields: [
+    {
+      name: 'cursor',
+      type: 'string',
+      title: 'Cursor'
+    },
+    {
+      name: 'node',
+      type: 'shopifySourceCollectionNode'
+    }
+  ]
+}
+
+export const shopifySourceCollectionsConnection = {
+  name: 'shopifySourceCollectionsConnection',
   type: 'object',
   fields: [
     {
@@ -54,28 +85,29 @@ export const collectionsConnection = {
     },
     {
       name: 'edges',
-      type: 'shopifyEdges'
+      type: 'array',
+      of: [{ type: 'shopifySourceCollectionEdge' }]
     }
   ]
 }
 
-export const productVariantEdge = {
-  name: 'productVariantEdge',
+export const shopifySourceProductVariantEdge = {
+  name: 'shopifySourceProductVariantEdge',
   type: 'object',
   fields: [
     { name: 'cursor', type: 'string' },
-    { name: 'node', type: 'shopifyProductVariantSource' }
+    { name: 'node', type: 'shopifySourceProductVariant' }
   ]
 }
 
-export const productVariantEdges = {
-  name: 'productVariantEdges',
+export const shopifySourceProductVariantEdges = {
+  name: 'shopifySourceProductVariantEdges',
   type: 'array',
-  of: [{ type: 'productVariantEdge', name: 'edge' }]
+  of: [{ type: 'shopifySourceProductVariantEdge' }]
 }
 
-export const productVariantsConnection = {
-  name: 'productVariantsConnection',
+export const shopifySourceProductVariantsConnection = {
+  name: 'shopifySourceProductVariantsConnection',
   type: 'object',
   fields: [
     {
@@ -84,31 +116,24 @@ export const productVariantsConnection = {
     },
     {
       name: 'edges',
-      type: 'productVariantEdges'
+      type: 'shopifySourceProductVariantEdges'
     }
   ]
 }
 
 export const shopifyProductSource = {
   title: 'Shopify Product Data',
-  name: 'shopifyProductSource',
+  name: 'shopifySourceProduct',
   readOnly: true,
   type: 'object',
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },
     {
-      name: 'options',
-      title: 'Product Options',
-      hidden: true,
-      type: 'array',
-      of: [{ type: 'saneProductOption' }]
-    },
-    {
       name: 'priceRange',
       title: 'Price Range',
       hidden: true,
-      type: 'saneProductPriceRange'
+      type: 'shopifySourceProductPriceRange'
     },
     {
       name: 'productType',
@@ -125,7 +150,6 @@ export const shopifyProductSource = {
       title: 'Handle',
       name: 'handle',
       type: 'string'
-      // hidden: true,
     },
     {
       title: 'Description',
@@ -141,6 +165,12 @@ export const shopifyProductSource = {
       hidden: true
     },
     {
+      title: 'Vendor',
+      name: 'vendor',
+      type: 'string',
+      hidden: true
+    },
+    {
       title: 'ID',
       name: 'id',
       type: 'string',
@@ -153,15 +183,22 @@ export const shopifyProductSource = {
       hidden: true
     },
     {
+      title: 'Options',
+      name: 'options',
+      type: 'array',
+      hidden: true,
+      of: [{ type: 'shopifySourceProductOption' }]
+    },
+    {
       title: 'Variants',
       name: 'variants',
-      type: 'productVariantsConnection',
+      type: 'shopifySourceProductVariantsConnection',
       hidden: true
     },
     {
       title: 'Collections',
       name: 'collections',
-      type: 'collectionsConnection',
+      type: 'shopifySourceCollectionsConnection',
       hidden: true
     }
   ]

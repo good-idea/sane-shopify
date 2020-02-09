@@ -4,7 +4,11 @@ const ImagesPreview = (props) => {
   return (
     <>
       {props.value.edges.map((edge) => (
-        <img key={edge.cursor} src={edge.node.transformedSrc} alt={edge.node.altText} />
+        <img
+          key={edge.cursor}
+          src={edge.node.transformedSrc}
+          alt={edge.node.altText}
+        />
       ))}
     </>
   )
@@ -16,7 +20,7 @@ const ImagePreview = (props) => {
 
 export const imageEdge = {
   title: 'Image Edge',
-  name: 'shopifyImageEdge',
+  name: 'shopifySourceImageEdge',
   type: 'object',
   fields: [
     { type: 'string', name: 'key', title: 'Key' },
@@ -37,7 +41,7 @@ export const shopifyImages = {
       type: 'array',
       of: [
         {
-          type: 'shopifyImageEdge'
+          type: 'shopifySourceImageEdge'
         }
       ]
     }

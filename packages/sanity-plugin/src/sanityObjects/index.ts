@@ -1,7 +1,7 @@
 import * as imageObjects from './shopifyImage'
-import * as productObjects from './shopifyProductSource'
-import * as productVariantObjects from './shopifyProductVariantSource'
-import * as collectionObjects from './shopifyCollectionSource'
+import * as productObjects from './shopifySourceProduct'
+import * as productVariantObjects from './shopifySourceProductVariant'
+import * as collectionObjects from './shopifySourceCollection'
 import * as linked from './linked'
 import * as connections from './connections'
 

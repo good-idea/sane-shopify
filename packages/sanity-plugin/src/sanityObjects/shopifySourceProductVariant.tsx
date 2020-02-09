@@ -1,5 +1,5 @@
 export const selectedOptions = {
-  name: 'selectedOption',
+  name: 'shopifySourceSelectedOption',
   type: 'object',
   fields: [
     { name: 'name', type: 'string' },
@@ -7,9 +7,9 @@ export const selectedOptions = {
   ]
 }
 
-export const shopifyProductVariantSource = {
+export const shopifySourceProductVariant = {
   title: 'Shopify Product Data',
-  name: 'shopifyProductVariantSource',
+  name: 'shopifySourceProductVariant',
   readOnly: true,
   type: 'object',
   fields: [
@@ -17,13 +17,12 @@ export const shopifyProductVariantSource = {
     { name: 'id', title: 'ID', type: 'string' },
     // TODO: this will return as NULL from shopify if it does not exist.
     //       The sync plugin needs to figure out how to deal with this.
-    // { name: 'compareAtPriceV2', type: 'saneMoney' },
     { name: 'image', type: 'shopifySourceImage' },
-    { name: 'priceV2', type: 'saneMoney' },
+    { name: 'priceV2', type: 'shopifyMoneyV2' },
     {
       name: 'selectedOptions',
       type: 'array',
-      of: [{ type: 'selectedOption' }]
+      of: [{ type: 'shopifySourceSelectedOption' }]
     },
     { name: 'requiresShipping', type: 'boolean' },
     { name: 'sku', type: 'string' },

@@ -17,6 +17,14 @@ export interface SanityDocumentConfig {
   [key: string]: any
 }
 
+export interface SaneShopifyConfig {
+  product?: SanityDocumentConfig
+  productVariant?: SanityDocumentConfig
+  productOption?: SanityDocumentConfig
+  productOptionValue?: SanityDocumentConfig
+  collection?: SanityDocumentConfig
+}
+
 /**
  * Client Context
  */

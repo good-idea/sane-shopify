@@ -3,18 +3,102 @@ import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '../types'
 import { MissingImage } from '../icons/MissingImage'
 
+export const createProductOptionValue = ({
+  fields,
+  ...rest
+}: SanityDocumentConfig = {}) => {
+  if (rest && rest.name && rest.name !== 'productOption')
+    throw new Error(
+      'The object name for a product option must be "shopifyProductOptionValue"'
+    )
+  if (rest && rest.type && rest.type !== 'object')
+    throw new Error('The type for a Product Variant must be "object"')
+
+  const additionalFields = fields || []
+  return {
+    title: 'Option Value',
+    name: 'shopifyProductOptionValue',
+    type: 'object',
+    fields: [
+      {
+        name: 'value',
+        title: 'Value',
+        type: 'string',
+        readOnly: true
+      },
+      ...additionalFields
+    ],
+    preview: {
+      select: {
+        title: 'value'
+      }
+    },
+    ...rest
+  }
+}
+
+export const createProductOption = ({
+  fields,
+  ...rest
+}: SanityDocumentConfig = {}) => {
+  if (rest && rest.name && rest.name !== 'shopifyProductOption')
+    throw new Error(
+      'The object name for a product must be "shopifyProductOption"'
+    )
+  if (rest && rest.type && rest.type !== 'object')
+    throw new Error('The type for a Product Variant must be "object"')
+
+  const additionalFields = fields || []
+  console.log('option', additionalFields)
+  return {
+    title: 'Product Option',
+    name: 'shopifyProductOption',
+    type: 'object',
+    fields: [
+      {
+        name: 'shopifyOptionId',
+        title: 'Option ID',
+        readOnly: true,
+        type: 'string',
+        hidden: true
+      },
+      {
+        name: 'name',
+        title: 'Name',
+        readOnly: true,
+        type: 'string'
+      },
+      {
+        name: 'values',
+        title: 'Values',
+        type: 'array',
+        of: [{ type: 'shopifyProductOptionValue' }]
+      },
+      ...additionalFields
+    ],
+    preview: {
+      select: {
+        title: 'name'
+      }
+    },
+    ...rest
+  }
+}
+
 export const createProductVariant = ({
   fields,
   ...rest
 }: SanityDocumentConfig = {}) => {
-  if (rest && rest.name && rest.name !== 'shopifyProduct')
-    throw new Error('The object name for a product must be "productVariant"')
+  if (rest && rest.name && rest.name !== 'shopifyProductVariant')
+    throw new Error(
+      'The object name for a product must be "shopifyProductVariant"'
+    )
   if (rest && rest.type && rest.type !== 'object')
-    throw new Error('The type for a Product Variant must be "variant"')
+    throw new Error('The type for a Product Variant must be "object"')
   const additionalFields = fields || []
   return {
     title: 'Product Variant',
-    name: 'productVariant',
+    name: 'shopifyProductVariant',
     type: 'object',
     fields: [
       {
@@ -30,20 +114,21 @@ export const createProductVariant = ({
         type: 'string',
         readOnly: true
       },
+      ...additionalFields,
       {
         title: 'Shopify Data',
         name: 'sourceData',
         readOnly: true,
         hidden: true,
-        type: 'shopifyProductVariantSource'
-      },
-      ...additionalFields
+        type: 'shopifySourceProductVariant'
+      }
     ],
     preview: {
       select: {
         title: 'title'
       }
-    }
+    },
+    ...rest
   }
 }
 
@@ -84,7 +169,7 @@ export const createProductDocument = ({
       {
         title: 'Shopify Data',
         name: 'sourceData',
-        type: 'shopifyProductSource',
+        type: 'shopifySourceProduct',
         readOnly: true
       },
       {
@@ -95,11 +180,16 @@ export const createProductDocument = ({
         readOnly: true
       },
       {
+        title: 'Options',
+        name: 'options',
+        type: 'array',
+        of: [{ type: 'shopifyProductOption' }]
+      },
+      {
         title: 'Variants',
         name: 'variants',
         type: 'array',
-        // readOnly: true,
-        of: [{ type: 'productVariant' }]
+        of: [{ type: 'shopifyProductVariant' }]
       },
       ...additionalFields
     ],
@@ -113,12 +203,13 @@ export const createProductDocument = ({
         const [images] = unwindEdges(sourceData.images)
         // @ts-ignore
         const src = images[0]?.w100
+        const alt = `Image for ${title}`
         return {
           title,
           media: (
             <div style={imageWrapperStyles}>
               {src ? (
-                <img style={imageStyles} src={src} alt={`Image for ${title}`} />
+                <img style={imageStyles} src={src} alt={alt} />
               ) : (
                 <MissingImage />
               )}

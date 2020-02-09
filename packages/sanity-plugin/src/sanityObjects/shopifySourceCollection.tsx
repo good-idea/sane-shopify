@@ -1,5 +1,30 @@
-export const productsConnection = {
-  name: 'productsConnection',
+export const shopifySourceProductNode = {
+  name: 'shopifySourceProductNode',
+  type: 'object',
+  fields: [
+    { name: 'handle', type: 'string' },
+    { name: 'id', type: 'string' }
+  ]
+}
+
+export const shopifySourceProductEdge = {
+  name: 'shopifySourceProductEdge',
+  type: 'object',
+  fields: [
+    {
+      name: 'cursor',
+      type: 'string',
+      title: 'Cursor'
+    },
+    {
+      name: 'node',
+      type: 'shopifySourceProductNode'
+    }
+  ]
+}
+
+export const shopifySourceProductsConnection = {
+  name: 'shopifySourceProductsConnection',
   type: 'object',
   fields: [
     {
@@ -8,7 +33,7 @@ export const productsConnection = {
     },
     {
       name: 'edges',
-      type: 'shopifyEdges'
+      type: 'shopifySourceProductEdge'
     }
   ]
 }
@@ -16,7 +41,7 @@ export const productsConnection = {
 export const shopifyCollectionSource = {
   title: 'Shopify Data',
   readOnly: true,
-  name: 'shopifyCollectionSource',
+  name: 'shopifySourceCollection',
   type: 'object',
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
@@ -54,7 +79,7 @@ export const shopifyCollectionSource = {
     {
       title: 'Products',
       name: 'products',
-      type: 'productsConnection',
+      type: 'shopifySourceProductsConnection',
       hidden: true
     }
   ]
