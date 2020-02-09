@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.1](https://github.com/good-idea/sane-shopify/compare/v0.8.0...v0.8.1) (2020-02-09)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix missing fields error ([0a3ffdc](https://github.com/good-idea/sane-shopify/commit/0a3ffdc80a999ec7a116d72e055cb5d8b0c76aa6))
+
 # [0.8.0](https://github.com/good-idea/sane-shopify/compare/v0.7.4...v0.8.0) (2020-02-09)
 
 ### Features
