@@ -63,6 +63,12 @@ export interface Collection extends ShopifyItem {
   products: Paginated<Product>
 }
 
+export interface ProductOption {
+  id: string
+  name: string
+  values: string[]
+}
+
 export interface Product extends ShopifyItem {
   handle: string
   title: string
@@ -71,6 +77,7 @@ export interface Product extends ShopifyItem {
   priceRange?: ProductPriceRange
   availableForSale?: boolean
   collections?: Paginated<Collection>
+  options: ProductOption[]
   images: Paginated<ShopifyImage>
   variants: Paginated<Variant>
   __typename: 'Product'
