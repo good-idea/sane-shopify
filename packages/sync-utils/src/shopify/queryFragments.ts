@@ -64,6 +64,7 @@ export const productFragment = gql`
     availableForSale
     productType
     tags
+    vendor
     options {
       id
       name

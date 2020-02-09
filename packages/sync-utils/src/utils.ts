@@ -1,6 +1,16 @@
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import { Collection, Product, SanityClient } from '@sane-shopify/types'
 
+export const slugify = (text: string) =>
+  text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, '') // Trim - from end of text
+
 export const getItemType = (item: Product | Collection) => {
   switch (item.__typename) {
     case 'Product':
@@ -34,7 +44,7 @@ export const mergePaginatedResults = <NodeType>(
 })
 
 interface ProductRef {
-  _type: 'Product'
+  _type: 'shopifyProduct'
   _ref: string
   _key: string
 }

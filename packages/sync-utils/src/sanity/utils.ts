@@ -1,5 +1,6 @@
 import { unwindEdges, Edge } from '@good-idea/unwind-edges'
 import { Collection, Product } from '@sane-shopify/types'
+import { slugify } from '../utils'
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms))
@@ -20,10 +21,11 @@ const getItemType = (item: Product | Collection) => {
   }
 }
 
-const addKeyByCursor = <T extends Edge<any>>(edges: T[]) =>
+const addKeyByCursor = <T extends Edge<any>>(edges: T[], _type: string) =>
   edges.map(({ cursor, node }) => ({
     cursor,
     node,
+    _type,
     _key: cursor
   }))
 
@@ -33,6 +35,7 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
     // Add keys to product images
     return {
       ...item,
+      _type: 'shopifySourceProduct',
       // @ts-ignore
       options: item.options.map(({ id, ...option }) => ({
         ...option,
@@ -41,20 +44,26 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
       collections: {
         // @ts-ignore
         ...item.collections,
-        // @ts-ignore
-        edges: addKeyByCursor(item.collections.edges)
+        edges: addKeyByCursor(
+          // @ts-ignore
+          item.collections.edges,
+          'shopifySourceCollectionEdge'
+        )
       },
       variants: {
         // @ts-ignore
         ...item.variants,
-        // @ts-ignore
-        edges: addKeyByCursor(item.variants.edges)
+        edges: addKeyByCursor(
+          // @ts-ignore
+          item.variants.edges,
+          'shopifySourceProductVariantEdges'
+        )
       },
       images: {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         ...item.images,
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
-        edges: addKeyByCursor(item.images.edges)
+        edges: addKeyByCursor(item.images.edges, 'shopifySourceImageEdge')
       }
     }
   }
@@ -63,6 +72,7 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
     return {
       // @ts-ignore omfg
       ...item,
+      _type: 'shopifySourceCollection',
       // @ts-ignore -- not sure how to tell typescript that this is definitely a Collection
       image: item.image || {},
       products: {
@@ -80,19 +90,36 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
   throw new Error('prepareImages can only be used for Products and Collections')
 }
 
+const createProductOptions = (item: Product) => {
+  const { options } = item
+  return options.map((option) => ({
+    _type: 'shopifyProductOption',
+    _key: option.id,
+    shopifyOptionId: option.id,
+    name: option.name,
+    values: option.values.map((value) => ({
+      _type: 'shopifyProductOptionValue',
+      _key: slugify(value),
+      value: value
+    }))
+  }))
+}
+
 const createProductVariantObjects = (item: Product) => {
   const [variants] = unwindEdges(item.variants)
   return (
     variants.map((v) => ({
-      _type: 'productVariant',
+      _type: 'shopifyProductVariant',
       _key: v.id,
       id: v.id,
-      shopifyVariantId: v.id,
+      shopifyVariantID: v.id,
       title: v.title,
       sourceData: {
         ...v,
+        _type: 'shopifySourceProductVariant',
         selectedOptions: v.selectedOptions.map(({ name, value }) => ({
           _key: `${name}_${value}`.replace(/\s/, '_'),
+          _type: 'shopifySourceSelectedOption',
           name,
           value
         }))
@@ -115,6 +142,8 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
     case 'Product':
       return {
         ...docInfo,
+        // @ts-ignore
+        options: createProductOptions(item),
         // @ts-ignore
         variants: createProductVariantObjects(item)
       }
