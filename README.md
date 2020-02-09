@@ -46,39 +46,137 @@ This project does not:
 
 # Installation & Setup
 
+_New setup starting with v0.8.0_
+
 In your Sanity installation, install the plugin: `yarn add @sane-shopify/sanity-plugin`. Once installed, add `@sane-shopify/sanity-plugin` to the list of plugins in `sanity.json`.
 
 Add the Product and Collection documents to your schema:
 
-- Import the `saneShopifyObjects` array
-- Import `createProductDocument` and `createCollectionDocument` from `@sane-shopify/sanity-plugin`. Use these to create the bare document types. (See more on these functions below)
-- Add all of the above to your schema. `saneShopifyObjects` is required.
+- Import the `saneShopify` function
+- (optional) Pass in a configuration object to extend the fields for the different object & document types
 
 ```js
-import {
-  createProductDocument,
-  createProductVariant,
-  createCollectionDocument,
-  saneShopifyObjects
-} from '@sane-shopify/sanity-plugin'
+// schema.js
 
-const product = createProductDocument()
-const collection = createCollectionDocument()
-const productVariant = createProductVariant()
+import { saneShopify } from '@sane-shopify/sanity-plugin'
+
+const saneShopifyConfig = {
+  ... // optional. see "configuration" below
+}
+
+const saneShopifyTypes = saneShopify(saneShopifyConfig)
 
 export default createSchema({
   name: 'default',
   types: schemaTypes.concat([
-    /* Your types here! */
-    ...saneShopifyObjects,
-    product,
-    productVariant,
-    collection
+    ...saneShopifyTypes,
   ])
 })
 ```
 
-To add additional fields to these documents, see the [documented example](https://github.com/good-idea/sane-shopify/#createproductdocument-and-createcollectiondocument) below.
+# Usage
+
+Sane-shopify fetches your product and collection data from Shopify's [Storefront API](https://help.shopify.com/en/api/storefront-api), and stores up-to-date copies of this information within Sanity. This means you can query your Sanity endpoint directly for all of the data you need to display products and collections.
+
+## Collection & Product Documents
+
+This plugin will add two document types to your schema: `shopifyCollection` and `shopifyProduct`.
+
+### `shopifyCollection`
+
+The Collection document has:
+
+- the **read-only** fields, sourced from shopify: `title`, `handle`, and `shopifyId`
+- a **read-only** `products` field with an array of references to the `shopifyProduct` documents for the products in the collection.
+- a **read-only** `sourceData` field which contains the data used to sync this document. This includes fields like `image`, `description`, `tags`, and so on.
+
+### `shopifyProduct`
+
+The Product document has:
+
+- the **read-only** fields, sourced from shopify: `title`, `handle`, and `shopifyId`
+- a **read-only** `collections` field with an array of references to the `shopifyCollection` documents that this product belongs to.
+- a **read-only** `sourceData` field which contains the data used to sync this document. This includes fields like `images`, `availableForSale`, `variants`, `tags`, and so on.
+- an `options` field, which allows for custom fields for both the option (i.e. "Color") as well as option values (i.e. "Blue", "Green"). This can be helpful for instances when you would like to add things like custom descriptions or images for a particular option.
+- a `variants` field, which allows for custom fields for variant. Note that Shopify creates a variant for each _combination_ of the available options.
+
+## Extending Document and Objects
+
+The `shopifyCollection` and `shopifyProduct` documents can be extended with custom fields or other standard Sanity configuration, such as custom previews or input components.
+
+To set this up, create a configuration object and assign custom configuration to any of the following properties:
+
+- `collection`: Extend the collection document
+- `product`: Extend the product document
+- `productOption`: Extend the product option category. (i.e. "Color")
+- `productOptionValue`: Extend product option values (i.e. "Blue", "Green"). Note that this will be applied to _all_ option values, so if your product has both a "Size" and "Color" option, the fields specified here will show up in the options of both types.
+- `productVariant`: Extend the product variant
+
+Example:
+
+```js
+{
+  collection: {
+    // Shopify only allows a single image on collections. Here, we can add a gallery:
+    fields: [
+      {
+        name: 'gallery',
+        title: 'Gallery',
+        type: 'array',
+        of: [{ type: 'image' }]
+      }
+    ]
+  },
+  product: {
+    fields: [
+      // Shopify's HTML description input can get messy. Let's have our users enter the descriptions using Sanity's rich text instead.
+      {
+        name: 'description',
+        title: 'Description',
+        type: 'array',
+        of: [{ type: 'block' }]
+      },
+
+      // Our users won't be editing fields on product variants. Let's hide that field. This will merge the "hidden" value into the sane-shoipfy defaults:
+      {
+        name: 'variants',
+        hidden: true
+      }
+    ]
+  },
+  productVariant: {
+    // Not adding anything here!
+  },
+  productOption: {
+    // Let's make the preview for option list items a little more informative:
+    preview: {
+      select: {
+        name: 'name',
+        values: 'values'
+      },
+      prepare: (fields) => {
+        const { name, values } = fields
+        const subtitle = values.map((v) => v.value).join(' | ')
+        return {
+          title: name,
+          subtitle
+        }
+      }
+    }
+  },
+  productOptionValue: {
+    // Our "Color" options will get a custom image swatch to use on the frontend
+
+    fields: [
+      {
+        name: 'swatch',
+        title: 'Color Swatch',
+        type: 'image'
+      }
+    ]
+  }
+}
+```
 
 ## Connecting to Shopify
 
@@ -94,67 +192,25 @@ Enter your Shopify storefront name and your access token in the setup pane. Once
 
 ---
 
-# Usage
-
-Sane-shopify fetches your product and collection data from Shopify's [Storefront API](https://help.shopify.com/en/api/storefront-api), and stores up-to-date copies of this information within Sanity. This means you can query your Sanity endpoint directly for all of the data you need to display products and collections.
-
-## Document Structure
-
-`shopifyProduct` & `shopifyCollection`
-
-The two document types have a number of read-only fields:
-
-```
-{
-  title: 'Product Title',
-  handle: 'product-title',
-
-  /* The product's ID in the Storefront API */
-  shopifyId: 'Zf5n....',
-
-  /* Other product data such as description, images, price, variants, etc */
-  sourceData: { ... },
-
-  /* (shopifyProduct only) An array of references to the corresponding collection documents in sanity */
-  collections: [ ... ],
-
-  /* (shopifyCollection only) An array of references to the corresponding product documents in sanity */
-  products: [ ... ],
-
-  /* Any additional custom fields you add to these document types */
-}
-```
-
 ## Working with the Cart
 
 This plugin does not manage orders or customer carts. You will need to use Shopify's storefront API (or another solution) to do this. But, the sanity documents will include all of the product & variant IDs you need.
 
----
-
-# API Reference
-
-#### `createProductDocument` and `createCollectionDocument`
-
-Both Collection and Document types come with some default document configuration. To extend these, just pass in standard Sanity document configuration. Any `fields` you pass in will be appended to the default fields. Other properties will overwrite the defaults. The two fields that can not be changed are `type` and `name`.
-
-Example:
-
-```js
-const document = createProductDocument({
-  title: 'Shoe'
-  fields: [
-    {
-      name: 'sizingInfo'
-      type: 'textarea',
-      title: 'Sizing Information'
-    },
-  ],
-})
-```
-
----
-
 # Alpha Changelog
+
+### 0.8.0
+
+_This release contains several breaking changes._
+
+New features:
+
+- Add fields to product options and product option values
+- Simplified initial configuration
+
+**Migrating from 0.7.x**
+
+- Use `saneShopify(yourConfig)` instead of `createProductDocument`, `createCollectionDocument`, etc. See the updated documentation above.
+- Many of the internal object type names have been modified. After you re-sync, your documents will likely have many fields that need to be unset. If you would like to completely remove all shopify collections and documents from your dataset, you can use [this gist](https://gist.github.com/good-idea/1abc5429c0c2a0be760d3a318468c750)
 
 ### 0.7.0
 
