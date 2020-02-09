@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/good-idea/sane-shopify/compare/v0.7.4...v0.8.0) (2020-02-09)
+
+### Features
+
+- **sanity-plugin:** add product options, product option values ([ec1a222](https://github.com/good-idea/sane-shopify/commit/ec1a2227bb21c72e8e5bccc04444aaf9f3b3e237))
+- **sanity-plugin:** merge in options on default fields ([6e1f9ca](https://github.com/good-idea/sane-shopify/commit/6e1f9cab4b5bf3483d5672de2461f9ac798bacb7))
+
 ## [0.7.4](https://github.com/good-idea/sane-shopify/compare/v0.7.3...v0.7.4) (2020-02-01)
 
 ### Bug Fixes

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/good-idea/sane-shopify/compare/v0.7.4...v0.8.0) (2020-02-09)
+
+### Bug Fixes
+
+- **types:** move shopify plugin types to types package ([0ebcf2c](https://github.com/good-idea/sane-shopify/commit/0ebcf2c20cfc1c2956845fd17cad12ec85c518e1))
+
+### Features
+
+- **types:** add product option ([b8f9b29](https://github.com/good-idea/sane-shopify/commit/b8f9b2992a685c05b52e7e2edbc6e014c468907e))
+
 ## [0.7.1](https://github.com/good-idea/sane-shopify/compare/v0.7.0...v0.7.1) (2020-01-27)
 
 ### Bug Fixes
