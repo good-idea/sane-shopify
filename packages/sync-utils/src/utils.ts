@@ -1,5 +1,10 @@
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
-import { Collection, Product, SanityClient } from '@sane-shopify/types'
+import {
+  Collection,
+  Product,
+  SanityClient,
+  SanityDocumentConfig
+} from '@sane-shopify/types'
 
 export const slugify = (text: string) =>
   text
