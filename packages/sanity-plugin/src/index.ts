@@ -1,6 +1,6 @@
 import { ShopifyIcon } from './icons/ShopifyIcon'
 import { ShopifyTool } from './ShopifyTool'
-import { SaneShopifyConfig } from './types'
+import { SaneShopifyPluginConfig } from '@sane-shopify/types'
 import {
   createCollectionDocument,
   createProductDocument,
@@ -10,7 +10,7 @@ import {
 } from './sanityDocuments'
 import { saneShopifyObjects } from './sanityObjects'
 
-export const saneShopify = (config: SaneShopifyConfig) => {
+export const saneShopify = (config: SaneShopifyPluginConfig) => {
   console.log(config)
   return [
     createProductDocument(config.product),

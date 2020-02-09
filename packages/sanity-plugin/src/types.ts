@@ -2,30 +2,6 @@ import { ShopifyClient, ShopifyClientConfig } from '@sane-shopify/types'
 import { testSecrets } from './Provider/utils'
 
 /**
- * Sanity Config
- */
-
-export interface SanityField {
-  title: string
-  name: string
-  type: string
-  fields?: [SanityField]
-}
-
-export interface SanityDocumentConfig {
-  fields?: SanityField[]
-  [key: string]: any
-}
-
-export interface SaneShopifyConfig {
-  product?: SanityDocumentConfig
-  productVariant?: SanityDocumentConfig
-  productOption?: SanityDocumentConfig
-  productOptionValue?: SanityDocumentConfig
-  collection?: SanityDocumentConfig
-}
-
-/**
  * Client Context
  */
 

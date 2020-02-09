@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
-import { SanityDocumentConfig } from '../types'
+import { SanityDocumentConfig } from '@sane-shopify/types'
 import { MissingImage } from '../icons/MissingImage'
+import { getFieldConfig } from '../utils'
 
 export const createProductOptionValue = ({
   fields,
@@ -49,7 +50,6 @@ export const createProductOption = ({
     throw new Error('The type for a Product Variant must be "object"')
 
   const additionalFields = fields || []
-  console.log('option', additionalFields)
   return {
     title: 'Product Option',
     name: 'shopifyProductOption',
@@ -96,6 +96,7 @@ export const createProductVariant = ({
   if (rest && rest.type && rest.type !== 'object')
     throw new Error('The type for a Product Variant must be "object"')
   const additionalFields = fields || []
+  console.log('variant', rest)
   return {
     title: 'Product Variant',
     name: 'shopifyProductVariant',
@@ -140,7 +141,15 @@ export const createProductDocument = ({
     throw new Error('The document name for a product must be "shopifyProduct"')
   if (rest && rest.type && rest.type !== 'document')
     throw new Error('The type for a Shopify Product must be "document"')
-  const additionalFields = fields || []
+  const { namedFields, additionalFields } = getFieldConfig(fields, [
+    'title',
+    'handle',
+    'shopifyId',
+    'sourceData',
+    'collections',
+    'options',
+    'variants'
+  ])
   return {
     title: 'Product',
     name: 'shopifyProduct',
@@ -151,45 +160,51 @@ export const createProductDocument = ({
         name: 'title',
         readOnly: true,
         type: 'string',
-        hidden: true
+        hidden: true,
+        ...namedFields.title
       },
       {
         title: 'Page URI',
         name: 'handle',
         type: 'string',
         readOnly: true,
-        hidden: true
+        hidden: true,
+        ...namedFields.handle
       },
       {
         title: 'Shopify ID',
         name: 'shopifyId',
         type: 'string',
-        hidden: true
+        hidden: true,
+        ...namedFields.shopifyId
       },
       {
         title: 'Shopify Data',
         name: 'sourceData',
         type: 'shopifySourceProduct',
-        readOnly: true
+        readOnly: true,
+        ...namedFields.sourceData
       },
       {
         title: 'Collections',
         name: 'collections',
         type: 'linkedCollections',
-        hidden: true,
-        readOnly: true
+        readOnly: true,
+        ...namedFields.collections
       },
       {
         title: 'Options',
         name: 'options',
         type: 'array',
-        of: [{ type: 'shopifyProductOption' }]
+        of: [{ type: 'shopifyProductOption' }],
+        ...namedFields.options
       },
       {
         title: 'Variants',
         name: 'variants',
         type: 'array',
-        of: [{ type: 'shopifyProductVariant' }]
+        of: [{ type: 'shopifyProductVariant' }],
+        ...namedFields.variants
       },
       ...additionalFields
     ],

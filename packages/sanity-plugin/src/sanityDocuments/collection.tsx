@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { SanityDocumentConfig } from '../types'
+import { SanityDocumentConfig } from '@sane-shopify/types'
 import { MissingImage } from '../icons/MissingImage'
+import { getFieldConfig } from '../utils'
 
 const imageStyles = {
   width: '100%',
@@ -26,7 +27,13 @@ export const createCollectionDocument = ({
     )
   if (rest && rest.type && rest.type !== 'document')
     throw new Error('The type for a Shopify collection must be "document"')
-  const additionalFields = fields || []
+  const { namedFields, additionalFields } = getFieldConfig(fields, [
+    'title',
+    'handle',
+    'shopifyId',
+    'products',
+    'sourceData'
+  ])
   return {
     title: 'Collection',
     name: 'shopifyCollection',
@@ -37,33 +44,30 @@ export const createCollectionDocument = ({
         name: 'title',
         readOnly: true,
         type: 'string',
-        hidden: true
+        hidden: true,
+        ...namedFields.title
       },
       {
         title: 'Page URI',
         name: 'handle',
         type: 'string',
         readOnly: true,
-        hidden: true
+        hidden: true,
+        ...namedFields.handle
       },
       {
         title: 'Shopify ID',
         name: 'shopifyId',
         type: 'string',
-        hidden: true
-      },
-      {
-        title: 'Shopify Data',
-        name: 'sourceData',
-        readOnly: true,
-        type: 'shopifySourceCollection'
+        hidden: true,
+        ...namedFields.shopifyId
       },
       {
         title: 'Products',
         name: 'products',
         type: 'array',
         description: 'Synced from Shopify',
-        // readOnly: true,
+        readOnly: true,
         of: [
           {
             type: 'reference',
@@ -73,10 +77,16 @@ export const createCollectionDocument = ({
               }
             ]
           }
-        ]
+        ],
+        ...namedFields.products
       },
-
-      ...additionalFields
+      ...additionalFields,
+      {
+        title: 'Shopify Data',
+        name: 'sourceData',
+        readOnly: true,
+        type: 'shopifySourceCollection'
+      }
     ],
     preview: {
       select: {
