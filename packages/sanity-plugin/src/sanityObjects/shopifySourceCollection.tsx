@@ -33,7 +33,12 @@ export const shopifySourceProductsConnection = {
     },
     {
       name: 'edges',
-      type: 'shopifySourceProductEdge'
+      type: 'array',
+      of: [
+        {
+          type: 'shopifySourceProductEdge'
+        }
+      ]
     }
   ]
 }

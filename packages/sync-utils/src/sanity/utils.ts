@@ -79,11 +79,7 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
         // @ts-ignore
         ...item.products,
         // @ts-ignore
-        edges: item.products.edges.map(({ cursor, node }) => ({
-          cursor,
-          node,
-          _key: cursor
-        }))
+        edges: addKeyByCursor(item.products.edges, 'shopifySourceProductEdge')
       }
     }
   }
