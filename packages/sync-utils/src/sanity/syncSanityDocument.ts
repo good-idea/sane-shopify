@@ -9,14 +9,38 @@ import { isMatch } from 'lodash'
 import { prepareDocument, sleep } from './utils'
 import { SanityCache } from './sanityUtils'
 
-const mergeVariantFields = (
+const mergeExistingFields = (
   docInfo: any,
   existingDoc: SanityShopifyDocument
 ) => {
-  if (!docInfo.variants) return docInfo
+  const variants = docInfo.variants || []
+  const options = docInfo.options || []
+  console.log(docInfo, existingDoc)
   return {
     ...docInfo,
-    variants: docInfo.variants.map((variant) => {
+    options: options.map((updatedOption) => {
+      const existingOption = existingDoc.options
+        ? existingDoc.options.find((o) => o._key === updatedOption._key) || {}
+        : {}
+
+      const existingOptionValues = existingOption.values || []
+
+      return {
+        ...existingOption,
+        ...updatedOption,
+        values: updatedOption.values.map((updatedOptionValue) => {
+          const existingOptionValue = existingOptionValues.find(
+            (v) => v._key === updatedOptionValue._key
+          )
+          return {
+            ...existingOptionValue,
+            ...updatedOptionValue
+          }
+        })
+      }
+    }),
+
+    variants: variants.map((variant) => {
       const existingVariant = existingDoc.variants
         ? existingDoc.variants.find((v) => v.id === variant.id) || {}
         : {}
@@ -86,7 +110,7 @@ export const createSyncSanityDocument = (
 
     const updatedDoc = await client
       .patch<SanityShopifyDocument>(existingDoc._id)
-      .set(mergeVariantFields(docInfo, existingDoc))
+      .set(mergeExistingFields(docInfo, existingDoc))
       .commit()
 
     cache.set(updatedDoc)
