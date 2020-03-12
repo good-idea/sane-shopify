@@ -73,6 +73,8 @@ export interface Product extends ShopifyItem {
   handle: string
   title: string
   description: string
+  descriptionHtml: string
+  tags: string[]
   productType?: string
   priceRange?: ProductPriceRange
   availableForSale?: boolean
