@@ -132,6 +132,20 @@ export const createProductVariant = ({
   }
 }
 
+const imageStyles = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover' as 'cover'
+}
+
+const imageWrapperStyles = {
+  height: 'calc(100% - 4px)',
+  background: '#d0cfcf',
+  overflow: 'hidden',
+  borderRadius: '3px',
+  padding: '2px'
+}
+
 export const createProductDocument = ({
   fields,
   ...rest
@@ -234,18 +248,4 @@ export const createProductDocument = ({
     },
     ...rest
   }
-}
-
-const imageStyles = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover' as 'cover'
-}
-
-const imageWrapperStyles = {
-  height: 'calc(100% - 4px)',
-  background: '#d0cfcf',
-  overflow: 'hidden',
-  borderRadius: '3px',
-  padding: '2px'
 }

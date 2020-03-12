@@ -15,7 +15,7 @@ const ImagesPreview = (props) => {
 }
 
 const ImagePreview = (props) => {
-  return <img src={props.w100} alt={props.altText} />
+  return <img src={props.w100} alt={props.altText || undefined} />
 }
 
 export const imageEdge = {

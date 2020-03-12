@@ -164,7 +164,17 @@ export const syncUtils = (
     const shopifyProduct = await fetchShopifyProduct({ handle })
     logger.logFetched(shopifyProduct)
     const syncResult = await syncProduct(shopifyProduct)
-    await makeRelationships(syncResult)
+
+    const { sanityDocument } = syncResult.operation
+    logger.logSynced(syncResult.operation)
+    const pairs = await makeRelationships(syncResult)
+
+    logger.logLinked(sanityDocument, pairs)
+    logger.logComplete({
+      type: 'complete',
+      sanityDocument,
+      shopifySource: shopifyProduct
+    })
   }
 
   /* Syncs a collection and any products it is related to */

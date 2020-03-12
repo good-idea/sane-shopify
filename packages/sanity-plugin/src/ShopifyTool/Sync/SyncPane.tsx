@@ -1,10 +1,8 @@
 import * as React from 'react'
 import { Sync, SyncRenderProps } from './Sync'
 
-/* tslint:disable */
 const Button = require('part:@sanity/components/buttons/default').default
 const Fieldset = require('part:@sanity/components/fieldsets/default').default
-/* tslint:enable */
 
 const SyncPaneBase = ({
   syncState,
