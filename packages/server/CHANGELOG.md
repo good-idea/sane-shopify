@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.4](https://github.com/good-idea/sane-shopify/compare/v0.8.3...v0.8.4) (2020-03-14)
+
+### Bug Fixes
+
+- **server:** fix tsc errors ([f32eed0](https://github.com/good-idea/sane-shopify/commit/f32eed0e84340d59dc5211c70d85063621871989))
+
 ## [0.8.3](https://github.com/good-idea/sane-shopify/compare/v0.8.2...v0.8.3) (2020-02-26)
 
 **Note:** Version bump only for package @sane-shopify/server
