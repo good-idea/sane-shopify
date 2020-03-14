@@ -1,12 +1,10 @@
 import { Product, Collection, ShopifyItem } from './shopify'
-import { SyncOperation } from './main'
+import { LinkOperation, SyncOperation } from './main'
 
 export interface SanityPair {
   from: SanityShopifyDocument
   to: SanityShopifyDocument
 }
-
-export const foo = 'bar'
 
 /**
  * Types that are shared between the plugin, the hooks server, and the syncing client.
@@ -70,7 +68,7 @@ export interface SanityUtils {
   syncRelationships: (
     from: SanityShopifyDocument,
     to: SanityShopifyDocument | SanityShopifyDocument[]
-  ) => Promise<SanityPair[]>
+  ) => Promise<LinkOperation>
   fetchRelatedDocs: (related: ShopifyItem[]) => Promise<RelatedPairPartial[]>
   fetchAllSanityDocuments: () => Promise<SanityShopifyDocument[]>
   documentByShopifyId: (shopifyId: string) => Promise<SanityShopifyDocument>
