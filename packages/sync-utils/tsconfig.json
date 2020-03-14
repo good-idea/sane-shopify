@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "references": [{ "path": "../types" }],
   "compilerOptions": {
+    "strictNullChecks": true,
     "declarationDir": "./lib",
     "outDir": "./lib",
     "rootDir": "src",

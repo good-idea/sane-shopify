@@ -53,7 +53,8 @@
 		"es6-promise": "^4.2.8",
 		"graphql-tag": "^2.10.1",
 		"isomorphic-fetch": "^2.2.1",
-		"p-queue": "^6.2.1"
+		"p-queue": "^6.2.1",
+		"xstate": "^4.8.0"
 	},
 	"devDependencies": {
 		"@types/debug": "^4.1.5",

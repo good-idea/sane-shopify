@@ -63,6 +63,12 @@ export const createCollectionDocument = ({
         ...namedFields.shopifyId
       },
       {
+        title: 'Shopify Data',
+        name: 'sourceData',
+        readOnly: true,
+        type: 'shopifySourceCollection'
+      },
+      {
         title: 'Products',
         name: 'products',
         type: 'array',
@@ -80,13 +86,7 @@ export const createCollectionDocument = ({
         ],
         ...namedFields.products
       },
-      ...additionalFields,
-      {
-        title: 'Shopify Data',
-        name: 'sourceData',
-        readOnly: true,
-        type: 'shopifySourceCollection'
-      }
+      ...additionalFields
     ],
     preview: {
       select: {

@@ -1,3 +1,5 @@
+import { ShopifySourceProductPreview } from '../components'
+
 export const shopifySourceProductOption = {
   name: 'shopifySourceProductOption',
   type: 'object',
@@ -126,6 +128,7 @@ export const shopifyProductSource = {
   name: 'shopifySourceProduct',
   readOnly: true,
   type: 'object',
+  inputComponent: ShopifySourceProductPreview,
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },

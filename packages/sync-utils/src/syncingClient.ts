@@ -9,18 +9,25 @@ import {
   SyncOperationResult,
   SaneShopifyConfig,
   RelatedPair,
+  LinkOperation,
   SubscriptionCallbacks,
-  RelatedPairPartial
+  RelatedPairPartial,
+  SyncState
 } from '@sane-shopify/types'
+import { syncStateMachine } from './syncState'
 import { createLogger } from './logger'
 import { createShopifyClient, shopifyUtils } from './shopify'
 import { sanityUtils } from './sanity'
 
 export interface SyncUtils {
+  initialize: () => void
+  initialState: SyncState
+  /* Syncs all items */
+  syncAll: (cbs?: SubscriptionCallbacks) => Promise<void>
   /* Syncs all products */
-  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<any>
+  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void>
   /* Syncs all collections */
-  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<any>
+  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void>
   /* Syncs a product by handle*/
   syncProductByHandle: (
     handle: string,
@@ -32,7 +39,7 @@ export interface SyncUtils {
     cbs?: SubscriptionCallbacks
   ) => Promise<any>
   /* Syncs a collection or product by storefront id */
-  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<any>
+  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
 }
 
 /**
@@ -46,9 +53,12 @@ export interface SyncUtils {
  * - Calls any callbacks provided by the API end user
  */
 
+const noop = () => undefined
+
 export const syncUtils = (
   shopifyClient: ShopifyClient,
-  sanityClient: SanityClient
+  sanityClient: SanityClient,
+  onStateChange: (state: SyncState) => void = noop
 ): SyncUtils => {
   /**
    * Client Setup
@@ -68,6 +78,22 @@ export const syncUtils = (
     fetchRelatedDocs,
     documentByShopifyId
   } = sanityUtils(sanityClient)
+
+  /**
+   * State Management
+   */
+
+  const {
+    init,
+    initialState,
+    onDocumentsFetched,
+    startSync,
+    onError,
+    onFetchComplete,
+    onDocumentSynced,
+    onDocumentLinked,
+    onComplete
+  } = syncStateMachine({ onStateChange })
 
   /**
    * Private Methods
@@ -94,19 +120,19 @@ export const syncUtils = (
     partialPair: RelatedPairPartial
   ): Promise<RelatedPair> => {
     const { shopifyNode, sanityDocument } = partialPair
-    if (shopifyNode && sanityDocument) return partialPair
+    if (shopifyNode && sanityDocument) return { shopifyNode, sanityDocument }
     if (!shopifyNode && !sanityDocument) {
       throw new Error(
         'A partial pair must have either a shopifyNode or a sanityDocument'
       )
     }
 
-    if (!shopifyNode) {
+    if (!shopifyNode && sanityDocument) {
       const fetchedShopifyItem = await fetchItemById(sanityDocument.shopifyId)
       return { shopifyNode: fetchedShopifyItem, sanityDocument }
     }
 
-    if (!sanityDocument) {
+    if (!sanityDocument && shopifyNode) {
       const existingDoc = await documentByShopifyId(shopifyNode.id)
       if (existingDoc) {
         return {
@@ -129,7 +155,7 @@ export const syncUtils = (
   const makeRelationships = async ({
     operation,
     related
-  }: SyncOperationResult) => {
+  }: SyncOperationResult): Promise<LinkOperation> => {
     const initialPairs = await fetchRelatedDocs(related)
     const pairQueue = new PQueue({ concurrency: 1 })
 
@@ -143,8 +169,11 @@ export const syncUtils = (
       ({ sanityDocument }) => sanityDocument
     )
 
-    const r = await syncRelationships(operation.sanityDocument, relatedDocs)
-    return r
+    const linkOperation = await syncRelationships(
+      operation.sanityDocument,
+      relatedDocs
+    )
+    return linkOperation
   }
 
   /**
@@ -155,16 +184,42 @@ export const syncUtils = (
    * - logging the events
    */
 
+  /* Initializes the syncState */
+  const initialize = async () => {
+    init(true)
+  }
+
   /* Syncs a product and any collections it is related to */
   const syncProductByHandle = async (
     handle: string,
     cbs: SubscriptionCallbacks = {}
   ) => {
+    startSync()
     const logger = createLogger(cbs)
     const shopifyProduct = await fetchShopifyProduct({ handle })
+    if (!shopifyProduct) {
+      onError(new Error(`Could not find a product with handle "${handle}"`))
+      return
+    }
     logger.logFetched(shopifyProduct)
+
+    onDocumentsFetched([shopifyProduct])
+    onFetchComplete()
     const syncResult = await syncProduct(shopifyProduct)
-    await makeRelationships(syncResult)
+
+    const { sanityDocument } = syncResult.operation
+    logger.logSynced(syncResult.operation)
+    onDocumentSynced(syncResult.operation)
+    const linkOperation = await makeRelationships(syncResult)
+
+    onDocumentLinked(linkOperation)
+    logger.logLinked(sanityDocument, linkOperation.pairs)
+    logger.logComplete({
+      type: 'complete',
+      sanityDocument,
+      shopifySource: shopifyProduct
+    })
+    onComplete()
   }
 
   /* Syncs a collection and any products it is related to */
@@ -172,25 +227,46 @@ export const syncUtils = (
     handle: string,
     cbs: SubscriptionCallbacks = {}
   ) => {
+    startSync()
     const logger = createLogger(cbs)
     const shopifyCollection = await fetchShopifyCollection({ handle })
+    if (!shopifyCollection) {
+      onError(new Error(`Could not find a collection with handle "${handle}"`))
+      return
+    }
+
+    onDocumentsFetched([shopifyCollection])
+    onFetchComplete()
     logger.logFetched(shopifyCollection)
     const syncResult = await syncCollection(shopifyCollection)
-    await makeRelationships(syncResult)
+    onDocumentSynced(syncResult.operation)
+    const linkOperation = await makeRelationships(syncResult)
+    onDocumentLinked(linkOperation)
+    onComplete()
   }
 
   /* Sync an item by ID */
   const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
+    startSync()
     const logger = createLogger(cbs)
     const shopifyItem = await fetchItemById(id)
+
+    onDocumentsFetched([shopifyItem])
     logger.logFetched(shopifyItem)
     if (shopifyItem.__typename === 'Product') {
       const syncResult = await syncProduct(shopifyItem)
-      await makeRelationships(syncResult)
+      onDocumentSynced(syncResult.operation)
+      const linkOperation = await makeRelationships(syncResult)
+      onDocumentLinked(linkOperation)
+      onComplete()
     }
+
     if (shopifyItem.__typename === 'Collection') {
       const syncResult = await syncCollection(shopifyItem)
-      await makeRelationships(syncResult)
+      onDocumentSynced(syncResult.operation)
+      const linkOperation = await makeRelationships(syncResult)
+      onDocumentLinked(linkOperation)
+      onComplete()
     }
     // @ts-ignore
     throw new Error(`Item type ${shopifyItem.__typename} is not supported`)
@@ -199,16 +275,25 @@ export const syncUtils = (
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
     // do an initial fetch of all docs to populate the cache
+
+    startSync()
     await fetchAllSanityDocuments()
 
     const logger = createLogger(cbs)
-    const allProducts = await fetchAllShopifyProducts()
+
+    const onProgress = (products: Product[]) => {
+      onDocumentsFetched(products)
+    }
+
+    const allProducts = await fetchAllShopifyProducts(onProgress)
     logger.logFetched(allProducts)
+    onFetchComplete()
 
     const queue = new PQueue({ concurrency: 1 })
     const results = await queue.addAll(
       allProducts.map((product) => async () => {
         const result = await syncProduct(product)
+        onDocumentSynced(result.operation)
         logger.logSynced(result.operation)
         return result
       })
@@ -217,28 +302,37 @@ export const syncUtils = (
     const relationshipQueue = new PQueue({ concurrency: 1 })
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        const pairs = await makeRelationships(result)
-        logger.logLinked(result.operation.sanityDocument, pairs)
-        return pairs
+        const linkOperation = await makeRelationships(result)
+        logger.logLinked(result.operation.sanityDocument, linkOperation.pairs)
+        onDocumentLinked(linkOperation)
+        return linkOperation.pairs
       })
     )
 
-    return results
+    onComplete()
   }
 
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
+    startSync()
     // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
     const logger = createLogger(cbs)
-    const allCollections = await fetchAllShopifyCollections()
+
+    const onProgress = (collections: Collection[]) => {
+      onDocumentsFetched(collections)
+    }
+
+    const allCollections = await fetchAllShopifyCollections(onProgress)
     logger.logFetched(allCollections)
+    onFetchComplete()
 
     const queue = new PQueue({ concurrency: 1 })
 
     const results = await queue.addAll(
       allCollections.map((collection) => async () => {
         const result = await syncCollection(collection)
+        onDocumentSynced(result.operation)
         logger.logSynced(result.operation)
         return result
       })
@@ -248,28 +342,96 @@ export const syncUtils = (
 
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        const pairs = await makeRelationships(result)
-        logger.logLinked(result.operation.sanityDocument, pairs)
-        return pairs
+        const linkOperation = await makeRelationships(result)
+        logger.logLinked(result.operation.sanityDocument, linkOperation.pairs)
+        onDocumentLinked(linkOperation)
+        return linkOperation.pairs
       })
     )
 
-    return results
+    onComplete()
+  }
+
+  const syncAll = async (cbs: SubscriptionCallbacks = {}) => {
+    startSync()
+
+    // do an initial fetch of all docs to populate the cache
+    await fetchAllSanityDocuments()
+
+    const onProgress = (items: Collection[] | Product[]) => {
+      onDocumentsFetched(items)
+    }
+
+    const logger = createLogger(cbs)
+
+    const fetchCollections = async () => {
+      const collections = await fetchAllShopifyCollections(onProgress)
+      return collections
+    }
+
+    const fetchProducts = async () => {
+      const products = await fetchAllShopifyProducts(onProgress)
+      return products
+    }
+    const allProducts = await fetchProducts()
+    const allCollections = await fetchCollections()
+
+    // const [allCollections, allProducts] = await Promise.all([
+    //
+    //   fetchCollections, fetchProducts
+    // ])
+    const allItems = [...allCollections, ...allProducts]
+    onFetchComplete()
+
+    const queue = new PQueue({ concurrency: 1 })
+
+    const results = await queue.addAll(
+      allItems.map((item) => async () => {
+        const result =
+          item.__typename === 'Collection'
+            ? await syncCollection(item)
+            : item.__typename === 'Product'
+            ? await syncProduct(item)
+            : null
+        if (result === null) throw new Error('Could not sync item')
+
+        onDocumentSynced(result.operation)
+        logger.logSynced(result.operation)
+        return result
+      })
+    )
+
+    const relationshipQueue = new PQueue({ concurrency: 1 })
+
+    await relationshipQueue.addAll(
+      results.map((result) => async () => {
+        const linkOperation = await makeRelationships(result)
+        logger.logLinked(result.operation.sanityDocument, linkOperation.pairs)
+        onDocumentLinked(linkOperation)
+        return linkOperation.pairs
+      })
+    )
+
+    onComplete()
   }
 
   return {
+    initialize,
+    initialState,
     syncCollectionByHandle,
     syncProductByHandle,
     syncProducts,
     syncCollections,
+    syncAll,
     syncItemByID
   }
 }
 
 export const createSyncingClient = ({
-  shopify,
-  sanity
+  secrets,
+  onStateChange
 }: SaneShopifyConfig): SyncUtils => {
+  const { sanity, shopify } = secrets
   const sanityClient = createSanityClient({
     projectId: sanity.projectId,
     dataset: sanity.dataset,
@@ -278,5 +440,5 @@ export const createSyncingClient = ({
 
   const shopifyClient = createShopifyClient(shopify)
 
-  return syncUtils(shopifyClient, sanityClient)
+  return syncUtils(shopifyClient, sanityClient, onStateChange)
 }

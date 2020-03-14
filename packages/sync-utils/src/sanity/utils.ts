@@ -29,6 +29,15 @@ const addKeyByCursor = <T extends Edge<any>>(edges: T[], _type: string) =>
     _key: cursor
   }))
 
+const missingImage = {
+  altText: '',
+  id: '',
+  originalSrc: '',
+  w100: '',
+  w300: '',
+  w800: ''
+}
+
 // Pretty much just adds keys to arrays
 const prepareSourceData = <T extends Product | Collection>(item: T) => {
   if (item.__typename === 'Product') {
@@ -58,6 +67,16 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
           item.variants.edges,
           'shopifySourceProductVariantEdges'
         )
+        // .map((variant) => {
+        //   const { node } = variant
+        //   return {
+        //     ...variant,
+        //     node: {
+        //       ...node,
+        //       image: node.image ? node.image : missingImage
+        //     }
+        //   }
+        // })
       },
       images: {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
@@ -113,12 +132,15 @@ const createProductVariantObjects = (item: Product) => {
       sourceData: {
         ...v,
         _type: 'shopifySourceProductVariant',
-        selectedOptions: v.selectedOptions.map(({ name, value }) => ({
-          _key: `${name}_${value}`.replace(/\s/, '_'),
-          _type: 'shopifySourceSelectedOption',
-          name,
-          value
-        }))
+        image: v.image ? v.image : missingImage,
+        selectedOptions: v.selectedOptions
+          ? v.selectedOptions.map(({ name, value }) => ({
+              _key: `${name}_${value}`.replace(/\s/, '_'),
+              _type: 'shopifySourceSelectedOption',
+              name,
+              value
+            }))
+          : []
       }
     })) || []
   )
