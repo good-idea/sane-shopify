@@ -23,7 +23,7 @@ const createEventHandlers = (resolve, reject) => ({
 })
 
 export const createLambdas = (config: SaneShopifyConfig): SaneLambdas => {
-  if (!config.sanity.authToken)
+  if (!config.secrets.sanity.authToken)
     throw new Error(
       'You must provide a Sanity client auth token to use the Shopify webhooks. If you only want to use the GraphQL Lambda, use `createGraphQLHandler` instead. To find your Auth token, run `sanity debug --secrets`'
     )
