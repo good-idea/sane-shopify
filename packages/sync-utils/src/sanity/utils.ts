@@ -133,12 +133,14 @@ const createProductVariantObjects = (item: Product) => {
         ...v,
         _type: 'shopifySourceProductVariant',
         image: v.image ? v.image : missingImage,
-        selectedOptions: v.selectedOptions.map(({ name, value }) => ({
-          _key: `${name}_${value}`.replace(/\s/, '_'),
-          _type: 'shopifySourceSelectedOption',
-          name,
-          value
-        }))
+        selectedOptions: v.selectedOptions
+          ? v.selectedOptions.map(({ name, value }) => ({
+              _key: `${name}_${value}`.replace(/\s/, '_'),
+              _type: 'shopifySourceSelectedOption',
+              name,
+              value
+            }))
+          : []
       }
     })) || []
   )
@@ -147,7 +149,6 @@ const createProductVariantObjects = (item: Product) => {
 export const prepareDocument = <T extends Product | Collection>(item: T) => {
   const _type = getItemType(item)
   const sourceData = prepareSourceData(item)
-  console.log(sourceData)
   const docInfo = {
     _type,
     title: item.title,

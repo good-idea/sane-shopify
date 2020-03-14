@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import PQueue from 'p-queue'
 import Debug from 'debug'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
-import { ShopifyClient, Collection } from '@sane-shopify/types'
+import { ProgressHandler, ShopifyClient, Collection } from '@sane-shopify/types'
 import { ShopifyCache } from './shopifyUtils'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { collectionFragment } from './queryFragments'
@@ -47,10 +47,14 @@ interface QueryResult {
   }
 }
 
+const noop = () => undefined
+
 export const createFetchAllShopifyCollections = (
   query: ShopifyClient['query'],
   cache: ShopifyCache
-) => async (): Promise<Collection[]> => {
+) => async (
+  onProgress: ProgressHandler<Collection> = noop
+): Promise<Collection[]> => {
   const allStartTimer = new Date()
   const fetchCollections = async (
     prevPage?: Paginated<Collection>
@@ -66,9 +70,15 @@ export const createFetchAllShopifyCollections = (
     const duration = new Date().getTime() - now.getTime()
     log(`Fetched page of Shopify Collections in ${duration / 1000}s`, result)
     const fetchedCollections = result.data.collections
+    const [batch] = unwindEdges(fetchedCollections)
+    onProgress(batch)
+
     const collections = prevPage
       ? mergePaginatedResults(prevPage, fetchedCollections)
       : fetchedCollections
+    if (!collections.pageInfo) {
+      throw new Error('Pagination info was not fetched')
+    }
     if (collections.pageInfo.hasNextPage) return fetchCollections(collections)
     const [unwound] = unwindEdges(fetchedCollections)
     unwound.forEach((collection) => cache.set(collection))

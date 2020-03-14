@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import PQueue from 'p-queue'
 import Debug from 'debug'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
-import { ShopifyClient, Product } from '@sane-shopify/types'
+import { ProgressHandler, ShopifyClient, Product } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { productFragment } from './queryFragments'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
@@ -47,10 +47,14 @@ interface QueryResult {
   }
 }
 
+const noop = () => undefined
+
 export const createFetchAllShopifyProducts = (
   query: ShopifyClient['query'],
   cache: ShopifyCache
-) => async (): Promise<Product[]> => {
+) => async (
+  onProgress: ProgressHandler<Product> = noop
+): Promise<Product[]> => {
   const allStartTimer = new Date()
   const fetchProducts = async (
     prevPage?: Paginated<Product>
@@ -64,9 +68,14 @@ export const createFetchAllShopifyProducts = (
     const duration = new Date().getTime() - now.getTime()
     log(`Fetched page of Shopify Products in ${duration / 1000}s`, result)
     const fetchedProducts = result.data.products
+    const [productsPage] = unwindEdges(fetchedProducts)
+    onProgress(productsPage)
     const products = prevPage
       ? mergePaginatedResults(prevPage, fetchedProducts)
       : fetchedProducts
+    if (!products.pageInfo) {
+      throw new Error('Products page info was not fetched')
+    }
     if (products.pageInfo.hasNextPage) return fetchProducts(products)
     const [unwound] = unwindEdges(products)
     unwound.forEach((product) => cache.set(product))

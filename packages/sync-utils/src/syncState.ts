@@ -1,20 +1,12 @@
-import { Machine, assign } from 'xstate'
+import { Machine, State, assign } from 'xstate'
 import {
   LinkOperation,
   SyncOperation,
   Product,
   Collection,
-  SanityShopifyDocument
+  SyncContext,
+  SyncState
 } from '@sane-shopify/types'
-
-interface SyncContext {
-  documentsFetched: Array<Product | Collection>
-  toSync: number
-  syncOperations: SyncOperation[]
-  toLink: number
-  linkOperations: LinkOperation[]
-  error: string | void
-}
 
 /** Actions */
 
@@ -29,38 +21,65 @@ const FETCHED_COMPLETE = 'FETCHED_COMPLETE'
 
 interface DocumentsFetchedCompleteAction {
   type: typeof FETCHED_COMPLETE
+  shopifyDocuments: Array<Product | Collection>
 }
 
 const DOCUMENTS_SYNCED = 'DOCUMENTS_SYNCED'
 
 interface DocumentsSyncedAction {
   type: typeof DOCUMENTS_SYNCED
-  ops: SyncOperation[]
+  op: SyncOperation
 }
 
 const DOCUMENTS_LINKED = 'DOCUMENTS_LINKED'
 
 interface DocumentsLinkedAction {
   type: typeof DOCUMENTS_LINKED
-  ops: LinkOperation[]
+  op: LinkOperation
+}
+
+const ERRORED = 'ERRORED'
+
+interface ErrorAction {
+  type: typeof ERRORED
+  errorMessage: string
+  error: Error
+}
+
+const initialContext = {
+  documentsFetched: [],
+  toSync: [],
+  syncOperations: [],
+  toLink: [],
+  linkOperations: [],
+  error: undefined,
+  errorMessage: undefined,
+  valid: false,
+  ready: false
 }
 
 const syncMachine = Machine<SyncContext>({
   id: 'syncMachine',
   initial: 'init',
-  context: {
-    documentsFetched: [],
-    toSync: 0,
-    syncOperations: [],
-    toLink: 0,
-    linkOperations: [],
-    error: undefined
-  },
+  context: initialContext,
   states: {
     init: {
       on: {
-        VALID: 'ready',
-        INVALID: 'setup'
+        VALID: {
+          target: 'ready',
+          actions: assign<SyncContext>({
+            ...initialContext,
+            valid: true,
+            ready: true
+          })
+        },
+        INVALID: {
+          target: 'setup',
+          actions: assign<SyncContext>({
+            valid: () => false,
+            ready: () => true
+          })
+        }
       }
     },
     setup: {
@@ -73,8 +92,9 @@ const syncMachine = Machine<SyncContext>({
         VALID: 'ready',
         INVALID: {
           target: 'setup',
-          actions: assign<SyncContext>({
-            error: () => 'Error Message'
+          actions: assign<SyncContext, ErrorAction>({
+            errorMessage: (context, action) => action.errorMessage,
+            error: (context, action) => action.error
           })
         }
       }
@@ -89,43 +109,151 @@ const syncMachine = Machine<SyncContext>({
         FETCHED_DOCUMENTS: {
           internal: true,
           actions: assign<SyncContext, DocumentsFetchedAction>({
-            documentsFetched: (context, action) => [
-              ...context.documentsFetched,
-              ...action.shopifyDocuments
-            ]
+            documentsFetched: (context, action) => {
+              return [...context.documentsFetched, ...action.shopifyDocuments]
+            }
           })
         },
         FETCHED_COMPLETE: {
           internal: true,
           actions: assign<SyncContext, DocumentsFetchedCompleteAction>({
-            toSync: 100,
-            toLink: 100
+            toSync: (context) => context.documentsFetched,
+            toLink: (context) => context.documentsFetched
           })
         },
-        SYNCED_DOCUMENTS: {
+        SYNCED_DOCUMENT: {
           internal: true,
           actions: assign<SyncContext, DocumentsSyncedAction>({
             syncOperations: (context, action) => [
               ...context.syncOperations,
-              ...action.ops
+              action.op
             ]
           })
         },
-        LINKED_DOCUMENTS: {
+        LINKED_DOCUMENT: {
           internal: true,
           actions: assign<SyncContext, DocumentsLinkedAction>({
-            linkOperations: (context, action) => [
-              ...context.linkOperations,
-              ...action.ops
-            ]
+            linkOperations: (context, action) => {
+              return [...context.linkOperations, action.op]
+            }
           })
         },
-
         COMPLETE: 'complete',
-        ERRORED: 'syncError'
+        ERRORED: {
+          target: 'syncError',
+          actions: assign<SyncContext, ErrorAction>({
+            errorMessage: (context, action) => action.errorMessage,
+            error: (context, action) => action.error
+          })
+        }
       }
     },
-    complete: {},
-    syncError: {}
+    complete: {
+      on: {
+        RESET: 'ready'
+      }
+    },
+    syncError: {
+      on: {
+        RESET: 'ready'
+      }
+    }
   }
 })
+
+interface SyncStateMachineArgs {
+  onStateChange: (state: SyncState) => void
+}
+
+interface SyncStateMachineValues {
+  initialState: SyncState
+  init: (valid: boolean) => void
+  startSync: () => void
+  onDocumentsFetched: (docs: Array<Product | Collection>) => void
+  onFetchComplete: () => void
+  onDocumentSynced: (op: SyncOperation) => void
+  onDocumentLinked: (op: LinkOperation) => void
+  onComplete: () => void
+  onError: (error: Error) => void
+}
+
+export const syncStateMachine = ({
+  onStateChange
+}: SyncStateMachineArgs): SyncStateMachineValues => {
+  const { initialState } = syncMachine
+  let state = initialState
+
+  const init = (valid: boolean) => {
+    if (valid) {
+      state = syncMachine.transition(state, 'VALID')
+      onStateChange(state)
+    } else {
+      state = syncMachine.transition(state, 'INVALID')
+      onStateChange(state)
+    }
+  }
+
+  const startSync = () => {
+    state = syncMachine.transition(state, 'SYNC')
+    onStateChange(state)
+  }
+
+  const onDocumentsFetched = (
+    shopifyDocuments: Array<Product | Collection>
+  ) => {
+    state = syncMachine.transition(state, {
+      type: 'FETCHED_DOCUMENTS',
+      shopifyDocuments
+    })
+    onStateChange(state)
+  }
+
+  const onFetchComplete = () => {
+    state = syncMachine.transition(state, {
+      type: 'FETCHED_COMPLETE'
+    })
+  }
+
+  const onDocumentSynced = (op: SyncOperation) => {
+    state = syncMachine.transition(state, {
+      type: 'SYNCED_DOCUMENT',
+      op
+    })
+    onStateChange(state)
+  }
+
+  const onDocumentLinked = (op: LinkOperation) => {
+    state = syncMachine.transition(state, {
+      type: 'LINKED_DOCUMENT',
+      op
+    })
+    onStateChange(state)
+  }
+
+  const onComplete = () => {
+    state = syncMachine.transition(state, {
+      type: 'COMPLETE'
+    })
+    onStateChange(state)
+  }
+
+  const onError = (error: Error) => {
+    state = syncMachine.transition(state, {
+      type: 'ERROR',
+      errorMessage: error.message,
+      error
+    })
+  }
+
+  return {
+    initialState,
+    startSync,
+    init,
+    onDocumentsFetched,
+    onFetchComplete,
+    onDocumentSynced,
+    onDocumentLinked,
+    onComplete,
+    onError
+  }
+}

@@ -1,8 +1,11 @@
 import gql from 'graphql-tag'
+import Debug from 'debug'
 import { ShopifyClient, ShopifyItemParams, Product } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { ShopifyCache } from './shopifyUtils'
 import { productFragment } from './queryFragments'
+
+const log = Debug('sane-shopify:fetching')
 
 export const PRODUCT_BY_HANDLE = gql`
   query ProductQuery(
@@ -99,27 +102,41 @@ export const fetchAllProductCollections = async (
   query: ShopifyClient['query'],
   prevProduct: Product
 ): Promise<Product> => {
-  if (!prevProduct.collections?.pageInfo.hasNextPage) return prevProduct
+  if (!prevProduct.collections?.pageInfo?.hasNextPage) {
+    log(
+      `Fetched all collections for product ${prevProduct.handle}`,
+      prevProduct
+    )
+    return prevProduct
+  }
   const collectionsAfter = getLastCursor(prevProduct.collections)
+  log(
+    `Fetching further products for product ${prevProduct.handle}`,
+    prevProduct
+  )
 
   const nextProduct = await getByHandle(
     query,
     prevProduct.handle,
-    collectionsAfter
+    collectionsAfter ? collectionsAfter : undefined
   )
 
-  const collections = mergePaginatedResults(
-    prevProduct.collections,
-    nextProduct.collections
-  )
-  const product = {
-    ...nextProduct,
-    collections
-  }
+  const product = nextProduct
+    ? {
+        ...nextProduct,
+        collections: nextProduct.collections
+          ? mergePaginatedResults(
+              prevProduct.collections,
+              nextProduct.collections
+            )
+          : prevProduct.collections
+      }
+    : prevProduct
 
-  if (product.collections.pageInfo.hasNextPage) {
+  if (product?.collections?.pageInfo?.hasNextPage) {
     return fetchAllProductCollections(query, product)
   }
+  log(`Fetched all collections for product ${prevProduct.handle}`, prevProduct)
 
   return product
 }
@@ -148,7 +165,10 @@ export const createFetchShopifyProduct = (
 
   const fetchedProduct = id
     ? await getById(query, id)
-    : await getByHandle(query, handle)
+    : handle
+    ? await getByHandle(query, handle)
+    : null
+  if (!fetchedProduct) throw new Error('Could not fetch product')
 
   const product = await fetchAllProductCollections(query, fetchedProduct)
   cache.set(product)
