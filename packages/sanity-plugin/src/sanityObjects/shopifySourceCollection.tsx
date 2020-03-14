@@ -1,3 +1,5 @@
+import { ShopifySourceCollectionPreview } from '../components'
+
 export const shopifySourceProductNode = {
   name: 'shopifySourceProductNode',
   type: 'object',
@@ -48,6 +50,7 @@ export const shopifyCollectionSource = {
   readOnly: true,
   name: 'shopifySourceCollection',
   type: 'object',
+  inputComponent: ShopifySourceCollectionPreview,
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
     {

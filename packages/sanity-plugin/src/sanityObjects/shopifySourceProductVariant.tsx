@@ -29,5 +29,8 @@ export const shopifySourceProductVariant = {
     { name: 'title', type: 'string' },
     { name: 'weight', type: 'number' },
     { name: 'weightUnit', type: 'string' }
-  ]
+  ],
+  preview: {
+    select: { title: 'title' }
+  }
 }

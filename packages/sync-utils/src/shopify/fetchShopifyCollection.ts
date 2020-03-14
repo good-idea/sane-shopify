@@ -102,7 +102,7 @@ export const fetchAllCollectionProducts = async (
   query: ShopifyClient['query'],
   prevCollection: Collection
 ): Promise<Collection> => {
-  if (!prevCollection.products?.pageInfo.hasNextPage) {
+  if (!prevCollection.products?.pageInfo?.hasNextPage) {
     log(
       `Fetched all products for collection ${prevCollection.handle}`,
       prevCollection
@@ -119,19 +119,20 @@ export const fetchAllCollectionProducts = async (
   const nextCollection = await getByHandle(
     query,
     prevCollection.handle,
-    productsAfter
+    productsAfter ? productsAfter : undefined
   )
 
-  const products = mergePaginatedResults(
-    prevCollection.products,
-    nextCollection.products
-  )
-  const collection = {
-    ...nextCollection,
-    products
-  }
+  const collection = nextCollection
+    ? {
+        ...nextCollection,
+        products: mergePaginatedResults(
+          prevCollection.products,
+          nextCollection.products
+        )
+      }
+    : prevCollection
 
-  if (collection.products.pageInfo.hasNextPage) {
+  if (collection?.products?.pageInfo?.hasNextPage) {
     return fetchAllCollectionProducts(query, collection)
   }
   log(
@@ -142,7 +143,7 @@ export const fetchAllCollectionProducts = async (
 }
 
 /**
- * Fetches a product from Shopify, with the IDs of all related collections
+ * Fetches a collection from Shopify, with the IDs of all related products
  */
 
 export const createFetchShopifyCollection = (
@@ -166,7 +167,10 @@ export const createFetchShopifyCollection = (
 
   const fetchedCollection = id
     ? await getById(query, id)
-    : await getByHandle(query, handle)
+    : handle
+    ? await getByHandle(query, handle)
+    : null
+  if (!fetchedCollection) throw new Error('Could not fetch collection')
 
   const collection = await fetchAllCollectionProducts(query, fetchedCollection)
   cache.set(collection)

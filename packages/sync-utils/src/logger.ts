@@ -29,30 +29,32 @@ export const createLogger = (cbs: SubscriptionCallbacks = {}): Logger => {
       ? fetchedItems
       : [fetchedItems]
     log('fetched initial shopify documents:', shopifyDocuments)
-    cbs.onProgress({
-      type: 'fetched',
-      shopifyDocuments
-    })
+    cbs.onProgress &&
+      cbs.onProgress({
+        type: 'fetched',
+        shopifyDocuments
+      })
   }
 
   const logSynced = (op: SyncOperation) => {
     log('synced document', op)
-    cbs.onProgress(op)
+    cbs.onProgress && cbs.onProgress(op)
   }
 
   const logLinked = (sourceDoc: SanityShopifyDocument, pairs: SanityPair[]) => {
     log('linked documents:', pairs)
-    cbs.onProgress({
-      type: 'link',
-      sourceDoc,
-      pairs
-    })
+    cbs.onProgress &&
+      cbs.onProgress({
+        type: 'link',
+        sourceDoc,
+        pairs
+      })
   }
 
   const logComplete = (op: OperationComplete | OperationComplete[]) => {
     log('completed sync operations', op)
     const ops = Array.isArray(op) ? op : [op]
-    cbs.onComplete(ops, 'completed sync operations')
+    cbs.onComplete && cbs.onComplete(ops, 'completed sync operations')
   }
 
   return { logFetched, logLinked, logSynced, logComplete }

@@ -94,9 +94,11 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
       message,
       success
     } = this.state
+    const { syncState } = this.props
+    const { ready, valid } = syncState.context
 
-    if (!this.props.ready) return null
-    if (this.props.valid) {
+    if (!ready) return null
+    if (valid) {
       return (
         <Fieldset legend="Account Setup" level={1} description="">
           <p>
@@ -123,7 +125,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
         legend="Account Setup"
         level={1}
         description="You need to provide your Shopify info before you can use this
-					field. These credentials will be stored safely in a hidden document only available to editors."
+    			field. These credentials will be stored safely in a hidden document only available to editors."
       >
         {message ? (
           <p style={error ? { color: 'red' } : {}}>{message}</p>

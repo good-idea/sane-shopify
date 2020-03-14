@@ -2,6 +2,7 @@ import PQueue from 'p-queue'
 import {
   SanityClient,
   SanityUtils,
+  LinkOperation,
   SanityPair,
   SanityShopifyDocument
 } from '@sane-shopify/types'
@@ -20,7 +21,7 @@ export const createSyncRelationships = (
 ): SanityUtils['syncRelationships'] => async (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
-): Promise<SanityPair[]> => {
+): Promise<LinkOperation> => {
   const toDocs = arrayify(to).map(removeDraftId)
 
   const aToBKey = from._type === 'shopifyProduct' ? 'collections' : 'products'
@@ -44,10 +45,15 @@ export const createSyncRelationships = (
     : false
 
   if (alreadyLinked) {
-    return toDocs.map((toDoc) => ({
+    const pairs = toDocs.map((toDoc) => ({
       from: from,
       to: toDoc
     }))
+    return {
+      type: 'link' as 'link',
+      sourceDoc: from,
+      pairs
+    }
   }
 
   await client
@@ -59,7 +65,7 @@ export const createSyncRelationships = (
 
   const rQueue = new PQueue({ concurrency: 1 })
 
-  return rQueue.addAll(
+  const pairs: SanityPair[] = await rQueue.addAll(
     toDocs.map((toDoc) => async () => {
       const relationships =
         toDoc._type === 'shopifyCollection' ? toDoc.products : toDoc.collections
@@ -87,4 +93,11 @@ export const createSyncRelationships = (
       return pair
     })
   )
+  const linkOperation: LinkOperation = {
+    type: 'link' as 'link',
+    sourceDoc: from,
+    pairs
+  }
+
+  return linkOperation
 }

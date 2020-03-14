@@ -40,13 +40,17 @@ export const getLastCursor = <NodeType>(connection: Paginated<NodeType>) =>
 export const mergePaginatedResults = <NodeType>(
   p1: Paginated<NodeType>,
   p2: Paginated<NodeType>
-) => ({
-  pageInfo: {
-    hasPreviousPage: p1.pageInfo.hasPreviousPage,
-    hasNextPage: p2.pageInfo.hasNextPage
-  },
-  edges: [...p1.edges, ...p2.edges]
-})
+): Paginated<NodeType> => {
+  if (!p1.pageInfo || !p2.pageInfo) throw new Error('Page info was not suplied')
+
+  return {
+    pageInfo: {
+      hasPreviousPage: p1.pageInfo.hasPreviousPage,
+      hasNextPage: p2.pageInfo.hasNextPage
+    },
+    edges: [...p1.edges, ...p2.edges]
+  }
+}
 
 interface ProductRef {
   _type: 'shopifyProduct'

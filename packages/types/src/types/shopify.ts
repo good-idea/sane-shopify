@@ -73,6 +73,8 @@ export interface Product extends ShopifyItem {
   handle: string
   title: string
   description: string
+  descriptionHtml: string
+  tags: string[]
   productType?: string
   priceRange?: ProductPriceRange
   availableForSale?: boolean
@@ -88,11 +90,19 @@ export interface ShopifyItemParams {
   handle?: string
 }
 
+export type ProgressHandler<T> = (docs: T[]) => void
+
 export interface ShopifyUtils {
   client: ShopifyClient
   fetchItemById: (id: string) => Promise<Product | Collection>
-  fetchShopifyProduct: (args: ShopifyItemParams) => Promise<Product>
-  fetchShopifyCollection: (args: ShopifyItemParams) => Promise<Collection>
-  fetchAllShopifyProducts: () => Promise<Product[]>
-  fetchAllShopifyCollections: () => Promise<Collection[]>
+  fetchShopifyProduct: (args: ShopifyItemParams) => Promise<Product | null>
+  fetchShopifyCollection: (
+    args: ShopifyItemParams
+  ) => Promise<Collection | null>
+  fetchAllShopifyProducts: (
+    onProgress: ProgressHandler<Product>
+  ) => Promise<Product[]>
+  fetchAllShopifyCollections: (
+    onProgress: ProgressHandler<Collection>
+  ) => Promise<Collection[]>
 }
