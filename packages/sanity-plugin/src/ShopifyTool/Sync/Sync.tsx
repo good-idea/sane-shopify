@@ -87,6 +87,12 @@ class SyncBase extends React.Component<Props, State> {
     })
   }
 
+  _syncAll = async () => {
+    await this.props.syncingClient.syncAll({
+      onProgress: this._handleProgress
+    })
+  }
+
   /** Public Methods */
 
   public syncProductByHandle = async (handle: string) => {
@@ -120,11 +126,7 @@ class SyncBase extends React.Component<Props, State> {
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    await Promise.all([
-      //
-      this._syncProducts(),
-      this._syncCollections()
-    ])
+    await this._syncAll()
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
@@ -158,9 +160,7 @@ class SyncBase extends React.Component<Props, State> {
 export const Sync = (props: { children: React.ReactNode }) => (
   <SaneConsumer>
     {(providerProps) =>
-      providerProps && providerProps.ready ? (
-        <SyncBase {...props} {...providerProps} />
-      ) : null
+      providerProps ? <SyncBase {...props} {...providerProps} /> : null
     }
   </SaneConsumer>
 )

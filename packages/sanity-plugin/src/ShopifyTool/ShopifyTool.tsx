@@ -10,7 +10,10 @@ interface Props {
 }
 
 const Inner = () => {
-  const { valid } = useSaneContext()
+  const { syncState } = useSaneContext()
+  if (!syncState) return null
+  const { valid } = syncState.context
+  if (syncState.value === 'init') return null
   return (
     <div style={{ margin: '0 auto', padding: '20px', maxWidth: '920px' }}>
       {valid ? <SyncPane /> : null}

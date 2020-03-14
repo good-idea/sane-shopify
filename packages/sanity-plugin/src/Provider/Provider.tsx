@@ -1,7 +1,8 @@
 import {
   SanityClient,
   ShopifyClient,
-  ShopifyClientConfig
+  ShopifyClientConfig,
+  SyncState
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
@@ -12,7 +13,7 @@ import {
 } from '@sane-shopify/sync-utils'
 // import { createShopifyClient } from '../shopifyClient'
 
-/* tslint:disable-next-line */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const defaultSanityClient = require('part:@sanity/base/client')
 
 /**
@@ -53,8 +54,7 @@ interface SecretUtils {
 
 export interface ClientContextValue extends SecretUtils {
   secrets: ShopifyClientConfig
-  valid: boolean
-  ready: boolean
+  syncState: SyncState
   syncingClient: SyncUtils
   shopifyClient: ShopifyClient
   sanityClient: SanityClient
@@ -66,18 +66,16 @@ interface ClientContextProps {
 
 interface ClientContextState {
   secrets?: ShopifyClientConfig
-  valid: boolean
-  ready: boolean
+  syncState?: SyncState
 }
 
 export class Provider extends React.Component<
   ClientContextProps,
   ClientContextState
 > {
-  public state = {
+  public state: ClientContextState = {
     secrets: undefined,
-    valid: false,
-    ready: false
+    syncState: undefined
   }
 
   public shopifyClient?: ShopifyClient = undefined
@@ -87,15 +85,34 @@ export class Provider extends React.Component<
   public syncingClient?: SyncUtils = undefined
 
   public async componentDidMount() {
-    const secrets = await this.fetchSecrets()
-    const { valid } = await testSecrets(secrets)
-    if (valid) {
-      this.shopifyClient = createShopifyClient(secrets)
-      this.syncingClient = syncUtils(this.shopifyClient, defaultSanityClient)
-      this.setState({ secrets, valid: true, ready: true })
-    } else {
-      this.setState({ valid: false, ready: true, secrets: emptySecrets })
-    }
+    const shopifySecrets = await this.fetchSecrets()
+    this.createSyncingClient(shopifySecrets)
+  }
+
+  private async createSyncingClient(secrets: ShopifyClientConfig) {
+    const shopifyClient = createShopifyClient(secrets)
+    this.syncingClient = syncUtils(
+      shopifyClient,
+      defaultSanityClient,
+      this.handleStateChange
+    )
+    const { accessToken, shopName } = secrets
+    this.setState(
+      {
+        secrets: {
+          accessToken,
+          shopName
+        },
+        syncState: this.syncingClient.initialState
+      },
+      this.syncingClient.initialize
+    )
+  }
+
+  public handleStateChange = (newState: SyncState) => {
+    this.setState({
+      syncState: newState
+    })
   }
 
   public fetchSecrets = async (): Promise<ShopifyClientConfig | null> => {
@@ -103,7 +120,7 @@ export class Provider extends React.Component<
       `*[_id == "${KEYS_ID}"]`
     )
     if (results.length) return results[0]
-    return null
+    return emptySecrets
   }
 
   /**
@@ -119,32 +136,31 @@ export class Provider extends React.Component<
       _type: KEYS_TYPE,
       ...secrets
     }
-    //
-    this.shopifyClient = createShopifyClient(secrets)
     await this.sanityClient.createIfNotExists(doc)
     await this.sanityClient
       .patch(KEYS_ID)
       .set({ ...secrets })
       .commit()
-    this.syncingClient = syncUtils(this.shopifyClient, defaultSanityClient)
-    this.setState({ valid: true, secrets })
+
+    this.createSyncingClient(secrets)
     return true
   }
 
   public clearSecrets = async (): Promise<boolean> => {
-    await this.sanityClient
-      .patch(KEYS_ID)
-      .set({
-        ...emptySecrets
-      })
-      .commit()
-    this.setState({ valid: false })
     return true
+    // await this.sanityClient
+    //   .patch(KEYS_ID)
+    //   .set({
+    //     ...emptySecrets
+    //   })
+    //   .commit()
+    // this.setState({ valid: false })
+    // return true
   }
 
   public render() {
     const { children } = this.props
-    const { secrets, valid, ready } = this.state
+    const { secrets, syncState } = this.state
     const {
       saveSecrets,
       clearSecrets,
@@ -154,14 +170,13 @@ export class Provider extends React.Component<
     } = this
 
     const value = {
-      valid,
-      ready,
       saveSecrets,
       testSecrets,
       clearSecrets,
       syncingClient,
       shopifyClient,
       sanityClient,
+      syncState,
       secrets: secrets || emptySecrets
     }
 

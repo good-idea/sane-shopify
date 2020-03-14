@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { unwindEdges } from '@good-idea/unwind-edges'
-import { Product } from '@sane-shopify/types'
+import { Collection } from '@sane-shopify/types'
 import { Progress } from './Progress'
 import { Value } from './shared'
 import { Provider, useSaneContext } from '../Provider'
@@ -8,36 +7,24 @@ import { Provider, useSaneContext } from '../Provider'
 const Button = require('part:@sanity/components/buttons/default').default
 const Fieldset = require('part:@sanity/components/fieldsets/default').default
 
-interface ShopifySourceProductPreviewProps {
-  value: Product
+interface ShopifySourceCollectionPreviewProps {
+  value: Collection
 }
 
-const ShopifySourceProductPreviewInner = ({
+const ShopifySourceCollectionPreviewInner = ({
   value
-}: ShopifySourceProductPreviewProps) => {
+}: ShopifySourceCollectionPreviewProps) => {
   const { syncState, syncingClient } = useSaneContext()
   if (!syncState) return null
   const { value: syncStateValue } = syncState
 
-  const syncProductByHandle = syncingClient
-    ? syncingClient.syncProductByHandle
+  const syncCollectionByHandle = syncingClient
+    ? syncingClient.syncCollectionByHandle
     : () => undefined
-  const {
-    title,
-    handle,
-    tags,
-    productType,
-    availableForSale,
-    description,
-    variants: paginatedVariants
-  } = value
-  const [variants] = unwindEdges(paginatedVariants)
-  const variantsValue = `${variants.length} variant${
-    variants.length === 1 ? '' : 's'
-  }`
+  const { title, handle, description } = value
 
   const reSync = async () => {
-    syncProductByHandle(handle)
+    syncCollectionByHandle(handle)
   }
 
   if (syncState.context.error)
@@ -57,10 +44,6 @@ const ShopifySourceProductPreviewInner = ({
       description="Read-only. Synced from product data in Shopify"
     >
       <Value label="Title" value={title} />
-      {tags.length ? <Value label="Tags" value={tags.join(', ')} /> : null}
-      {productType ? <Value label="Product Type" value={productType} /> : null}
-      <Value label="Available" value={availableForSale ? 'Yes ✅' : 'No 🚫'} />
-      <Value label="Variants" value={variantsValue} />
       <hr />
       <Value label="Description" value={description} />
       <hr />
@@ -72,13 +55,13 @@ const ShopifySourceProductPreviewInner = ({
   )
 }
 
-export class ShopifySourceProductPreview extends React.Component<
-  ShopifySourceProductPreviewProps
+export class ShopifySourceCollectionPreview extends React.Component<
+  ShopifySourceCollectionPreviewProps
 > {
   render() {
     return (
       <Provider>
-        <ShopifySourceProductPreviewInner {...this.props} />
+        <ShopifySourceCollectionPreviewInner {...this.props} />
       </Provider>
     )
   }
