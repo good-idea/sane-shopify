@@ -6,8 +6,7 @@
     "declarationDir": "./lib",
     "outDir": "./lib",
     "rootDir": "src",
-    "baseUrl": ".",
-    "typeRoots": ["node_modules/@types"]
+    "baseUrl": "."
   },
   "include": ["src"]
 }
