@@ -9,10 +9,12 @@ import {
   SyncOperationResult,
   SaneShopifyConfig,
   RelatedPair,
+  ShopifySecrets,
   LinkOperation,
   SubscriptionCallbacks,
   RelatedPairPartial,
-  SyncState
+  SyncState,
+  TestSecretsResponse
 } from '@sane-shopify/types'
 import { syncStateMachine } from './syncState'
 import { createLogger } from './logger'
@@ -40,6 +42,10 @@ export interface SyncUtils {
   ) => Promise<any>
   /* Syncs a collection or product by storefront id */
   syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
+  /* Manage Secrets */
+  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
+  clearSecrets: () => Promise<void>
+  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
 }
 
 /**
@@ -68,7 +74,8 @@ export const syncUtils = (
     fetchShopifyProduct,
     fetchShopifyCollection,
     fetchAllShopifyProducts,
-    fetchAllShopifyCollections
+    fetchAllShopifyCollections,
+    testSecrets
   } = shopifyUtils(shopifyClient)
 
   const {
@@ -76,7 +83,10 @@ export const syncUtils = (
     syncSanityDocument,
     syncRelationships,
     fetchRelatedDocs,
-    documentByShopifyId
+    documentByShopifyId,
+    fetchSecrets,
+    saveSecrets: saveSecretsToSanity,
+    clearSecrets: clearSecretsFromSanity
   } = sanityUtils(sanityClient)
 
   /**
@@ -89,6 +99,9 @@ export const syncUtils = (
     onDocumentsFetched,
     startSync,
     onError,
+    onSavedSecrets,
+    onSavedSecretsError,
+    onClearedSecrets,
     onFetchComplete,
     onDocumentSynced,
     onDocumentLinked,
@@ -186,7 +199,28 @@ export const syncUtils = (
 
   /* Initializes the syncState */
   const initialize = async () => {
-    init(true)
+    const secrets = await fetchSecrets()
+    const { isError, message } = await testSecrets(secrets)
+    console.log(isError, message)
+
+    init(!isError, secrets.shopName)
+  }
+
+  /* Saves the Storefront name and API key to Sanity */
+
+  const saveSecrets = async (secrets: ShopifySecrets) => {
+    const { isError, message } = await testSecrets(secrets)
+    if (isError) {
+      onSavedSecretsError(message)
+      return
+    }
+    await saveSecretsToSanity(secrets)
+    onSavedSecrets(secrets.shopName)
+  }
+
+  const clearSecrets = async () => {
+    await clearSecretsFromSanity()
+    onClearedSecrets()
   }
 
   /* Syncs a product and any collections it is related to */
@@ -418,6 +452,9 @@ export const syncUtils = (
   return {
     initialize,
     initialState,
+    saveSecrets,
+    clearSecrets,
+    testSecrets,
     syncCollectionByHandle,
     syncProductByHandle,
     syncProducts,

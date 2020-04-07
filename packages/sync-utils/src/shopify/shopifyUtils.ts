@@ -5,6 +5,7 @@ import { createFetchShopifyCollection } from './fetchShopifyCollection'
 import { createFetchItemById } from './fetchItemById'
 import { createFetchAllShopifyCollections } from './fetchAllShopifyCollections'
 import { createFetchAllShopifyProducts } from './fetchAllShopifyProducts'
+import { testSecrets } from './testSecrets'
 
 require('es6-promise').polyfill()
 require('isomorphic-fetch')
@@ -73,6 +74,7 @@ export const shopifyUtils = (client: ShopifyClient): ShopifyUtils => {
     fetchShopifyProduct: createFetchShopifyProduct(query, cache),
     fetchShopifyCollection: createFetchShopifyCollection(query, cache),
     fetchAllShopifyProducts: createFetchAllShopifyProducts(query, cache),
-    fetchAllShopifyCollections: createFetchAllShopifyCollections(query, cache)
+    fetchAllShopifyCollections: createFetchAllShopifyCollections(query, cache),
+    testSecrets
   }
 }

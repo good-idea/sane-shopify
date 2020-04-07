@@ -15,7 +15,6 @@ const mergeExistingFields = (
 ) => {
   const variants = docInfo.variants || []
   const options = docInfo.options || []
-  console.log(docInfo, existingDoc)
   return {
     ...docInfo,
     options: options.map((updatedOption) => {

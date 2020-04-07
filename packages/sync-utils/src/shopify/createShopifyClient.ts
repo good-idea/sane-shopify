@@ -1,10 +1,4 @@
-import gql from 'graphql-tag'
-import {
-  ShopifyClient,
-  ShopifyClientConfig,
-  Variables
-} from '@sane-shopify/types'
-import { STOREFRONT_API_VERSION } from './constants'
+import { ShopifyClient, ShopifySecrets, Variables } from '@sane-shopify/types'
 
 const getErrorMessage = (r: Response): string => {
   switch (r.status) {
@@ -26,9 +20,7 @@ interface GraphQLAST {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const createShopifyClient = (
-  secrets: ShopifyClientConfig
-): ShopifyClient => {
+export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
   const { shopName, accessToken } = secrets
   // const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql`
   const url = `https://${shopName}.myshopify.com/api/graphql`

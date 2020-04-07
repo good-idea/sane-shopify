@@ -9,8 +9,21 @@ import {
 } from '@sane-shopify/types'
 
 /** Actions */
-
+const READY = 'READY'
+const SAVED_SECRETS = 'SAVED_SECRETS'
+const SECRETS_ERROR = 'SECRETS_ERROR'
+const CLEARED_SECRETS = 'CLEARED_SECRETS'
 const DOCUMENTS_FETCHED = 'DOCUMENTS_FETCHED'
+
+interface ReadyAction {
+  type: typeof READY
+  shopName: string
+}
+
+interface SavedSecretsAction {
+  type: typeof SAVED_SECRETS
+  shopName: string
+}
 
 interface DocumentsFetchedAction {
   type: typeof DOCUMENTS_FETCHED
@@ -55,7 +68,8 @@ const initialContext = {
   error: undefined,
   errorMessage: undefined,
   valid: false,
-  ready: false
+  ready: false,
+  shopName: undefined
 }
 
 const syncMachine = Machine<SyncContext>({
@@ -67,10 +81,11 @@ const syncMachine = Machine<SyncContext>({
       on: {
         VALID: {
           target: 'ready',
-          actions: assign<SyncContext>({
+          actions: assign<SyncContext, ReadyAction>({
             ...initialContext,
             valid: true,
-            ready: true
+            ready: true,
+            shopName: (context, action) => action.shopName
           })
         },
         INVALID: {
@@ -84,24 +99,36 @@ const syncMachine = Machine<SyncContext>({
     },
     setup: {
       on: {
-        SUBMIT: 'submittingSecrets'
-      }
-    },
-    submittingSecrets: {
-      on: {
-        VALID: 'ready',
+        VALID: {
+          target: 'ready',
+          actions: assign<SyncContext, SavedSecretsAction>({
+            shopName: (context, action) => action.shopName,
+            errorMessage: undefined,
+            error: undefined,
+            valid: true
+          })
+        },
+
         INVALID: {
           target: 'setup',
           actions: assign<SyncContext, ErrorAction>({
             errorMessage: (context, action) => action.errorMessage,
-            error: (context, action) => action.error
+            error: (context, action) => action.error,
+            valid: false
           })
         }
       }
     },
     ready: {
       on: {
-        SYNC: 'syncing'
+        SYNC: 'syncing',
+        CLEARED_SECRETS: {
+          target: 'setup',
+          actions: assign<SyncContext>({
+            shopName: () => undefined,
+            valid: false
+          })
+        }
       }
     },
     syncing: {
@@ -167,7 +194,7 @@ interface SyncStateMachineArgs {
 
 interface SyncStateMachineValues {
   initialState: SyncState
-  init: (valid: boolean) => void
+  init: (valid: boolean, shopName?: string) => void
   startSync: () => void
   onDocumentsFetched: (docs: Array<Product | Collection>) => void
   onFetchComplete: () => void
@@ -175,6 +202,9 @@ interface SyncStateMachineValues {
   onDocumentLinked: (op: LinkOperation) => void
   onComplete: () => void
   onError: (error: Error) => void
+  onSavedSecrets: (shopName: string) => void
+  onSavedSecretsError: (message: string) => void
+  onClearedSecrets: () => void
 }
 
 export const syncStateMachine = ({
@@ -183,14 +213,32 @@ export const syncStateMachine = ({
   const { initialState } = syncMachine
   let state = initialState
 
-  const init = (valid: boolean) => {
+  const init = (valid: boolean, shopName?: string) => {
     if (valid) {
-      state = syncMachine.transition(state, 'VALID')
+      state = syncMachine.transition(state, { type: 'VALID', shopName })
       onStateChange(state)
     } else {
       state = syncMachine.transition(state, 'INVALID')
       onStateChange(state)
     }
+  }
+
+  const onSavedSecrets = (shopName: string) => {
+    state = syncMachine.transition(state, { type: 'VALID', shopName })
+    console.log('saved', state)
+    onStateChange(state)
+  }
+
+  const onSavedSecretsError = (errorMessage: string) => {
+    console.log('on error', errorMessage)
+    state = syncMachine.transition(state, { type: 'INVALID', errorMessage })
+    onStateChange(state)
+  }
+
+  const onClearedSecrets = () => {
+    state = syncMachine.transition(state, { type: 'CLEARED_SECRETS' })
+    console.log('cleared', state)
+    onStateChange(state)
   }
 
   const startSync = () => {
@@ -249,6 +297,9 @@ export const syncStateMachine = ({
     initialState,
     startSync,
     init,
+    onSavedSecrets,
+    onSavedSecretsError,
+    onClearedSecrets,
     onDocumentsFetched,
     onFetchComplete,
     onDocumentSynced,
