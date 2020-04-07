@@ -19,3 +19,4 @@ yalc.lock
 coverage
 
 test-store
+test-frontend
