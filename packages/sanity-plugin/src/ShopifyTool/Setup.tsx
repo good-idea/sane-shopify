@@ -13,7 +13,6 @@ interface State {
   accessToken: string
   loading: boolean
   error: boolean
-  message: string
   success: boolean
 }
 
@@ -36,8 +35,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     accessToken: this.props.secrets.accessToken || '',
     loading: false,
     success: false,
-    error: undefined,
-    message: undefined
+    error: undefined
   }
 
   public handleInputChange = (field: 'shopName' | 'accessToken') => (e) => {
@@ -49,61 +47,37 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     this.setState({
       shopName: this.props.secrets.shopName || '',
       accessToken: this.props.secrets.accessToken || '',
-      error: false,
-      message: undefined
+      error: false
     })
   }
 
   public handleSubmit = async () => {
     this.setState({ loading: true })
-    const { testSecrets, saveSecrets } = this.props
+    const { saveSecrets } = this.props
     const { shopName, accessToken } = this.state
-    const { valid, message } = await testSecrets({
-      shopName,
-      accessToken
-    })
-    if (!valid) {
-      this.setState({
-        message,
-        loading: false,
-        error: true
-      })
-      return
-    }
     await saveSecrets({ shopName, accessToken })
-    this.setState({
-      message,
-      loading: false,
-      error: false,
-      success: true
-    })
+    this.setState({ loading: false })
   }
 
   public handleUnlink = async () => {
     this.setState({ loading: true })
-    this.props.clearSecrets()
+    await this.props.syncingClient.clearSecrets()
     this.setState({ loading: false })
   }
 
   public render() {
-    const {
-      shopName,
-      accessToken,
-      loading,
-      error,
-      message,
-      success
-    } = this.state
+    const { shopName, accessToken, loading, error, success } = this.state
     const { syncState } = this.props
-    const { ready, valid } = syncState.context
+    const { ready, valid, errorMessage } = syncState.context
+    console.log(syncState.context)
 
     if (!ready) return null
     if (valid) {
+      const { shopName } = syncState.context
       return (
         <Fieldset legend="Account Setup" level={1} description="">
           <p>
-            Connected to shopify storefront{' '}
-            <strong>{this.props.secrets.shopName}</strong>
+            Connected to shopify storefront <strong>{shopName || null}</strong>
           </p>
 
           <Button color="danger" disabled={loading} onClick={this.handleUnlink}>
@@ -121,14 +95,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     }
 
     return (
-      <Fieldset
-        legend="Account Setup"
-        level={1}
-        description="You need to provide your Shopify info before you can use this
-    			field. These credentials will be stored safely in a hidden document only available to editors."
-      >
-        {message ? (
-          <p style={error ? { color: 'red' } : {}}>{message}</p>
+      <Fieldset legend="Account Setup" level={1}>
+        {errorMessage ? (
+          <p style={errorMessage ? { color: 'red' } : {}}>{errorMessage}</p>
         ) : null}
         {!success && (
           <React.Fragment>
