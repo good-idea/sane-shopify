@@ -225,19 +225,16 @@ export const syncStateMachine = ({
 
   const onSavedSecrets = (shopName: string) => {
     state = syncMachine.transition(state, { type: 'VALID', shopName })
-    console.log('saved', state)
     onStateChange(state)
   }
 
   const onSavedSecretsError = (errorMessage: string) => {
-    console.log('on error', errorMessage)
     state = syncMachine.transition(state, { type: 'INVALID', errorMessage })
     onStateChange(state)
   }
 
   const onClearedSecrets = () => {
     state = syncMachine.transition(state, { type: 'CLEARED_SECRETS' })
-    console.log('cleared', state)
     onStateChange(state)
   }
 

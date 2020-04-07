@@ -9,7 +9,7 @@ module.exports = {
     'jest.config.js',
     './src/types'
   ],
-  collectCoverage: true,
+  collectCoverage: false,
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   }

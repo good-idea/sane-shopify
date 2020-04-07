@@ -42,7 +42,6 @@ export const testSecrets = async (
     }))
     return response
   } catch (e) {
-    console.log(e)
     return {
       isError: true,
       message:

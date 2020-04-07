@@ -1,6 +1,11 @@
 import * as React from 'react'
+import { Paginated } from '@good-idea/unwind-edges'
+import { ShopifyImage } from '@sane-shopify/types'
 
-const ImagesPreview = (props) => {
+interface ImagesPreviewProps {
+  value: Paginated<ShopifyImage>
+}
+const ImagesPreview = (props: ImagesPreviewProps) => {
   return (
     <>
       {props.value.edges.map((edge) => (
@@ -14,7 +19,7 @@ const ImagesPreview = (props) => {
   )
 }
 
-const ImagePreview = (props) => {
+const ImagePreview = (props: ShopifyImage) => {
   return <img src={props.w100} alt={props.altText || undefined} />
 }
 

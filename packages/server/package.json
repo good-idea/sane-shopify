@@ -6,14 +6,14 @@
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "MIT",
 	"scripts": {
-		"build": "rollup -c",
-		"watch": "rollup -cw",
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.ts",
-		"test": "run-s build test:lint test:unit",
-		"test:lint": "eslint --project ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
+		"test": "run-s test:lint test:unit",
+		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",
+		"build": "yarn test && rollup -c",
+		"watch": "rollup -cw",
 		"prepublishOnly": "yarn build"
 	},
 	"keywords": [

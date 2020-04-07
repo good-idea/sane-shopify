@@ -69,7 +69,6 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     const { shopName, accessToken, loading, error, success } = this.state
     const { syncState } = this.props
     const { ready, valid, errorMessage } = syncState.context
-    console.log(syncState.context)
 
     if (!ready) return null
     if (valid) {

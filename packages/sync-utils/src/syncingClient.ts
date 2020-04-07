@@ -201,7 +201,6 @@ export const syncUtils = (
   const initialize = async () => {
     const secrets = await fetchSecrets()
     const { isError, message } = await testSecrets(secrets)
-    console.log(isError, message)
 
     init(!isError, secrets.shopName)
   }

@@ -12,7 +12,6 @@ interface Props {
 const Inner = () => {
   const { syncState } = useSaneContext()
   if (!syncState) return null
-  console.log(syncState)
   const { valid } = syncState.context
   if (syncState.value === 'init') return null
   return (

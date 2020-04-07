@@ -23,6 +23,9 @@ export interface ShopifyImage {
   originalSrc: string
   altText?: string
   transformedSrc?: string
+  w100: string
+  w300: string
+  w800: string
   __typename: 'Image'
 }
 
