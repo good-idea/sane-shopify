@@ -1,10 +1,5 @@
 import { Paginated } from '@good-idea/unwind-edges'
 
-export interface ShopifyClientConfig {
-  shopName: string
-  accessToken: string
-}
-
 export type Variables = { [key: string]: any }
 
 export interface ShopifyItem {
@@ -19,8 +14,8 @@ export interface ShopifyClient {
 }
 
 export interface ShopifySecrets {
-  storefrontName: string
-  storefrontApiKey: string
+  shopName: string
+  accessToken: string
 }
 
 export interface ShopifyImage {
@@ -92,6 +87,11 @@ export interface ShopifyItemParams {
 
 export type ProgressHandler<T> = (docs: T[]) => void
 
+export interface TestSecretsResponse {
+  message: string
+  isError: boolean
+}
+
 export interface ShopifyUtils {
   client: ShopifyClient
   fetchItemById: (id: string) => Promise<Product | Collection>
@@ -105,4 +105,5 @@ export interface ShopifyUtils {
   fetchAllShopifyCollections: (
     onProgress: ProgressHandler<Collection>
   ) => Promise<Collection[]>
+  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
 }

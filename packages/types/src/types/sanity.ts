@@ -1,4 +1,4 @@
-import { Product, Collection, ShopifyItem } from './shopify'
+import { Product, Collection, ShopifyItem, ShopifySecrets } from './shopify'
 import { LinkOperation, SyncOperation } from './main'
 
 export interface SanityPair {
@@ -72,6 +72,9 @@ export interface SanityUtils {
   fetchRelatedDocs: (related: ShopifyItem[]) => Promise<RelatedPairPartial[]>
   fetchAllSanityDocuments: () => Promise<SanityShopifyDocument[]>
   documentByShopifyId: (shopifyId: string) => Promise<SanityShopifyDocument>
+  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
+  clearSecrets: () => Promise<void>
+  fetchSecrets: () => Promise<ShopifySecrets>
 }
 
 // TODO: This kept coming up as undefined in the test store..

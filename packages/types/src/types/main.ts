@@ -1,15 +1,10 @@
 import { SanityClientConfig, SanityShopifyDocument, SanityPair } from './sanity'
 import { State } from 'xstate'
-import {
-  ShopifyClientConfig,
-  Product,
-  Collection,
-  ShopifyItem
-} from './shopify'
+import { ShopifySecrets, Product, Collection, ShopifyItem } from './shopify'
 
 export interface Secrets {
   sanity: SanityClientConfig
-  shopify: ShopifyClientConfig
+  shopify: ShopifySecrets
 }
 
 export interface SaneShopifyConfig {
@@ -27,6 +22,7 @@ export interface SyncContext {
   errorMessage: string | void
   valid: boolean
   ready: boolean
+  shopName: string | void
 }
 
 export type SyncState = State<SyncContext>
