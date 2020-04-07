@@ -47,7 +47,9 @@ export const NODE_QUERY = gql`
 `
 
 interface NodeResult {
-  node: Product | Collection
+  data: {
+    node: Product | Collection
+  }
 }
 
 export const createFetchItemById = (
@@ -57,7 +59,7 @@ export const createFetchItemById = (
   const cached = cache.getCollectionById(id) || cache.getProductById(id)
   if (cached) return cached
   const result = await query<NodeResult>(NODE_QUERY, { id })
-  const item = result.node
+  const item = result.data.node
   if (item.__typename === 'Product') {
     return fetchAllProductCollections(query, item)
   }

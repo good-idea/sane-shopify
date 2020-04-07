@@ -145,7 +145,7 @@ export const syncUtils = (
       return { shopifyNode: fetchedShopifyItem, sanityDocument }
     }
 
-    if (!sanityDocument && shopifyNode) {
+    if (shopifyNode && !sanityDocument) {
       const existingDoc = await documentByShopifyId(shopifyNode.id)
       if (existingDoc) {
         return {
@@ -200,7 +200,7 @@ export const syncUtils = (
   /* Initializes the syncState */
   const initialize = async () => {
     const secrets = await fetchSecrets()
-    const { isError, message } = await testSecrets(secrets)
+    const { isError } = await testSecrets(secrets)
 
     init(!isError, secrets.shopName)
   }
@@ -471,7 +471,8 @@ export const createSyncingClient = ({
   const sanityClient = createSanityClient({
     projectId: sanity.projectId,
     dataset: sanity.dataset,
-    authToken: sanity.authToken
+    token: sanity.authToken,
+    useCdn: false
   })
 
   const shopifyClient = createShopifyClient(shopify)

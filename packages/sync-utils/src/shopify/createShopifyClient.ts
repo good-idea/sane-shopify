@@ -20,7 +20,26 @@ interface GraphQLAST {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const deduplicateFragments = (queryString: string) =>
+  queryString
+    .split(/\n\s+\n/)
+    .map((group) => group.replace(/^([\n\s])+/, '').replace(/\n+$/, ''))
+    .reduce<string[]>((acc, current) => {
+      if (acc.includes(current)) return acc
+      return [...acc, current]
+    }, [])
+    .join('\n\n')
+
 export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
+  if (!secrets) {
+    return {
+      query: async () => {
+        throw new Error(
+          'You must provide a shopify storefront name and access token'
+        )
+      }
+    }
+  }
   const { shopName, accessToken } = secrets
   // const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql`
   const url = `https://${shopName}.myshopify.com/api/graphql`
@@ -35,7 +54,8 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
     q: string | GraphQLAST,
     variables?: Variables
   ): Promise<ResponseType> => {
-    const queryString = typeof q === 'string' ? q : q?.loc.source.body
+    const queryString =
+      typeof q === 'string' ? q : deduplicateFragments(q?.loc.source.body)
 
     // Rate limit to 2 requests per second.
     // Shopify's limits are "leaky bucket" so this could be improved.
@@ -54,7 +74,9 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
         query: queryString
       })
     }).then(async (r) => {
-      if (!r.ok) throw new Error(getErrorMessage(r))
+      if (!r.ok) {
+        throw new Error(getErrorMessage(r))
+      }
       const json = await r.json()
       return json
     })

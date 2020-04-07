@@ -121,5 +121,6 @@ export const createSyncSanityDocument = (
       shopifySource: item
     }
   }
+
   return syncItem(item)
 }
