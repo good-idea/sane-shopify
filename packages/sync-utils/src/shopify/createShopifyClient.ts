@@ -21,9 +21,9 @@ interface GraphQLAST {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const deduplicateFragments = (queryString: string | undefined) => {
+const deduplicateFragments = (queryString: string | undefined): string => {
   if (!queryString) throw new Error('No query string provided')
-  queryString
+  return queryString
     .split(/\n\s+\n/)
     .map((group) => group.replace(/^([\n\s])+/, '').replace(/\n+$/, ''))
     .reduce<string[]>((acc, current) => {
@@ -77,6 +77,7 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
       }),
     }).then(async (r) => {
       if (!r.ok) {
+        const j = await r.json()
         throw new Error(getErrorMessage(r))
       }
       const json = await r.json()
