@@ -46,6 +46,12 @@ export const createFetchRelatedDocs = (
     *[shopifyId in $relatedIds]{
       products[]->,
       collections[]->,
+      "collectionKeys": collections[]{
+        ...
+      },
+      "productKeys": products[]{
+        ...
+      },
       ...,
     }`,
         { relatedIds: idsNotInCache }

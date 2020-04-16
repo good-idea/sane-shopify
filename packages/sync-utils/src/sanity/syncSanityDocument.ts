@@ -66,6 +66,13 @@ export const createSyncSanityDocument = (
       `*[shopifyId == $shopifyId]{
         products[]->,
         collections[]->,
+        "collectionKeys": collections[]{
+          ...
+        },
+        "productKeys": products[] {
+          ...
+        },
+ 
         ...
       }[0]`,
       {

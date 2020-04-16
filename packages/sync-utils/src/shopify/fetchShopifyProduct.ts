@@ -168,7 +168,7 @@ export const createFetchShopifyProduct = (
     : handle
     ? await getByHandle(query, handle)
     : null
-  if (!fetchedProduct) throw new Error('Could not fetch product')
+  if (!fetchedProduct) return null
 
   const product = await fetchAllProductCollections(query, fetchedProduct)
   cache.set(product)

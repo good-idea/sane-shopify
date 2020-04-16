@@ -82,9 +82,12 @@ export const syncUtils = (
     fetchAllSanityDocuments,
     syncSanityDocument,
     syncRelationships,
+    removeRelationships,
     fetchRelatedDocs,
     documentByShopifyId,
+    documentByHandle,
     fetchSecrets,
+    archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,
     clearSecrets: clearSecretsFromSanity
   } = sanityUtils(sanityClient)
@@ -169,6 +172,7 @@ export const syncUtils = (
     operation,
     related
   }: SyncOperationResult): Promise<LinkOperation> => {
+    const { sanityDocument } = operation
     const initialPairs = await fetchRelatedDocs(related)
     const pairQueue = new PQueue({ concurrency: 1 })
 
@@ -181,12 +185,64 @@ export const syncUtils = (
     const relatedDocs = completePairs.map(
       ({ sanityDocument }) => sanityDocument
     )
-
-    const linkOperation = await syncRelationships(
-      operation.sanityDocument,
-      relatedDocs
+    const existingRelationships =
+      sanityDocument.products || sanityDocument.collections
+    const relationshipsToRemove = existingRelationships.filter(
+      (r) => !Boolean(related.find((ri) => ri.id === r.shopifyId))
     )
+    await removeRelationships(sanityDocument, relationshipsToRemove)
+
+    const linkOperation = await syncRelationships(sanityDocument, relatedDocs)
     return linkOperation
+  }
+
+  const archiveProducts = async (products: Product[]) => {
+    const allSanityProducts = await fetchAllSanityDocuments({
+      types: ['shopifyProduct']
+    })
+
+    const productsToArchive = allSanityProducts.filter(
+      (sanityDocument) =>
+        !Boolean(
+          products.find(
+            (shopifyProduct) => shopifyProduct.id === sanityDocument.shopifyId
+          )
+        )
+    )
+
+    const archiveQueue = new PQueue({ concurrency: 1 })
+    await archiveQueue.addAll(
+      productsToArchive.map((product) => async () => {
+        await archiveSanityDocument(product)
+      })
+    )
+
+    return productsToArchive
+  }
+
+  const archiveCollections = async (collections: Collection[]) => {
+    const allSanityProducts = await fetchAllSanityDocuments({
+      types: ['shopifyCollection']
+    })
+
+    const collectionsToArchive = allSanityProducts.filter(
+      (sanityDocument) =>
+        !Boolean(
+          collections.find(
+            (shopifyCollection) =>
+              shopifyCollection.id === sanityDocument.shopifyId
+          )
+        )
+    )
+
+    const archiveQueue = new PQueue({ concurrency: 1 })
+    await archiveQueue.addAll(
+      collectionsToArchive.map((product) => async () => {
+        await archiveSanityDocument(product)
+      })
+    )
+
+    return collectionsToArchive
   }
 
   /**
@@ -231,7 +287,10 @@ export const syncUtils = (
     const logger = createLogger(cbs)
     const shopifyProduct = await fetchShopifyProduct({ handle })
     if (!shopifyProduct) {
-      onError(new Error(`Could not find a product with handle "${handle}"`))
+      onFetchComplete()
+      const sanityDoc = await documentByHandle(handle, 'product')
+      archiveSanityDocument(sanityDoc)
+      onComplete()
       return
     }
     logger.logFetched(shopifyProduct)
@@ -264,7 +323,10 @@ export const syncUtils = (
     const logger = createLogger(cbs)
     const shopifyCollection = await fetchShopifyCollection({ handle })
     if (!shopifyCollection) {
-      onError(new Error(`Could not find a collection with handle "${handle}"`))
+      onFetchComplete()
+      const sanityDoc = await documentByHandle(handle, 'collection')
+      archiveSanityDocument(sanityDoc)
+      onComplete()
       return
     }
 
@@ -307,9 +369,9 @@ export const syncUtils = (
 
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
-    // do an initial fetch of all docs to populate the cache
-
     startSync()
+
+    // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
 
     const logger = createLogger(cbs)
@@ -341,7 +403,7 @@ export const syncUtils = (
         return linkOperation.pairs
       })
     )
-
+    await archiveProducts(allProducts)
     onComplete()
   }
 
@@ -444,6 +506,9 @@ export const syncUtils = (
         return linkOperation.pairs
       })
     )
+
+    await archiveProducts(allProducts)
+    await archiveCollections(allCollections)
 
     onComplete()
   }

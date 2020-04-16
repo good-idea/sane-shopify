@@ -6,7 +6,6 @@ import {
   SanityPair,
   SanityShopifyDocument
 } from '@sane-shopify/types'
-import { SanityCache } from './sanityUtils'
 
 const arrayify = <T>(i: T | T[]) => (Array.isArray(i) ? i : [i])
 
@@ -15,9 +14,32 @@ const removeDraftId = (doc: SanityShopifyDocument): SanityShopifyDocument => ({
   _id: doc._id.replace(/^drafts\./, '')
 })
 
+export const createRemoveRelationships = (
+  client: SanityClient
+): SanityUtils['removeRelationships'] => async (
+  from: SanityShopifyDocument,
+  toRemove: SanityShopifyDocument | SanityShopifyDocument[]
+): Promise<null> => {
+  const type = from._type === 'shopifyProduct' ? 'collections' : 'products'
+  const keys =
+    from._type === 'shopifyProduct' ? 'collectionKeys' : 'productKeys'
+
+  const relationshipsToRemove = arrayify(toRemove)
+    .map((itemToRemove) =>
+      from[keys].find((reference) => reference._ref === itemToRemove._id)
+    )
+    .map((reference) => `${type}[_key=="${reference._key}"]`)
+  const r = await client
+    .patch(from._id)
+    // @ts-ignore
+    .unset(relationshipsToRemove)
+    .commit()
+
+  return null
+}
+
 export const createSyncRelationships = (
-  client: SanityClient,
-  cache: SanityCache
+  client: SanityClient
 ): SanityUtils['syncRelationships'] => async (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
