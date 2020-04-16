@@ -83,7 +83,8 @@ export class Provider extends React.Component<
       defaultSanityClient,
       this.handleStateChange
     )
-    const { shopName, accessToken } = secrets
+
+    const { shopName, accessToken } = secrets || {}
     this.setState(
       {
         secrets: {

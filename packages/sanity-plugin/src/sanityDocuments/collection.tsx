@@ -2,6 +2,7 @@ import * as React from 'react'
 import { SanityDocumentConfig } from '@sane-shopify/types'
 import { MissingImage } from '../icons/MissingImage'
 import { getFieldConfig } from '../utils'
+import { ArchivedInput } from '../components/ArchivedInput'
 
 const imageStyles = {
   width: '100%',
@@ -61,6 +62,12 @@ export const createCollectionDocument = ({
         type: 'string',
         hidden: true,
         ...namedFields.shopifyId
+      },
+      {
+        title: 'Archived',
+        name: 'archived',
+        type: 'boolean',
+        inputComponent: ArchivedInput
       },
       {
         title: 'Shopify Data',

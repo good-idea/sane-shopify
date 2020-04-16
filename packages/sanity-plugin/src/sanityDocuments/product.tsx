@@ -3,6 +3,7 @@ import { unwindEdges } from '@good-idea/unwind-edges'
 import { SanityDocumentConfig } from '@sane-shopify/types'
 import { MissingImage } from '../icons/MissingImage'
 import { getFieldConfig } from '../utils'
+import { ArchivedInput } from '../components/ArchivedInput'
 
 export const createProductOptionValue = ({
   fields,
@@ -192,6 +193,12 @@ export const createProductDocument = ({
         ...namedFields.shopifyId
       },
       {
+        title: 'Archived',
+        name: 'archived',
+        type: 'boolean',
+        inputComponent: ArchivedInput
+      },
+      {
         title: 'Shopify Data',
         name: 'sourceData',
         type: 'shopifySourceProduct',
@@ -224,16 +231,19 @@ export const createProductDocument = ({
     preview: {
       select: {
         title: 'title',
-        sourceData: 'sourceData'
+        sourceData: 'sourceData',
+        archived: 'archived'
       },
       prepare: (props) => {
-        const { title, sourceData } = props
+        const { title, sourceData, archived } = props
         const [images] = unwindEdges(sourceData.images)
         // @ts-ignore
         const src = images[0]?.w100
         const alt = `Image for ${title}`
+        const subtitle = archived ? '📁 Archived' : undefined
         return {
           title,
+          subtitle,
           media: (
             <div style={imageWrapperStyles}>
               {src ? (
