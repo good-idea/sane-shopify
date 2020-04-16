@@ -63,15 +63,32 @@ interface Patch<ExpectedResult = any> {
   }
 }
 
+export interface SanityFetchParams {
+  types?: string[]
+}
+
 export interface SanityUtils {
   syncSanityDocument: (item: Product | Collection) => Promise<SyncOperation>
   syncRelationships: (
     from: SanityShopifyDocument,
     to: SanityShopifyDocument | SanityShopifyDocument[]
   ) => Promise<LinkOperation>
+  removeRelationships: (
+    from: SanityShopifyDocument,
+    toRemove: SanityShopifyDocument | SanityShopifyDocument[]
+  ) => Promise<null>
   fetchRelatedDocs: (related: ShopifyItem[]) => Promise<RelatedPairPartial[]>
-  fetchAllSanityDocuments: () => Promise<SanityShopifyDocument[]>
+  fetchAllSanityDocuments: (
+    params?: SanityFetchParams
+  ) => Promise<SanityShopifyDocument[]>
   documentByShopifyId: (shopifyId: string) => Promise<SanityShopifyDocument>
+  documentByHandle: (
+    handle: string,
+    type: string
+  ) => Promise<SanityShopifyDocument>
+  archiveSanityDocument: (
+    doc: SanityShopifyDocument
+  ) => Promise<SanityShopifyDocument>
   saveSecrets: (secrets: ShopifySecrets) => Promise<void>
   clearSecrets: () => Promise<void>
   fetchSecrets: () => Promise<ShopifySecrets>
