@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/good-idea/sane-shopify/compare/v0.9.0...v0.10.0) (2020-04-16)
+
+### Bug Fixes
+
+- **sync-utils:** fix sync item by ID ([9c5f5a5](https://github.com/good-idea/sane-shopify/commit/9c5f5a58ba6c7d41c6cc523ed5c52df1a105444d))
+
+### Features
+
+- **sanity-plugin:** add archived field ([6f7a0d9](https://github.com/good-idea/sane-shopify/commit/6f7a0d9c084af3fb96a47ff6d2e48f6a71ec0538))
+- **sync-utils:** archive dead products, remove dead relationships ([804ca05](https://github.com/good-idea/sane-shopify/commit/804ca054c7ff4d26d6305359b90ca7fc0c8cfe62))
+- **types:** update types for archiving ([e06332e](https://github.com/good-idea/sane-shopify/commit/e06332e2cf6c17d48d123ab8ba287775cf7a3043))
+
 # [0.9.0](https://github.com/good-idea/sane-shopify/compare/v0.8.4...v0.9.0) (2020-04-07)
 
 ### Bug Fixes
