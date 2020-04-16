@@ -198,6 +198,14 @@ This plugin does not manage orders or customer carts. You will need to use Shopi
 
 # Alpha Changelog
 
+### 0.10.1
+
+The plugin now marks products that are no longer in the Shopify catalogue as archived on their corresponding sanity documents. Relationships that no longer exist in Shopify are also removed.
+
+### 0.9.0
+
+Fixes setup flow
+
 ### 0.8.0
 
 _This release contains several breaking changes._
