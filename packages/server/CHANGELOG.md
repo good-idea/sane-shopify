@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/good-idea/sane-shopify/compare/v0.10.0...v0.10.1) (2020-04-16)
+
+### Bug Fixes
+
+- **server:** make pretty ([b46042e](https://github.com/good-idea/sane-shopify/commit/b46042e4d3f1f09e5c70799193ce04b12d0bd88e))
+
 # [0.10.0](https://github.com/good-idea/sane-shopify/compare/v0.9.0...v0.10.0) (2020-04-16)
 
 **Note:** Version bump only for package @sane-shopify/server

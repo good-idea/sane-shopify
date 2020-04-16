@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/good-idea/sane-shopify/compare/v0.10.0...v0.10.1) (2020-04-16)
+
+### Bug Fixes
+
+- **sync-utils:** make pretty, fix ts errors ([2f41364](https://github.com/good-idea/sane-shopify/commit/2f41364c2ba5b1061f7d20b6ef2e2bfbd530c733))
+
 # [0.10.0](https://github.com/good-idea/sane-shopify/compare/v0.9.0...v0.10.0) (2020-04-16)
 
 ### Bug Fixes

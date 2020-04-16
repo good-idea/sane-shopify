@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/good-idea/sane-shopify/compare/v0.10.0...v0.10.1) (2020-04-16)
+
+### Bug Fixes
+
+- **types:** add DocumentNode to shopify client query args ([958fe9b](https://github.com/good-idea/sane-shopify/commit/958fe9b1be73ac6494e3cc5ee98e3ba88de5b2c5))
+
 # [0.10.0](https://github.com/good-idea/sane-shopify/compare/v0.9.0...v0.10.0) (2020-04-16)
 
 ### Features
