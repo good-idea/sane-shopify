@@ -17,7 +17,7 @@ export const Progress = () => {
     toLink,
     documentsFetched,
     linkOperations,
-    syncOperations
+    syncOperations,
   } = context
   if (value !== 'complete' && value !== 'syncing') return null
 
@@ -57,7 +57,7 @@ export const Progress = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '200px 200px'
+            gridTemplateColumns: '200px 200px',
           }}
         >
           {productsFetched && productsFetched.length ? (

@@ -9,7 +9,7 @@ const imageWrapperStyles = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  color: '#acacac'
+  color: '#acacac',
 }
 
 export const MissingImage = () => (

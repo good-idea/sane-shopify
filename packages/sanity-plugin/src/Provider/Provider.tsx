@@ -2,14 +2,14 @@ import {
   SanityClient,
   ShopifyClient,
   ShopifySecrets,
-  SyncState
+  SyncState,
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
   createShopifyClient,
   syncUtils,
   SyncUtils,
-  KEYS_ID
+  KEYS_ID,
 } from '@sane-shopify/sync-utils'
 // import { createShopifyClient } from '../shopifyClient'
 
@@ -62,7 +62,7 @@ export class Provider extends React.Component<
 > {
   public state: ClientContextState = {
     secrets: undefined,
-    syncState: undefined
+    syncState: undefined,
   }
 
   public shopifyClient?: ShopifyClient = undefined
@@ -89,9 +89,9 @@ export class Provider extends React.Component<
       {
         secrets: {
           shopName,
-          accessToken
+          accessToken,
         },
-        syncState: this.syncingClient.initialState
+        syncState: this.syncingClient.initialState,
       },
       this.syncingClient.initialize
     )
@@ -99,7 +99,7 @@ export class Provider extends React.Component<
 
   public handleStateChange = (newState: SyncState) => {
     this.setState({
-      syncState: newState
+      syncState: newState,
     })
   }
 
@@ -131,7 +131,7 @@ export class Provider extends React.Component<
       clearSecrets,
       syncingClient,
       shopifyClient,
-      sanityClient
+      sanityClient,
     } = this
 
     const value = {
@@ -141,7 +141,7 @@ export class Provider extends React.Component<
       shopifyClient,
       sanityClient,
       syncState,
-      secrets
+      secrets,
     }
 
     return (

@@ -11,5 +11,5 @@ export const saneShopifyObjects = Object.values({
   ...productVariantObjects,
   ...collectionObjects,
   ...linked,
-  ...connections
+  ...connections,
 })

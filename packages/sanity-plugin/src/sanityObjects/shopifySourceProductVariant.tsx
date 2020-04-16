@@ -3,8 +3,8 @@ export const selectedOptions = {
   type: 'object',
   fields: [
     { name: 'name', type: 'string' },
-    { name: 'value', type: 'string' }
-  ]
+    { name: 'value', type: 'string' },
+  ],
 }
 
 export const shopifySourceProductVariant = {
@@ -22,15 +22,15 @@ export const shopifySourceProductVariant = {
     {
       name: 'selectedOptions',
       type: 'array',
-      of: [{ type: 'shopifySourceSelectedOption' }]
+      of: [{ type: 'shopifySourceSelectedOption' }],
     },
     { name: 'requiresShipping', type: 'boolean' },
     { name: 'sku', type: 'string' },
     { name: 'title', type: 'string' },
     { name: 'weight', type: 'number' },
-    { name: 'weightUnit', type: 'string' }
+    { name: 'weightUnit', type: 'string' },
   ],
   preview: {
-    select: { title: 'title' }
-  }
+    select: { title: 'title' },
+  },
 }

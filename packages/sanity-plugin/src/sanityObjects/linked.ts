@@ -8,9 +8,9 @@ export const linkedCollections = {
       type: 'reference',
       to: [
         {
-          type: 'shopifyCollection'
-        }
-      ]
-    }
-  ]
+          type: 'shopifyCollection',
+        },
+      ],
+    },
+  ],
 }

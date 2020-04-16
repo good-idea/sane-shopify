@@ -7,7 +7,7 @@ interface ArchivedInputProps {
 const pStyles = {
   backgroundColor: 'rgb(236, 236, 236)',
   padding: '10px',
-  color: 'red'
+  color: 'red',
 }
 
 export class ArchivedInput extends React.Component<ArchivedInputProps> {

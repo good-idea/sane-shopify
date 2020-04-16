@@ -6,7 +6,7 @@ import {
   createProductDocument,
   createProductOption,
   createProductOptionValue,
-  createProductVariant
+  createProductVariant,
 } from './sanityDocuments'
 import { saneShopifyObjects } from './sanityObjects'
 
@@ -17,7 +17,7 @@ export const saneShopify = (config: SaneShopifyPluginConfig) => {
     createProductOption(config.productOption),
     createProductOptionValue(config.productOptionValue),
     createCollectionDocument(config.collection),
-    ...saneShopifyObjects
+    ...saneShopifyObjects,
   ]
 }
 
@@ -25,5 +25,5 @@ export default {
   title: 'Shopify',
   name: 'shopify',
   icon: ShopifyIcon,
-  component: ShopifyTool
+  component: ShopifyTool,
 }

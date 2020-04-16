@@ -30,12 +30,12 @@ const initialState = {
   fetchedProducts: [],
   productsSynced: [],
   fetchedCollections: [],
-  collectionsSynced: []
+  collectionsSynced: [],
 }
 
 class SyncBase extends React.Component<Props, State> {
   public state = {
-    ...initialState
+    ...initialState,
   }
 
   public reset = async () => {
@@ -52,12 +52,12 @@ class SyncBase extends React.Component<Props, State> {
       this.setState((initialState) => ({
         fetchedProducts: uniqueBy('id', [
           ...initialState.fetchedProducts,
-          ...fetchedProducts
+          ...fetchedProducts,
         ]),
         fetchedCollections: uniqueBy('id', [
           ...initialState.fetchedCollections,
-          ...fetchedCollections
-        ])
+          ...fetchedCollections,
+        ]),
       }))
     }
 
@@ -65,11 +65,11 @@ class SyncBase extends React.Component<Props, State> {
       const { sourceDoc } = op
       if (sourceDoc._type === 'shopifyProduct') {
         this.setState((initialState) => ({
-          productsSynced: [...initialState.productsSynced, sourceDoc]
+          productsSynced: [...initialState.productsSynced, sourceDoc],
         }))
       } else {
         this.setState((initialState) => ({
-          collectionsSynced: [...initialState.collectionsSynced, sourceDoc]
+          collectionsSynced: [...initialState.collectionsSynced, sourceDoc],
         }))
       }
     }
@@ -77,19 +77,19 @@ class SyncBase extends React.Component<Props, State> {
 
   _syncProducts = async () => {
     await this.props.syncingClient.syncProducts({
-      onProgress: this._handleProgress
+      onProgress: this._handleProgress,
     })
   }
 
   _syncCollections = async () => {
     await this.props.syncingClient.syncCollections({
-      onProgress: this._handleProgress
+      onProgress: this._handleProgress,
     })
   }
 
   _syncAll = async () => {
     await this.props.syncingClient.syncAll({
-      onProgress: this._handleProgress
+      onProgress: this._handleProgress,
     })
   }
 
@@ -137,7 +137,7 @@ class SyncBase extends React.Component<Props, State> {
       syncCollectionByHandle,
       syncProducts,
       syncCollections,
-      syncAll
+      syncAll,
     } = this
 
     const renderProps = {
@@ -146,7 +146,7 @@ class SyncBase extends React.Component<Props, State> {
       syncCollectionByHandle,
       syncProducts,
       syncCollections,
-      syncAll
+      syncAll,
     }
 
     return children

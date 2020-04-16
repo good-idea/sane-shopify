@@ -15,7 +15,7 @@ export const getFieldConfig = (
     const fieldConfig = fields.find((f) => f.name === name) || {}
     return {
       ...acc,
-      [name]: fieldConfig
+      [name]: fieldConfig,
     }
   }, {})
   const additionalFields = fields.filter(

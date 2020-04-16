@@ -4,11 +4,11 @@ export const pageInfo = {
   fields: [
     {
       name: 'hasNextPage',
-      type: 'boolean'
+      type: 'boolean',
     },
     {
       name: 'hasPreviousPage',
-      type: 'boolean'
-    }
-  ]
+      type: 'boolean',
+    },
+  ],
 }

@@ -30,8 +30,8 @@ export const imageEdge = {
   fields: [
     { type: 'string', name: 'key', title: 'Key' },
     { type: 'string', name: 'cursor', title: 'Key' },
-    { type: 'shopifySourceImage', name: 'node', title: 'Node' }
-  ]
+    { type: 'shopifySourceImage', name: 'node', title: 'Node' },
+  ],
 }
 
 export const shopifyImages = {
@@ -46,11 +46,11 @@ export const shopifyImages = {
       type: 'array',
       of: [
         {
-          type: 'shopifySourceImageEdge'
-        }
-      ]
-    }
-  ]
+          type: 'shopifySourceImageEdge',
+        },
+      ],
+    },
+  ],
 }
 
 export const shopifyImage = {
@@ -62,32 +62,32 @@ export const shopifyImage = {
     {
       title: 'altText',
       name: 'altText',
-      type: 'string'
+      type: 'string',
     },
     {
       title: 'id',
       name: 'id',
-      type: 'string'
+      type: 'string',
     },
     {
       title: 'originalSrc',
       name: 'originalSrc',
-      type: 'string'
+      type: 'string',
     },
     {
       title: 'w100',
       name: 'w100',
-      type: 'string'
+      type: 'string',
     },
     {
       title: 'w300',
       name: 'w300',
-      type: 'string'
+      type: 'string',
     },
     {
       title: 'w800',
       name: 'w800',
-      type: 'string'
-    }
-  ]
+      type: 'string',
+    },
+  ],
 }

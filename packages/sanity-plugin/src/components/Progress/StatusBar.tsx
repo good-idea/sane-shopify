@@ -13,7 +13,7 @@ const progressOuterStyles = {
   backgroundColor: '#ccc',
   borderRadius: '10px',
   position: 'relative' as 'relative',
-  overflow: 'hidden' as 'hidden'
+  overflow: 'hidden' as 'hidden',
 }
 
 const progressInnerStyles = {
@@ -22,12 +22,12 @@ const progressInnerStyles = {
   transition: '0.3s ease-out',
   top: 0,
   left: 0,
-  height: '100%'
+  height: '100%',
 }
 
 const barStyles = {
   display: 'flex' as 'flex',
-  alignItems: 'center' as 'center'
+  alignItems: 'center' as 'center',
 }
 
 export const StatusBar = ({ text, complete, total }: StatusBarProps) => {

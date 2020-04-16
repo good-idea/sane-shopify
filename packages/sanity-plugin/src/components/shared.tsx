@@ -8,7 +8,7 @@ interface ValueProps {
 export const textStyles = {
   fontWeight: 400,
   display: 'inline-block',
-  margin: 0
+  margin: 0,
 }
 
 export const Value = ({ label, value }: ValueProps) => {
@@ -18,7 +18,7 @@ export const Value = ({ label, value }: ValueProps) => {
         style={{
           ...textStyles,
           color: 'rgba(48, 48, 48, 0.8)',
-          marginRight: '0.35em'
+          marginRight: '0.35em',
         }}
       >
         {label}:

@@ -12,7 +12,7 @@ interface ShopifySourceCollectionPreviewProps {
 }
 
 const ShopifySourceCollectionPreviewInner = ({
-  value
+  value,
 }: ShopifySourceCollectionPreviewProps) => {
   const { syncState, syncingClient } = useSaneContext()
   if (!syncState) return null

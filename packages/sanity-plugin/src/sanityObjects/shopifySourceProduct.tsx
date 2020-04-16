@@ -6,14 +6,14 @@ export const shopifySourceProductOption = {
   fields: [
     {
       name: 'name',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'values',
       type: 'array',
-      of: [{ type: 'string' }]
-    }
-  ]
+      of: [{ type: 'string' }],
+    },
+  ],
 }
 
 export const shopifyMoneyV2 = {
@@ -22,13 +22,13 @@ export const shopifyMoneyV2 = {
   fields: [
     {
       name: 'amount',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'currencyCode',
-      type: 'string'
-    }
-  ]
+      type: 'string',
+    },
+  ],
 }
 
 export const shopifySourceProductPriceRange = {
@@ -37,13 +37,13 @@ export const shopifySourceProductPriceRange = {
   fields: [
     {
       name: 'minVariantPrice',
-      type: 'shopifyMoneyV2'
+      type: 'shopifyMoneyV2',
     },
     {
       name: 'maxVariantPrice',
-      type: 'shopifyMoneyV2'
-    }
-  ]
+      type: 'shopifyMoneyV2',
+    },
+  ],
 }
 
 export const shopifySourceCollectionNode = {
@@ -52,13 +52,13 @@ export const shopifySourceCollectionNode = {
   fields: [
     {
       name: 'handle',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'id',
-      type: 'string'
-    }
-  ]
+      type: 'string',
+    },
+  ],
 }
 
 export const shopifySourceCollectionEdge = {
@@ -68,13 +68,13 @@ export const shopifySourceCollectionEdge = {
     {
       name: 'cursor',
       type: 'string',
-      title: 'Cursor'
+      title: 'Cursor',
     },
     {
       name: 'node',
-      type: 'shopifySourceCollectionNode'
-    }
-  ]
+      type: 'shopifySourceCollectionNode',
+    },
+  ],
 }
 
 export const shopifySourceCollectionsConnection = {
@@ -83,14 +83,14 @@ export const shopifySourceCollectionsConnection = {
   fields: [
     {
       name: 'pageInfo',
-      type: 'pageInfo'
+      type: 'pageInfo',
     },
     {
       name: 'edges',
       type: 'array',
-      of: [{ type: 'shopifySourceCollectionEdge' }]
-    }
-  ]
+      of: [{ type: 'shopifySourceCollectionEdge' }],
+    },
+  ],
 }
 
 export const shopifySourceProductVariantEdge = {
@@ -98,14 +98,14 @@ export const shopifySourceProductVariantEdge = {
   type: 'object',
   fields: [
     { name: 'cursor', type: 'string' },
-    { name: 'node', type: 'shopifySourceProductVariant' }
-  ]
+    { name: 'node', type: 'shopifySourceProductVariant' },
+  ],
 }
 
 export const shopifySourceProductVariantEdges = {
   name: 'shopifySourceProductVariantEdges',
   type: 'array',
-  of: [{ type: 'shopifySourceProductVariantEdge' }]
+  of: [{ type: 'shopifySourceProductVariantEdge' }],
 }
 
 export const shopifySourceProductVariantsConnection = {
@@ -114,13 +114,13 @@ export const shopifySourceProductVariantsConnection = {
   fields: [
     {
       name: 'pageInfo',
-      type: 'pageInfo'
+      type: 'pageInfo',
     },
     {
       name: 'edges',
-      type: 'shopifySourceProductVariantEdges'
-    }
-  ]
+      type: 'shopifySourceProductVariantEdges',
+    },
+  ],
 }
 
 export const shopifyProductSource = {
@@ -136,73 +136,73 @@ export const shopifyProductSource = {
       name: 'priceRange',
       title: 'Price Range',
       hidden: true,
-      type: 'shopifySourceProductPriceRange'
+      type: 'shopifySourceProductPriceRange',
     },
     {
       name: 'productType',
       title: 'Product Type',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'tags',
       title: 'Tags',
       type: 'array',
-      of: [{ type: 'string' }]
+      of: [{ type: 'string' }],
     },
     {
       title: 'Handle',
       name: 'handle',
-      type: 'string'
+      type: 'string',
     },
     {
       title: 'Description',
       name: 'description',
       type: 'text',
-      rows: 3
+      rows: 3,
     },
     {
       title: 'Description (HTML)',
       name: 'descriptionHtml',
       type: 'text',
       rows: 3,
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Vendor',
       name: 'vendor',
       type: 'string',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'ID',
       name: 'id',
       type: 'string',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Images',
       name: 'images',
       type: 'shopifySourceImages',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Options',
       name: 'options',
       type: 'array',
       hidden: true,
-      of: [{ type: 'shopifySourceProductOption' }]
+      of: [{ type: 'shopifySourceProductOption' }],
     },
     {
       title: 'Variants',
       name: 'variants',
       type: 'shopifySourceProductVariantsConnection',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Collections',
       name: 'collections',
       type: 'shopifySourceCollectionsConnection',
-      hidden: true
-    }
-  ]
+      hidden: true,
+    },
+  ],
 }

@@ -7,7 +7,7 @@ import { ArchivedInput } from '../components/ArchivedInput'
 const imageStyles = {
   width: '100%',
   height: '100%',
-  objectFit: 'cover'
+  objectFit: 'cover',
 }
 
 const imageWrapperStyles = {
@@ -15,7 +15,7 @@ const imageWrapperStyles = {
   background: '#d0cfcf',
   overflow: 'hidden',
   borderRadius: '3px',
-  padding: '2px'
+  padding: '2px',
 }
 
 export const createCollectionDocument = ({
@@ -33,7 +33,7 @@ export const createCollectionDocument = ({
     'handle',
     'shopifyId',
     'products',
-    'sourceData'
+    'sourceData',
   ])
   return {
     title: 'Collection',
@@ -46,7 +46,7 @@ export const createCollectionDocument = ({
         readOnly: true,
         type: 'string',
         hidden: true,
-        ...namedFields.title
+        ...namedFields.title,
       },
       {
         title: 'Page URI',
@@ -54,26 +54,26 @@ export const createCollectionDocument = ({
         type: 'string',
         readOnly: true,
         hidden: true,
-        ...namedFields.handle
+        ...namedFields.handle,
       },
       {
         title: 'Shopify ID',
         name: 'shopifyId',
         type: 'string',
         hidden: true,
-        ...namedFields.shopifyId
+        ...namedFields.shopifyId,
       },
       {
         title: 'Archived',
         name: 'archived',
         type: 'boolean',
-        inputComponent: ArchivedInput
+        inputComponent: ArchivedInput,
       },
       {
         title: 'Shopify Data',
         name: 'sourceData',
         readOnly: true,
-        type: 'shopifySourceCollection'
+        type: 'shopifySourceCollection',
       },
       {
         title: 'Products',
@@ -86,19 +86,19 @@ export const createCollectionDocument = ({
             type: 'reference',
             to: [
               {
-                type: 'shopifyProduct'
-              }
-            ]
-          }
+                type: 'shopifyProduct',
+              },
+            ],
+          },
         ],
-        ...namedFields.products
+        ...namedFields.products,
       },
-      ...additionalFields
+      ...additionalFields,
     ],
     preview: {
       select: {
         title: 'title',
-        sourceData: 'sourceData'
+        sourceData: 'sourceData',
       },
       prepare: (props) => {
         const { title, sourceData } = props
@@ -121,15 +121,13 @@ export const createCollectionDocument = ({
                 <MissingImage />
               )}
             </>
-          ) : (
-            undefined
-          )
+          ) : undefined
         return {
           media,
-          title: itemTitle
+          title: itemTitle,
         }
-      }
+      },
     },
-    ...rest
+    ...rest,
   }
 }

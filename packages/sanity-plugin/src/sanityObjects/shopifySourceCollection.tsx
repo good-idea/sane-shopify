@@ -5,8 +5,8 @@ export const shopifySourceProductNode = {
   type: 'object',
   fields: [
     { name: 'handle', type: 'string' },
-    { name: 'id', type: 'string' }
-  ]
+    { name: 'id', type: 'string' },
+  ],
 }
 
 export const shopifySourceProductEdge = {
@@ -16,13 +16,13 @@ export const shopifySourceProductEdge = {
     {
       name: 'cursor',
       type: 'string',
-      title: 'Cursor'
+      title: 'Cursor',
     },
     {
       name: 'node',
-      type: 'shopifySourceProductNode'
-    }
-  ]
+      type: 'shopifySourceProductNode',
+    },
+  ],
 }
 
 export const shopifySourceProductsConnection = {
@@ -31,18 +31,18 @@ export const shopifySourceProductsConnection = {
   fields: [
     {
       name: 'pageInfo',
-      type: 'pageInfo'
+      type: 'pageInfo',
     },
     {
       name: 'edges',
       type: 'array',
       of: [
         {
-          type: 'shopifySourceProductEdge'
-        }
-      ]
-    }
-  ]
+          type: 'shopifySourceProductEdge',
+        },
+      ],
+    },
+  ],
 }
 
 export const shopifyCollectionSource = {
@@ -57,38 +57,38 @@ export const shopifyCollectionSource = {
       title: 'Handle',
       name: 'handle',
       type: 'string',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Description',
       name: 'description',
       type: 'text',
-      rows: 3
+      rows: 3,
     },
     {
       title: 'Description (HTML)',
       name: 'descriptionHtml',
       type: 'text',
       rows: 3,
-      hidden: true
+      hidden: true,
     },
     {
       title: 'ID',
       name: 'id',
       type: 'string',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Image',
       name: 'image',
       type: 'shopifySourceImage',
-      hidden: true
+      hidden: true,
     },
     {
       title: 'Products',
       name: 'products',
       type: 'shopifySourceProductsConnection',
-      hidden: true
-    }
-  ]
+      hidden: true,
+    },
+  ],
 }

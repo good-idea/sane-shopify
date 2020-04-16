@@ -13,7 +13,7 @@ interface ShopifySourceProductPreviewProps {
 }
 
 const ShopifySourceProductPreviewInner = ({
-  value
+  value,
 }: ShopifySourceProductPreviewProps) => {
   const { syncState, syncingClient } = useSaneContext()
   if (!syncState) return null
@@ -29,7 +29,7 @@ const ShopifySourceProductPreviewInner = ({
     productType,
     availableForSale,
     description,
-    variants: paginatedVariants
+    variants: paginatedVariants,
   } = value
   const [variants] = unwindEdges(paginatedVariants)
   const variantsValue = `${variants.length} variant${

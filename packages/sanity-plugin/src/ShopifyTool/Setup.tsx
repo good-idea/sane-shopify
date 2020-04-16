@@ -19,11 +19,11 @@ interface State {
 const buttonWrapperStyles = {
   display: 'flex',
   justifyContent: 'center',
-  marginTop: '10px'
+  marginTop: '10px',
 }
 
 const buttonStyles = {
-  margin: '0 15px'
+  margin: '0 15px',
 }
 
 export class SetupBase extends React.Component<ClientContextValue, State> {
@@ -35,7 +35,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     accessToken: this.props.secrets.accessToken || '',
     loading: false,
     success: false,
-    error: undefined
+    error: undefined,
   }
 
   public handleInputChange = (field: 'shopName' | 'accessToken') => (e) => {
@@ -47,7 +47,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     this.setState({
       shopName: this.props.secrets.shopName || '',
       accessToken: this.props.secrets.accessToken || '',
-      error: false
+      error: false,
     })
   }
 

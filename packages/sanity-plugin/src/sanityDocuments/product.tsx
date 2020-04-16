@@ -26,16 +26,16 @@ export const createProductOptionValue = ({
         name: 'value',
         title: 'Value',
         type: 'string',
-        readOnly: true
+        readOnly: true,
       },
-      ...additionalFields
+      ...additionalFields,
     ],
     preview: {
       select: {
-        title: 'value'
-      }
+        title: 'value',
+      },
     },
-    ...rest
+    ...rest,
   }
 }
 
@@ -61,28 +61,28 @@ export const createProductOption = ({
         title: 'Option ID',
         readOnly: true,
         type: 'string',
-        hidden: true
+        hidden: true,
       },
       {
         name: 'name',
         title: 'Name',
         readOnly: true,
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'values',
         title: 'Values',
         type: 'array',
-        of: [{ type: 'shopifyProductOptionValue' }]
+        of: [{ type: 'shopifyProductOptionValue' }],
       },
-      ...additionalFields
+      ...additionalFields,
     ],
     preview: {
       select: {
-        title: 'name'
-      }
+        title: 'name',
+      },
     },
-    ...rest
+    ...rest,
   }
 }
 
@@ -107,13 +107,13 @@ export const createProductVariant = ({
         title: 'Variant ID',
         type: 'string',
         readOnly: true,
-        hidden: true
+        hidden: true,
       },
       {
         name: 'title',
         title: 'Variant Title',
         type: 'string',
-        readOnly: true
+        readOnly: true,
       },
       ...additionalFields,
       {
@@ -121,22 +121,22 @@ export const createProductVariant = ({
         name: 'sourceData',
         readOnly: true,
         hidden: true,
-        type: 'shopifySourceProductVariant'
-      }
+        type: 'shopifySourceProductVariant',
+      },
     ],
     preview: {
       select: {
-        title: 'title'
-      }
+        title: 'title',
+      },
     },
-    ...rest
+    ...rest,
   }
 }
 
 const imageStyles = {
   width: '100%',
   height: '100%',
-  objectFit: 'cover' as 'cover'
+  objectFit: 'cover' as 'cover',
 }
 
 const imageWrapperStyles = {
@@ -144,7 +144,7 @@ const imageWrapperStyles = {
   background: '#d0cfcf',
   overflow: 'hidden',
   borderRadius: '3px',
-  padding: '2px'
+  padding: '2px',
 }
 
 export const createProductDocument = ({
@@ -162,7 +162,7 @@ export const createProductDocument = ({
     'sourceData',
     'collections',
     'options',
-    'variants'
+    'variants',
   ])
   return {
     title: 'Product',
@@ -175,7 +175,7 @@ export const createProductDocument = ({
         readOnly: true,
         type: 'string',
         hidden: true,
-        ...namedFields.title
+        ...namedFields.title,
       },
       {
         title: 'Page URI',
@@ -183,56 +183,56 @@ export const createProductDocument = ({
         type: 'string',
         readOnly: true,
         hidden: true,
-        ...namedFields.handle
+        ...namedFields.handle,
       },
       {
         title: 'Shopify ID',
         name: 'shopifyId',
         type: 'string',
         hidden: true,
-        ...namedFields.shopifyId
+        ...namedFields.shopifyId,
       },
       {
         title: 'Archived',
         name: 'archived',
         type: 'boolean',
-        inputComponent: ArchivedInput
+        inputComponent: ArchivedInput,
       },
       {
         title: 'Shopify Data',
         name: 'sourceData',
         type: 'shopifySourceProduct',
         readOnly: true,
-        ...namedFields.sourceData
+        ...namedFields.sourceData,
       },
       {
         title: 'Collections',
         name: 'collections',
         type: 'linkedCollections',
         readOnly: true,
-        ...namedFields.collections
+        ...namedFields.collections,
       },
       {
         title: 'Options',
         name: 'options',
         type: 'array',
         of: [{ type: 'shopifyProductOption' }],
-        ...namedFields.options
+        ...namedFields.options,
       },
       {
         title: 'Variants',
         name: 'variants',
         type: 'array',
         of: [{ type: 'shopifyProductVariant' }],
-        ...namedFields.variants
+        ...namedFields.variants,
       },
-      ...additionalFields
+      ...additionalFields,
     ],
     preview: {
       select: {
         title: 'title',
         sourceData: 'sourceData',
-        archived: 'archived'
+        archived: 'archived',
       },
       prepare: (props) => {
         const { title, sourceData, archived } = props
@@ -252,10 +252,10 @@ export const createProductDocument = ({
                 <MissingImage />
               )}
             </div>
-          )
+          ),
         }
-      }
+      },
     },
-    ...rest
+    ...rest,
   }
 }
