@@ -47,20 +47,20 @@
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
 	"dependencies": {
-		"@good-idea/unwind-edges": "^1.2.0",
+		"@good-idea/unwind-edges": "^1.3.0",
 		"@sane-shopify/types": "^0.10.0",
-		"@sanity/client": "^0.144.0",
+		"@sanity/client": "^1.149.7",
 		"debug": "^4.1.1",
 		"es6-promise": "^4.2.8",
-		"graphql-tag": "^2.10.1",
+		"graphql-tag": "^2.10.3",
 		"isomorphic-fetch": "^2.2.1",
-		"p-queue": "^6.2.1",
-		"xstate": "^4.8.0"
+		"p-queue": "^6.3.0",
+		"xstate": "^4.9.0"
 	},
 	"devDependencies": {
 		"@types/debug": "^4.1.5",
 		"@types/isomorphic-fetch": "^0.0.35",
-		"react-hot-loader": "^4.12.16"
+		"react-hot-loader": "^4.12.20"
 	},
 	"gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }
