@@ -1,4 +1,5 @@
 import { Paginated } from '@good-idea/unwind-edges'
+import { DocumentNode } from 'graphql'
 
 export type Variables = { [key: string]: any }
 
@@ -8,7 +9,7 @@ export interface ShopifyItem {
 
 export interface ShopifyClient {
   query: <ResponseType>(
-    query: string,
+    query: string | DocumentNode,
     variables?: Variables
   ) => Promise<ResponseType>
 }
