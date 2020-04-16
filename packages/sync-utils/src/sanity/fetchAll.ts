@@ -1,12 +1,12 @@
 import {
   SanityClient,
   SanityShopifyDocument,
-  SanityFetchParams
+  SanityFetchParams,
 } from '@sane-shopify/types'
 import { SanityCache } from './sanityUtils'
 
 const defaultParams = {
-  types: ['shopifyCollection', 'shopifyProduct']
+  types: ['shopifyCollection', 'shopifyProduct'],
 }
 
 export const createFetchAll = (

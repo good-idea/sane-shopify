@@ -3,7 +3,7 @@ import {
   SanityShopifyDocument,
   ShopifyItem,
   RelatedPairPartial,
-  SanityUtils
+  SanityUtils,
 } from '@sane-shopify/types'
 import { SanityCache } from './sanityUtils'
 
@@ -22,19 +22,19 @@ export const createFetchRelatedDocs = (
   const { cachedDocs, idsNotInCache } = relatedIds
     .map((id) => ({
       cachedItem: cache.getByShopifyId(id),
-      id
+      id,
     }))
     .reduce<CacheResults>(
       (acc, current) => {
         if (current.cachedItem === null) {
           return {
             ...acc,
-            idsNotInCache: [...acc.idsNotInCache, current.id]
+            idsNotInCache: [...acc.idsNotInCache, current.id],
           }
         }
         return {
           ...acc,
-          cachedDocs: [...acc.cachedDocs, current.cachedItem]
+          cachedDocs: [...acc.cachedDocs, current.cachedItem],
         }
       },
       { cachedDocs: [], idsNotInCache: [] }
@@ -62,7 +62,7 @@ export const createFetchRelatedDocs = (
   const pairs = relatedNodes.map((shopifyNode) => ({
     shopifyNode,
     sanityDocument:
-      relatedDocs.find((d) => d.shopifyId === shopifyNode.id) || null
+      relatedDocs.find((d) => d.shopifyId === shopifyNode.id) || null,
   }))
   return pairs
 }

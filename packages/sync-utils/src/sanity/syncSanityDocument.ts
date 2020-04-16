@@ -3,7 +3,7 @@ import {
   Product,
   SanityClient,
   SyncOperation,
-  SanityShopifyDocument
+  SanityShopifyDocument,
 } from '@sane-shopify/types'
 import { isMatch } from 'lodash'
 import { prepareDocument, sleep } from './utils'
@@ -33,9 +33,9 @@ const mergeExistingFields = (
           )
           return {
             ...existingOptionValue,
-            ...updatedOptionValue
+            ...updatedOptionValue,
           }
-        })
+        }),
       }
     }),
 
@@ -46,9 +46,9 @@ const mergeExistingFields = (
 
       return {
         ...existingVariant,
-        ...variant
+        ...variant,
       }
-    })
+    }),
   }
 }
 
@@ -76,7 +76,7 @@ export const createSyncSanityDocument = (
         ...
       }[0]`,
       {
-        shopifyId
+        shopifyId,
       }
     )
 
@@ -95,7 +95,7 @@ export const createSyncSanityDocument = (
       return {
         type: 'skip' as 'skip',
         sanityDocument: existingDoc,
-        shopifySource: item
+        shopifySource: item,
       }
     }
 
@@ -109,7 +109,7 @@ export const createSyncSanityDocument = (
       return {
         type: 'create' as 'create',
         sanityDocument: newDoc,
-        shopifySource: item
+        shopifySource: item,
       }
     }
 
@@ -125,7 +125,7 @@ export const createSyncSanityDocument = (
     return {
       type: 'update' as 'update',
       sanityDocument: updatedDoc,
-      shopifySource: item
+      shopifySource: item,
     }
   }
 

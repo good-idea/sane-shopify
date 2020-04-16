@@ -26,7 +26,7 @@ const addKeyByCursor = <T extends Edge<any>>(edges: T[], _type: string) =>
     cursor,
     node,
     _type,
-    _key: cursor
+    _key: cursor,
   }))
 
 const missingImage = {
@@ -35,7 +35,7 @@ const missingImage = {
   originalSrc: '',
   w100: '',
   w300: '',
-  w800: ''
+  w800: '',
 }
 
 // Pretty much just adds keys to arrays
@@ -48,7 +48,7 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
       // @ts-ignore
       options: item.options.map(({ id, ...option }) => ({
         ...option,
-        _key: id
+        _key: id,
       })),
       collections: {
         // @ts-ignore
@@ -57,7 +57,7 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
           // @ts-ignore
           item.collections.edges,
           'shopifySourceCollectionEdge'
-        )
+        ),
       },
       variants: {
         // @ts-ignore
@@ -66,7 +66,7 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
           // @ts-ignore
           item.variants.edges,
           'shopifySourceProductVariantEdges'
-        )
+        ),
         // .map((variant) => {
         //   const { node } = variant
         //   return {
@@ -82,8 +82,8 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         ...item.images,
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
-        edges: addKeyByCursor(item.images.edges, 'shopifySourceImageEdge')
-      }
+        edges: addKeyByCursor(item.images.edges, 'shopifySourceImageEdge'),
+      },
     }
   }
   if (item.__typename === 'Collection') {
@@ -98,8 +98,8 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
         // @ts-ignore
         ...item.products,
         // @ts-ignore
-        edges: addKeyByCursor(item.products.edges, 'shopifySourceProductEdge')
-      }
+        edges: addKeyByCursor(item.products.edges, 'shopifySourceProductEdge'),
+      },
     }
   }
   throw new Error('prepareImages can only be used for Products and Collections')
@@ -115,8 +115,8 @@ const createProductOptions = (item: Product) => {
     values: option.values.map((value) => ({
       _type: 'shopifyProductOptionValue',
       _key: slugify(value),
-      value: value
-    }))
+      value: value,
+    })),
   }))
 }
 
@@ -138,10 +138,10 @@ const createProductVariantObjects = (item: Product) => {
               _key: `${name}_${value}`.replace(/\s/, '_'),
               _type: 'shopifySourceSelectedOption',
               name,
-              value
+              value,
             }))
-          : []
-      }
+          : [],
+      },
     })) || []
   )
 }
@@ -154,7 +154,7 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
     title: item.title,
     shopifyId: item.id,
     handle: item.handle,
-    sourceData
+    sourceData,
   }
   switch (item.__typename) {
     case 'Product':
@@ -163,7 +163,7 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
         // @ts-ignore
         options: createProductOptions(item),
         // @ts-ignore
-        variants: createProductVariantObjects(item)
+        variants: createProductVariantObjects(item),
       }
     default:
       return docInfo

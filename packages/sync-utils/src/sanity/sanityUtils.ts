@@ -1,20 +1,20 @@
 import {
   SanityClient,
   SanityUtils,
-  SanityShopifyDocument
+  SanityShopifyDocument,
 } from '@sane-shopify/types'
 import { createSyncSanityDocument } from './syncSanityDocument'
 import { createFetchRelatedDocs } from './fetchRelatedDocs'
 import {
   createSyncRelationships,
-  createRemoveRelationships
+  createRemoveRelationships,
 } from './syncRelationships'
 import { createArchiveSanityDocument } from './archive'
 import { createFetchAll } from './fetchAll'
 import {
   createFetchSecrets,
   createSaveSecrets,
-  createClearSecrets
+  createClearSecrets,
 } from './secrets'
 
 interface StringCache<NodeType> {
@@ -73,7 +73,7 @@ const createCache = (): SanityCache => {
     getById,
     getByHandle,
     getByShopifyId,
-    set
+    set,
   }
 }
 
@@ -107,7 +107,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
         ...
       }[0]`,
       {
-        shopifyId
+        shopifyId,
       }
     )
     if (doc) cache.set(doc)
@@ -131,7 +131,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
         ...
       }[0]`,
       {
-        handle
+        handle,
       }
     )
     if (doc) cache.set(doc)
@@ -149,6 +149,6 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
     archiveSanityDocument,
     clearSecrets,
     saveSecrets,
-    fetchSecrets
+    fetchSecrets,
   }
 }

@@ -46,7 +46,7 @@ const getByHandle = async (
   const result = await query<ByHandleResult>(PRODUCT_BY_HANDLE, {
     handle,
     collectionsFirst: 200,
-    collectionsAfter
+    collectionsAfter,
   })
   return result?.data?.productByHandle
 }
@@ -93,7 +93,7 @@ const getById = async (
   const result = await query<ByIdResult>(PRODUCT_BY_ID, {
     id,
     collectionsFirst: 20,
-    collectionsAfter
+    collectionsAfter,
   })
   return result?.data?.node
 }
@@ -129,7 +129,7 @@ export const fetchAllProductCollections = async (
               prevProduct.collections,
               nextProduct.collections
             )
-          : prevProduct.collections
+          : prevProduct.collections,
       }
     : prevProduct
 

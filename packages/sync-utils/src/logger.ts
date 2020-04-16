@@ -5,7 +5,7 @@ import {
   SanityShopifyDocument,
   SyncOperation,
   SanityPair,
-  OperationComplete
+  OperationComplete,
 } from '@sane-shopify/types'
 import Debug from 'debug'
 
@@ -32,7 +32,7 @@ export const createLogger = (cbs: SubscriptionCallbacks = {}): Logger => {
     cbs.onProgress &&
       cbs.onProgress({
         type: 'fetched',
-        shopifyDocuments
+        shopifyDocuments,
       })
   }
 
@@ -47,7 +47,7 @@ export const createLogger = (cbs: SubscriptionCallbacks = {}): Logger => {
       cbs.onProgress({
         type: 'link',
         sourceDoc,
-        pairs
+        pairs,
       })
   }
 

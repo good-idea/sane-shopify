@@ -5,7 +5,7 @@ import {
   Product,
   Collection,
   SyncContext,
-  SyncState
+  SyncState,
 } from '@sane-shopify/types'
 
 /** Actions */
@@ -69,7 +69,7 @@ const initialContext = {
   errorMessage: undefined,
   valid: false,
   ready: false,
-  shopName: undefined
+  shopName: undefined,
 }
 
 const syncMachine = Machine<SyncContext>({
@@ -85,17 +85,17 @@ const syncMachine = Machine<SyncContext>({
             ...initialContext,
             valid: true,
             ready: true,
-            shopName: (context, action) => action.shopName
-          })
+            shopName: (context, action) => action.shopName,
+          }),
         },
         INVALID: {
           target: 'setup',
           actions: assign<SyncContext>({
             valid: () => false,
-            ready: () => true
-          })
-        }
-      }
+            ready: () => true,
+          }),
+        },
+      },
     },
     setup: {
       on: {
@@ -105,8 +105,8 @@ const syncMachine = Machine<SyncContext>({
             shopName: (context, action) => action.shopName,
             errorMessage: undefined,
             error: undefined,
-            valid: true
-          })
+            valid: true,
+          }),
         },
 
         INVALID: {
@@ -114,10 +114,10 @@ const syncMachine = Machine<SyncContext>({
           actions: assign<SyncContext, ErrorAction>({
             errorMessage: (context, action) => action.errorMessage,
             error: (context, action) => action.error,
-            valid: false
-          })
-        }
-      }
+            valid: false,
+          }),
+        },
+      },
     },
     ready: {
       on: {
@@ -126,10 +126,10 @@ const syncMachine = Machine<SyncContext>({
           target: 'setup',
           actions: assign<SyncContext>({
             shopName: () => undefined,
-            valid: false
-          })
-        }
-      }
+            valid: false,
+          }),
+        },
+      },
     },
     syncing: {
       on: {
@@ -138,54 +138,54 @@ const syncMachine = Machine<SyncContext>({
           actions: assign<SyncContext, DocumentsFetchedAction>({
             documentsFetched: (context, action) => {
               return [...context.documentsFetched, ...action.shopifyDocuments]
-            }
-          })
+            },
+          }),
         },
         FETCHED_COMPLETE: {
           internal: true,
           actions: assign<SyncContext, DocumentsFetchedCompleteAction>({
             toSync: (context) => context.documentsFetched,
-            toLink: (context) => context.documentsFetched
-          })
+            toLink: (context) => context.documentsFetched,
+          }),
         },
         SYNCED_DOCUMENT: {
           internal: true,
           actions: assign<SyncContext, DocumentsSyncedAction>({
             syncOperations: (context, action) => [
               ...context.syncOperations,
-              action.op
-            ]
-          })
+              action.op,
+            ],
+          }),
         },
         LINKED_DOCUMENT: {
           internal: true,
           actions: assign<SyncContext, DocumentsLinkedAction>({
             linkOperations: (context, action) => {
               return [...context.linkOperations, action.op]
-            }
-          })
+            },
+          }),
         },
         COMPLETE: 'complete',
         ERRORED: {
           target: 'syncError',
           actions: assign<SyncContext, ErrorAction>({
             errorMessage: (context, action) => action.errorMessage,
-            error: (context, action) => action.error
-          })
-        }
-      }
+            error: (context, action) => action.error,
+          }),
+        },
+      },
     },
     complete: {
       on: {
-        RESET: 'ready'
-      }
+        RESET: 'ready',
+      },
     },
     syncError: {
       on: {
-        RESET: 'ready'
-      }
-    }
-  }
+        RESET: 'ready',
+      },
+    },
+  },
 })
 
 interface SyncStateMachineArgs {
@@ -208,7 +208,7 @@ interface SyncStateMachineValues {
 }
 
 export const syncStateMachine = ({
-  onStateChange
+  onStateChange,
 }: SyncStateMachineArgs): SyncStateMachineValues => {
   const { initialState } = syncMachine
   let state = initialState
@@ -248,21 +248,21 @@ export const syncStateMachine = ({
   ) => {
     state = syncMachine.transition(state, {
       type: 'FETCHED_DOCUMENTS',
-      shopifyDocuments
+      shopifyDocuments,
     })
     onStateChange(state)
   }
 
   const onFetchComplete = () => {
     state = syncMachine.transition(state, {
-      type: 'FETCHED_COMPLETE'
+      type: 'FETCHED_COMPLETE',
     })
   }
 
   const onDocumentSynced = (op: SyncOperation) => {
     state = syncMachine.transition(state, {
       type: 'SYNCED_DOCUMENT',
-      op
+      op,
     })
     onStateChange(state)
   }
@@ -270,14 +270,14 @@ export const syncStateMachine = ({
   const onDocumentLinked = (op: LinkOperation) => {
     state = syncMachine.transition(state, {
       type: 'LINKED_DOCUMENT',
-      op
+      op,
     })
     onStateChange(state)
   }
 
   const onComplete = () => {
     state = syncMachine.transition(state, {
-      type: 'COMPLETE'
+      type: 'COMPLETE',
     })
     onStateChange(state)
   }
@@ -286,7 +286,7 @@ export const syncStateMachine = ({
     state = syncMachine.transition(state, {
       type: 'ERROR',
       errorMessage: error.message,
-      error
+      error,
     })
   }
 
@@ -302,6 +302,6 @@ export const syncStateMachine = ({
     onDocumentSynced,
     onDocumentLinked,
     onComplete,
-    onError
+    onError,
   }
 }

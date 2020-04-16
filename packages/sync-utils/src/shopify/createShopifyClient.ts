@@ -1,4 +1,5 @@
 import { ShopifyClient, ShopifySecrets, Variables } from '@sane-shopify/types'
+import { DocumentNode } from 'graphql'
 
 const getErrorMessage = (r: Response): string => {
   switch (r.status) {
@@ -20,7 +21,8 @@ interface GraphQLAST {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const deduplicateFragments = (queryString: string) =>
+const deduplicateFragments = (queryString: string | undefined) => {
+  if (!queryString) throw new Error('No query string provided')
   queryString
     .split(/\n\s+\n/)
     .map((group) => group.replace(/^([\n\s])+/, '').replace(/\n+$/, ''))
@@ -29,7 +31,7 @@ const deduplicateFragments = (queryString: string) =>
       return [...acc, current]
     }, [])
     .join('\n\n')
-
+}
 export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
   if (!secrets) {
     return {
@@ -37,7 +39,7 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
         throw new Error(
           'You must provide a shopify storefront name and access token'
         )
-      }
+      },
     }
   }
   const { shopName, accessToken } = secrets
@@ -45,17 +47,17 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
   const url = `https://${shopName}.myshopify.com/api/graphql`
   const headers = {
     'Content-Type': 'application/json',
-    'X-Shopify-Storefront-Access-Token': accessToken
+    'X-Shopify-Storefront-Access-Token': accessToken,
   }
 
   let lastRequestTime = new Date().getTime()
 
   const query = async <ResponseType>(
-    q: string | GraphQLAST,
+    q: string | DocumentNode,
     variables?: Variables
   ): Promise<ResponseType> => {
     const queryString =
-      typeof q === 'string' ? q : deduplicateFragments(q?.loc.source.body)
+      typeof q === 'string' ? q : deduplicateFragments(q?.loc?.source.body)
 
     // Rate limit to 2 requests per second.
     // Shopify's limits are "leaky bucket" so this could be improved.
@@ -71,8 +73,8 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
       method: 'POST',
       body: JSON.stringify({
         variables,
-        query: queryString
-      })
+        query: queryString,
+      }),
     }).then(async (r) => {
       if (!r.ok) {
         throw new Error(getErrorMessage(r))

@@ -3,7 +3,7 @@ import {
   Collection,
   Product,
   SanityClient,
-  SanityDocumentConfig
+  SanityDocumentConfig,
 } from '@sane-shopify/types'
 
 export const slugify = (text: string) =>
@@ -46,9 +46,9 @@ export const mergePaginatedResults = <NodeType>(
   return {
     pageInfo: {
       hasPreviousPage: p1.pageInfo.hasPreviousPage,
-      hasNextPage: p2.pageInfo.hasNextPage
+      hasNextPage: p2.pageInfo.hasNextPage,
     },
-    edges: [...p1.edges, ...p2.edges]
+    edges: [...p1.edges, ...p2.edges],
   }
 }
 
@@ -69,7 +69,7 @@ export const buildProductReferences = async (
   const productRefs = productDocuments.map((doc) => ({
     _type: 'reference',
     _ref: doc._id,
-    _key: `${doc._rev}-${doc._id}`
+    _key: `${doc._rev}-${doc._id}`,
   }))
   return productRefs
 }
@@ -82,7 +82,7 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
       // @ts-ignore
       options: item.options.map(({ id, ...option }) => ({
         ...option,
-        _key: id
+        _key: id,
       })),
       images: {
         // @ts-ignore -- not sure how to tell typescript that this is definitely a product
@@ -92,10 +92,10 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
           return {
             cursor,
             node,
-            _key: cursor
+            _key: cursor,
           }
-        })
-      }
+        }),
+      },
     }
   }
   if (item.__typename === 'Collection') {
@@ -105,7 +105,7 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
       // @ts-ignore omfg
       ...collection,
       // @ts-ignore -- not sure how to tell typescript that this is definitely a Collection
-      image: item.image || {}
+      image: item.image || {},
     }
   }
   throw new Error('prepareImages can only be used for Products and Collections')

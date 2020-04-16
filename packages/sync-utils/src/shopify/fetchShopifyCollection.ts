@@ -3,7 +3,7 @@ import Debug from 'debug'
 import {
   ShopifyClient,
   ShopifyItemParams,
-  Collection
+  Collection,
 } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { collectionFragment } from './queryFragments'
@@ -50,7 +50,7 @@ const getByHandle = async (
   const result = await query<ByHandleResult>(COLLECTION_BY_HANDLE, {
     handle,
     productsFirst: 50,
-    productsAfter
+    productsAfter,
   })
   return result?.data?.collectionByHandle
 }
@@ -93,7 +93,7 @@ const getById = async (
   const result = await query<ByIdResult>(COLLECTION_BY_ID, {
     id,
     productsFirst: 200,
-    productsAfter
+    productsAfter,
   })
   return result?.data?.node
 }
@@ -128,7 +128,7 @@ export const fetchAllCollectionProducts = async (
         products: mergePaginatedResults(
           prevCollection.products,
           nextCollection.products
-        )
+        ),
       }
     : prevCollection
 

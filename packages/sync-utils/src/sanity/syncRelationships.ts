@@ -4,14 +4,14 @@ import {
   SanityUtils,
   LinkOperation,
   SanityPair,
-  SanityShopifyDocument
+  SanityShopifyDocument,
 } from '@sane-shopify/types'
 
 const arrayify = <T>(i: T | T[]) => (Array.isArray(i) ? i : [i])
 
 const removeDraftId = (doc: SanityShopifyDocument): SanityShopifyDocument => ({
   ...doc,
-  _id: doc._id.replace(/^drafts\./, '')
+  _id: doc._id.replace(/^drafts\./, ''),
 })
 
 export const createRemoveRelationships = (
@@ -50,7 +50,7 @@ export const createSyncRelationships = (
   const aToBRelationships = toDocs.map((toDoc) => ({
     _type: 'reference',
     _ref: toDoc._id,
-    _key: `${toDoc._rev}-${toDoc._id}`
+    _key: `${toDoc._rev}-${toDoc._id}`,
   }))
 
   // determine if the FROM doc already has the
@@ -69,12 +69,12 @@ export const createSyncRelationships = (
   if (alreadyLinked) {
     const pairs = toDocs.map((toDoc) => ({
       from: from,
-      to: toDoc
+      to: toDoc,
     }))
     return {
       type: 'link' as 'link',
       sourceDoc: from,
-      pairs
+      pairs,
     }
   }
 
@@ -93,7 +93,7 @@ export const createSyncRelationships = (
         toDoc._type === 'shopifyCollection' ? toDoc.products : toDoc.collections
       const pair = {
         from: from,
-        to: toDoc
+        to: toDoc,
       }
 
       if (relationships && relationships.find(({ _id }) => _id === from._id)) {
@@ -109,8 +109,8 @@ export const createSyncRelationships = (
           {
             _type: 'reference',
             _ref: from._id,
-            key: `${from._id}-${from._rev}`
-          }
+            key: `${from._id}-${from._rev}`,
+          },
         ])
       return pair
     })
@@ -118,7 +118,7 @@ export const createSyncRelationships = (
   const linkOperation: LinkOperation = {
     type: 'link' as 'link',
     sourceDoc: from,
-    pairs
+    pairs,
   }
 
   return linkOperation

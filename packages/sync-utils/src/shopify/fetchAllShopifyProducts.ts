@@ -63,7 +63,7 @@ export const createFetchAllShopifyProducts = (
     const now = new Date()
     const result = await query<QueryResult>(PRODUCTS_QUERY, {
       first: 50,
-      after
+      after,
     })
     const duration = new Date().getTime() - now.getTime()
     log(`Fetched page of Shopify Products in ${duration / 1000}s`, result)

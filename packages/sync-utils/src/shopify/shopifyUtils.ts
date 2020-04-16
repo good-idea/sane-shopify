@@ -61,7 +61,7 @@ const createCache = (): ShopifyCache => {
     getProductByHandle,
     getCollectionById,
     getCollectionByHandle,
-    set
+    set,
   }
 }
 
@@ -75,6 +75,6 @@ export const shopifyUtils = (client: ShopifyClient): ShopifyUtils => {
     fetchShopifyCollection: createFetchShopifyCollection(query, cache),
     fetchAllShopifyProducts: createFetchAllShopifyProducts(query, cache),
     fetchAllShopifyCollections: createFetchAllShopifyCollections(query, cache),
-    testSecrets
+    testSecrets,
   }
 }

@@ -7,7 +7,7 @@ import { KEYS_ID, KEYS_TYPE } from '../constants'
 
 const emptySecrets = {
   shopName: '',
-  accessToken: ''
+  accessToken: '',
 }
 
 export const createSaveSecrets = (
@@ -16,7 +16,7 @@ export const createSaveSecrets = (
   const doc = {
     _id: KEYS_ID,
     _type: KEYS_TYPE,
-    ...secrets
+    ...secrets,
   }
   await client.createIfNotExists(doc)
   await client
@@ -31,7 +31,7 @@ export const createClearSecrets = (
   await client
     .patch(KEYS_ID)
     .set({
-      ...emptySecrets
+      ...emptySecrets,
     })
     .commit()
 }

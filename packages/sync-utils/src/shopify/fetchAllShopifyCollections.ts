@@ -64,7 +64,7 @@ export const createFetchAllShopifyCollections = (
     const now = new Date()
     const result = await query<QueryResult>(COLLECTIONS_QUERY, {
       first: 50,
-      after
+      after,
     })
 
     const duration = new Date().getTime() - now.getTime()

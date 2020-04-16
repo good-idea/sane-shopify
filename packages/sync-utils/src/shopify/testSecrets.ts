@@ -27,7 +27,7 @@ export const testSecrets = async (
   if (!secrets)
     return {
       isError: false,
-      message: 'You must provide an API Key and Storefront Name'
+      message: 'You must provide an API Key and Storefront Name',
     }
   const { shopName, accessToken } = secrets
   if (!shopName || !shopName.length)
@@ -38,7 +38,7 @@ export const testSecrets = async (
     const client = createShopifyClient(secrets)
     const response = await client.query<TestData>(testQuery).then(() => ({
       isError: false,
-      message: `Successfully connected to ${shopName}`
+      message: `Successfully connected to ${shopName}`,
     }))
     return response
   } catch (e) {
@@ -46,7 +46,7 @@ export const testSecrets = async (
       isError: true,
       message:
         e.message ||
-        'There was an error connecting to Shopify. Check your console for more information.'
+        'There was an error connecting to Shopify. Check your console for more information.',
     }
   }
 }

@@ -14,7 +14,7 @@ import {
   SubscriptionCallbacks,
   RelatedPairPartial,
   SyncState,
-  TestSecretsResponse
+  TestSecretsResponse,
 } from '@sane-shopify/types'
 import { syncStateMachine } from './syncState'
 import { createLogger } from './logger'
@@ -75,7 +75,7 @@ export const syncUtils = (
     fetchShopifyCollection,
     fetchAllShopifyProducts,
     fetchAllShopifyCollections,
-    testSecrets
+    testSecrets,
   } = shopifyUtils(shopifyClient)
 
   const {
@@ -89,7 +89,7 @@ export const syncUtils = (
     fetchSecrets,
     archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,
-    clearSecrets: clearSecretsFromSanity
+    clearSecrets: clearSecretsFromSanity,
   } = sanityUtils(sanityClient)
 
   /**
@@ -108,7 +108,7 @@ export const syncUtils = (
     onFetchComplete,
     onDocumentSynced,
     onDocumentLinked,
-    onComplete
+    onComplete,
   } = syncStateMachine({ onStateChange })
 
   /**
@@ -153,7 +153,7 @@ export const syncUtils = (
       if (existingDoc) {
         return {
           shopifyNode,
-          sanityDocument: existingDoc
+          sanityDocument: existingDoc,
         }
       }
       const completeShopifyItem = await fetchItemById(shopifyNode.id)
@@ -161,7 +161,7 @@ export const syncUtils = (
 
       return {
         shopifyNode,
-        sanityDocument: op.sanityDocument
+        sanityDocument: op.sanityDocument,
       }
     }
     // typescript should know better
@@ -170,7 +170,7 @@ export const syncUtils = (
 
   const makeRelationships = async ({
     operation,
-    related
+    related,
   }: SyncOperationResult): Promise<LinkOperation> => {
     const { sanityDocument } = operation
     const initialPairs = await fetchRelatedDocs(related)
@@ -198,7 +198,7 @@ export const syncUtils = (
 
   const archiveProducts = async (products: Product[]) => {
     const allSanityProducts = await fetchAllSanityDocuments({
-      types: ['shopifyProduct']
+      types: ['shopifyProduct'],
     })
 
     const productsToArchive = allSanityProducts.filter(
@@ -222,7 +222,7 @@ export const syncUtils = (
 
   const archiveCollections = async (collections: Collection[]) => {
     const allSanityProducts = await fetchAllSanityDocuments({
-      types: ['shopifyCollection']
+      types: ['shopifyCollection'],
     })
 
     const collectionsToArchive = allSanityProducts.filter(
@@ -309,7 +309,7 @@ export const syncUtils = (
     logger.logComplete({
       type: 'complete',
       sanityDocument,
-      shopifySource: shopifyProduct
+      shopifySource: shopifyProduct,
     })
     onComplete()
   }
@@ -524,20 +524,20 @@ export const syncUtils = (
     syncProducts,
     syncCollections,
     syncAll,
-    syncItemByID
+    syncItemByID,
   }
 }
 
 export const createSyncingClient = ({
   secrets,
-  onStateChange
+  onStateChange,
 }: SaneShopifyConfig): SyncUtils => {
   const { sanity, shopify } = secrets
   const sanityClient = createSanityClient({
     projectId: sanity.projectId,
     dataset: sanity.dataset,
     token: sanity.authToken,
-    useCdn: false
+    useCdn: false,
   })
 
   const shopifyClient = createShopifyClient(shopify)
