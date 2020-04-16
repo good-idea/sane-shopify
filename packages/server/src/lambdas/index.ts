@@ -15,11 +15,11 @@ const createEventHandlers = (resolve, reject) => ({
   onComplete: (payload: any) =>
     resolve({
       statusCode: 200,
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     }),
   onError: (err: Error) => {
     reject(err)
-  }
+  },
 })
 
 export const createLambdas = (config: SaneShopifyConfig): SaneLambdas => {
@@ -79,6 +79,6 @@ export const createLambdas = (config: SaneShopifyConfig): SaneLambdas => {
     productCreate: productCreateOrUpdate,
     productUpdate: productCreateOrUpdate,
     collectionCreate: collectionCreateOrUpdate,
-    collectionUpdate: collectionCreateOrUpdate
+    collectionUpdate: collectionCreateOrUpdate,
   }
 }
