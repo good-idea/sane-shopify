@@ -29,7 +29,7 @@ export const createRemoveRelationships = (
       from[keys].find((reference) => reference._ref === itemToRemove._id)
     )
     .map((reference) => `${type}[_key=="${reference._key}"]`)
-  const r = await client
+  await client
     .patch(from._id)
     // @ts-ignore
     .unset(relationshipsToRemove)

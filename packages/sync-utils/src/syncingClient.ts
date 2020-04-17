@@ -101,7 +101,6 @@ export const syncUtils = (
     initialState,
     onDocumentsFetched,
     startSync,
-    onError,
     onSavedSecrets,
     onSavedSecretsError,
     onClearedSecrets,
@@ -186,7 +185,7 @@ export const syncUtils = (
       ({ sanityDocument }) => sanityDocument
     )
     const existingRelationships =
-      sanityDocument.products || sanityDocument.collections
+      sanityDocument.products || sanityDocument.collections || []
     const relationshipsToRemove = existingRelationships.filter(
       (r) => !Boolean(related.find((ri) => ri.id === r.shopifyId))
     )

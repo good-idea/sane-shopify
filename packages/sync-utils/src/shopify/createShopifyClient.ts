@@ -1,4 +1,5 @@
 import { ShopifyClient, ShopifySecrets, Variables } from '@sane-shopify/types'
+import LeakyBucket from '@good-idea/leaky-bucket'
 import { DocumentNode } from 'graphql'
 
 const getErrorMessage = (r: Response): string => {
@@ -18,8 +19,6 @@ interface GraphQLAST {
     }
   }
 }
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const deduplicateFragments = (queryString: string | undefined): string => {
   if (!queryString) throw new Error('No query string provided')
@@ -50,7 +49,10 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
     'X-Shopify-Storefront-Access-Token': accessToken,
   }
 
-  let lastRequestTime = new Date().getTime()
+  const bucket = new LeakyBucket({
+    capacity: 40,
+    interval: 30,
+  })
 
   const query = async <ResponseType>(
     q: string | DocumentNode,
@@ -59,14 +61,7 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
     const queryString =
       typeof q === 'string' ? q : deduplicateFragments(q?.loc?.source.body)
 
-    // Rate limit to 2 requests per second.
-    // Shopify's limits are "leaky bucket" so this could be improved.
-    // https://help.shopify.com/en/api/storefront-api/getting-started#storefront-api-rate-limits
-    const now = new Date().getTime()
-    const timeSinceLastRequest = now - lastRequestTime
-    if (timeSinceLastRequest > 500) await sleep(timeSinceLastRequest)
-
-    lastRequestTime = now
+    await bucket.throttle()
 
     return fetch(url, {
       headers,
@@ -77,7 +72,6 @@ export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
       }),
     }).then(async (r) => {
       if (!r.ok) {
-        const j = await r.json()
         throw new Error(getErrorMessage(r))
       }
       const json = await r.json()
