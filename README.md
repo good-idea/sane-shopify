@@ -46,7 +46,7 @@ This project does not:
 
 # Installation & Setup
 
-_New setup starting with v0.8.0_
+_New setup starting with v0.11.0_
 
 In your Sanity installation, install the plugin: `yarn add @sane-shopify/sanity-plugin`. Once installed, add `@sane-shopify/sanity-plugin` to the list of plugins in `sanity.json`.
 
@@ -73,6 +73,14 @@ export default createSchema({
   ])
 })
 ```
+
+## Webhooks
+
+Version 0.11.0 introduces webhooks to keep your Sanity data in sync.
+
+For convenience, there are "pre-packaged" webhooks set up for Mirco JS (if you use Next.js) or Lambdas (for AWS, Netlify).
+
+See the [`@sane-shopfiy/server` README](/packages/server/README.md) for instructions on setting this up.
 
 # Usage
 
@@ -197,6 +205,10 @@ Enter your Shopify storefront name and your access token in the setup pane. Once
 This plugin does not manage orders or customer carts. You will need to use Shopify's storefront API (or another solution) to do this. But, the sanity documents will include all of the product & variant IDs you need.
 
 # Alpha Changelog
+
+### 0.11.0
+
+`@sane-shopify/server` now exports functions that can be used to handle Shopify's webhooks.
 
 ### 0.10.1
 
