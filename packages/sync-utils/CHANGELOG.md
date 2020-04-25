@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/good-idea/sane-shopify/compare/v0.10.2...v0.11.0) (2020-04-25)
+
+### Bug Fixes
+
+- **sync-utils:** improve relationships syncing ([6c7c671](https://github.com/good-idea/sane-shopify/commit/6c7c67184f29097f139d3cdd0a9107a97189dd8c))
+- **sync-utils:** rate limit shopify API ([5b7d0ef](https://github.com/good-idea/sane-shopify/commit/5b7d0ef2570805a0839021c05ea09581ab1c3a7b))
+
 ## [0.10.2](https://github.com/good-idea/sane-shopify/compare/v0.10.1...v0.10.2) (2020-04-16)
 
 ### Bug Fixes

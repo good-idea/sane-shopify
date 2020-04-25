@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/good-idea/sane-shopify/compare/v0.10.2...v0.11.0) (2020-04-25)
+
+### Bug Fixes
+
+- **sanity-plugin:** add archive subtitle to collections ([5e321ac](https://github.com/good-idea/sane-shopify/commit/5e321ac86e0ca8f6090773a92f5aa690473b013c))
+- **sanity-plugin:** fix SyncUtils type imports ([4396f3c](https://github.com/good-idea/sane-shopify/commit/4396f3c98ae6575931dfda33cf19357efbcf8a88))
+- **sync-utils:** improve relationships syncing ([6c7c671](https://github.com/good-idea/sane-shopify/commit/6c7c67184f29097f139d3cdd0a9107a97189dd8c))
+- **sync-utils:** rate limit shopify API ([5b7d0ef](https://github.com/good-idea/sane-shopify/commit/5b7d0ef2570805a0839021c05ea09581ab1c3a7b))
+
+### Features
+
+- **server:** add webhooks ([f28a90b](https://github.com/good-idea/sane-shopify/commit/f28a90bfc325db060cf9a28a7fa9c0196f8291af))
+- **types:** update types for webhooks ([58494f4](https://github.com/good-idea/sane-shopify/commit/58494f4d7de7a58fe28486d766800e62ad8fa94a))
+
 ## [0.10.2](https://github.com/good-idea/sane-shopify/compare/v0.10.1...v0.10.2) (2020-04-16)
 
 ### Bug Fixes
