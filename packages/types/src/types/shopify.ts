@@ -98,7 +98,7 @@ export interface TestSecretsResponse {
 
 export interface ShopifyUtils {
   client: ShopifyClient
-  fetchItemById: (id: string) => Promise<Product | Collection>
+  fetchItemById: (id: string) => Promise<Product | Collection | null>
   fetchShopifyProduct: (args: ShopifyItemParams) => Promise<Product | null>
   fetchShopifyCollection: (
     args: ShopifyItemParams

@@ -1,6 +1,12 @@
 import { SanityClientConfig, SanityShopifyDocument, SanityPair } from './sanity'
 import { State } from 'xstate'
-import { ShopifySecrets, Product, Collection, ShopifyItem } from './shopify'
+import {
+  ShopifySecrets,
+  Product,
+  Collection,
+  ShopifyItem,
+  TestSecretsResponse,
+} from './shopify'
 
 export interface Secrets {
   sanity: SanityClientConfig
@@ -26,6 +32,33 @@ export interface SyncContext {
 }
 
 export type SyncState = State<SyncContext>
+
+export interface SyncUtils {
+  initialize: () => void
+  initialState: SyncState
+  /* Syncs all items */
+  syncAll: (cbs?: SubscriptionCallbacks) => Promise<void>
+  /* Syncs all products */
+  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void>
+  /* Syncs all collections */
+  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void>
+  /* Syncs a product by handle*/
+  syncProductByHandle: (
+    handle: string,
+    cbs?: SubscriptionCallbacks
+  ) => Promise<any>
+  /* Syncs a collection by handle*/
+  syncCollectionByHandle: (
+    handle: string,
+    cbs?: SubscriptionCallbacks
+  ) => Promise<any>
+  /* Syncs a collection or product by storefront id */
+  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
+  /* Manage Secrets */
+  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
+  clearSecrets: () => Promise<void>
+  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
+}
 
 export interface SyncOperation {
   type: 'create' | 'update' | 'delete' | 'skip'
