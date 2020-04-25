@@ -2,13 +2,13 @@ import {
   SanityClient,
   ShopifyClient,
   ShopifySecrets,
+  SyncUtils,
   SyncState,
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
   createShopifyClient,
   syncUtils,
-  SyncUtils,
   KEYS_ID,
 } from '@sane-shopify/sync-utils'
 // import { createShopifyClient } from '../shopifyClient'

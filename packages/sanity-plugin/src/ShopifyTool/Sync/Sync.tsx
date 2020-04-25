@@ -1,5 +1,4 @@
-import { SyncUtils } from '@sane-shopify/sync-utils'
-import { Operation } from '@sane-shopify/types'
+import { SyncUtils, Operation } from '@sane-shopify/types'
 import * as React from 'react'
 import { ClientContextValue, SaneConsumer } from '../../Provider'
 import { uniqueBy } from './utils'
