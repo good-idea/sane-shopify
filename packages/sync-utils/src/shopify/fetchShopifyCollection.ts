@@ -170,7 +170,7 @@ export const createFetchShopifyCollection = (
     : handle
     ? await getByHandle(query, handle)
     : null
-  if (!fetchedCollection) throw new Error('Could not fetch collection')
+  if (!fetchedCollection) return null
 
   const collection = await fetchAllCollectionProducts(query, fetchedCollection)
   cache.set(collection)

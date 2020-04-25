@@ -72,14 +72,12 @@ export const createSyncSanityDocument = (
         "productKeys": products[] {
           ...
         },
- 
         ...
       }[0]`,
       {
         shopifyId,
       }
     )
-
     if (doc) cache.set(doc)
     return doc
   }
@@ -105,7 +103,14 @@ export const createSyncSanityDocument = (
     /* Create a new document if none exists */
     if (!existingDoc) {
       const newDoc = await client.create<SanityShopifyDocument>(docInfo)
-      cache.set(newDoc)
+      const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
+      if (!refetchedDoc) {
+        throw new Error(
+          `Could not fetch updated document with shopifyId ${newDoc.shopifyId}`
+        )
+      }
+
+      cache.set(refetchedDoc)
       return {
         type: 'create' as 'create',
         sanityDocument: newDoc,
@@ -120,11 +125,17 @@ export const createSyncSanityDocument = (
       .set(mergeExistingFields(docInfo, existingDoc))
       .commit()
 
-    cache.set(updatedDoc)
+    const refetchedDoc = await getSanityDocByShopifyId(updatedDoc.shopifyId)
+    if (!refetchedDoc) {
+      throw new Error(
+        `Could not fetch updated document with shopifyId ${updatedDoc.shopifyId}`
+      )
+    }
+    cache.set(refetchedDoc)
 
     return {
       type: 'update' as 'update',
-      sanityDocument: updatedDoc,
+      sanityDocument: refetchedDoc,
       shopifySource: item,
     }
   }

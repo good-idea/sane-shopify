@@ -14,39 +14,12 @@ import {
   SubscriptionCallbacks,
   RelatedPairPartial,
   SyncState,
-  TestSecretsResponse,
+  SyncUtils,
 } from '@sane-shopify/types'
 import { syncStateMachine } from './syncState'
 import { createLogger } from './logger'
 import { createShopifyClient, shopifyUtils } from './shopify'
 import { sanityUtils } from './sanity'
-
-export interface SyncUtils {
-  initialize: () => void
-  initialState: SyncState
-  /* Syncs all items */
-  syncAll: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs all products */
-  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs all collections */
-  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs a product by handle*/
-  syncProductByHandle: (
-    handle: string,
-    cbs?: SubscriptionCallbacks
-  ) => Promise<any>
-  /* Syncs a collection by handle*/
-  syncCollectionByHandle: (
-    handle: string,
-    cbs?: SubscriptionCallbacks
-  ) => Promise<any>
-  /* Syncs a collection or product by storefront id */
-  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Manage Secrets */
-  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: () => Promise<void>
-  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
-}
 
 /**
  * This is the main 'entry point' for the sync utils client.
@@ -133,7 +106,7 @@ export const syncUtils = (
 
   const completePair = async (
     partialPair: RelatedPairPartial
-  ): Promise<RelatedPair> => {
+  ): Promise<RelatedPair | null> => {
     const { shopifyNode, sanityDocument } = partialPair
     if (shopifyNode && sanityDocument) return { shopifyNode, sanityDocument }
     if (!shopifyNode && !sanityDocument) {
@@ -144,7 +117,10 @@ export const syncUtils = (
 
     if (!shopifyNode && sanityDocument) {
       const fetchedShopifyItem = await fetchItemById(sanityDocument.shopifyId)
-      return { shopifyNode: fetchedShopifyItem, sanityDocument }
+      if (fetchedShopifyItem) {
+        return { shopifyNode: fetchedShopifyItem, sanityDocument }
+      }
+      return null
     }
 
     if (shopifyNode && !sanityDocument) {
@@ -156,6 +132,7 @@ export const syncUtils = (
         }
       }
       const completeShopifyItem = await fetchItemById(shopifyNode.id)
+      if (!completeShopifyItem) return null
       const op = await syncSanityDocument(completeShopifyItem)
 
       return {
@@ -181,9 +158,12 @@ export const syncUtils = (
     // At this point we have the already-synced document,
     // and all of the documents that it should be related to
 
-    const relatedDocs = completePairs.map(
-      ({ sanityDocument }) => sanityDocument
-    )
+    const relatedDocs = completePairs
+      .reduce(
+        (acc, current) => (current !== null ? [...acc, current] : acc),
+        []
+      )
+      .map(({ sanityDocument }) => sanityDocument)
     const existingRelationships =
       sanityDocument.products || sanityDocument.collections || []
     const relationshipsToRemove = existingRelationships.filter(
@@ -192,6 +172,15 @@ export const syncUtils = (
     await removeRelationships(sanityDocument, relationshipsToRemove)
 
     const linkOperation = await syncRelationships(sanityDocument, relatedDocs)
+
+    const reverseRelationshipsQueue = new PQueue({ concurrency: 1 })
+
+    await reverseRelationshipsQueue.addAll(
+      relatedDocs.map((doc) => async () => {
+        await syncRelationships(doc, [sanityDocument])
+      })
+    )
+
     return linkOperation
   }
 
@@ -200,6 +189,7 @@ export const syncUtils = (
       types: ['shopifyProduct'],
     })
 
+    // Find all sanity products that do not have corresponding Shopify products
     const productsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
         !Boolean(
@@ -345,6 +335,14 @@ export const syncUtils = (
     const logger = createLogger(cbs)
     const shopifyItem = await fetchItemById(id)
 
+    if (!shopifyItem) {
+      onFetchComplete()
+      const sanityDoc = await documentByShopifyId(id)
+      archiveSanityDocument(sanityDoc)
+      onComplete()
+      return
+    }
+
     onDocumentsFetched([shopifyItem])
     logger.logFetched(shopifyItem)
     if (shopifyItem.__typename === 'Product') {
@@ -353,6 +351,7 @@ export const syncUtils = (
       const linkOperation = await makeRelationships(syncResult)
       onDocumentLinked(linkOperation)
       onComplete()
+      return
     }
 
     if (shopifyItem.__typename === 'Collection') {
@@ -361,6 +360,7 @@ export const syncUtils = (
       const linkOperation = await makeRelationships(syncResult)
       onDocumentLinked(linkOperation)
       onComplete()
+      return
     }
     // @ts-ignore
     throw new Error(`Item type ${shopifyItem.__typename} is not supported`)
