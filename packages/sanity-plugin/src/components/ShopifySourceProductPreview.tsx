@@ -18,6 +18,7 @@ const ShopifySourceProductPreviewInner = ({
   const { syncState, syncingClient } = useSaneContext()
   if (!syncState) return null
   const { value: syncStateValue } = syncState
+  if (!value) return null
 
   const syncProductByHandle = syncingClient
     ? syncingClient.syncProductByHandle
