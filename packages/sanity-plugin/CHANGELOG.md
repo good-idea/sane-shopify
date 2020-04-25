@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.1](https://github.com/good-idea/sane-shopify/compare/v0.11.0...v0.11.1) (2020-04-25)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix crashing desk tool when deleting documents ([4dd4b11](https://github.com/good-idea/sane-shopify/commit/4dd4b115affa4b2db257e2fe8bc0e49f8cf8d34e))
+
 # [0.11.0](https://github.com/good-idea/sane-shopify/compare/v0.10.2...v0.11.0) (2020-04-25)
 
 ### Bug Fixes
