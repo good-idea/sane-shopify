@@ -99,12 +99,14 @@ export const createCollectionDocument = ({
       select: {
         title: 'title',
         sourceData: 'sourceData',
+        archived: 'archived',
       },
       prepare: (props) => {
-        const { title, sourceData } = props
+        const { title, archived, sourceData } = props
         const itemTitle = sourceData ? title || sourceData.title : title
         const alt = `Image for ${itemTitle}`
         const src = sourceData?.image?.w100
+        const subtitle = archived ? '📁 Archived' : undefined
         const media =
           sourceData && sourceData.image ? (
             <>
@@ -124,6 +126,7 @@ export const createCollectionDocument = ({
           ) : undefined
         return {
           media,
+          subtitle,
           title: itemTitle,
         }
       },
