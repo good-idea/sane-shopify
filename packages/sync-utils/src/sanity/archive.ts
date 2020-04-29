@@ -25,6 +25,7 @@ export const createArchiveSanityDocument = (client: SanityClient) => async (
       .commit()
   }
   const relationships = doc[relationshipsKey]
+  if (!relationships) return doc
   await Promise.all(relationships.map((r) => removeRelationships(r)))
   await client
     .patch(doc._id)
