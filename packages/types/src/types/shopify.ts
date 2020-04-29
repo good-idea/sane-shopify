@@ -27,6 +27,8 @@ export interface ShopifyImage {
   w100: string
   w300: string
   w800: string
+  w1200: string
+  w1600: string
   __typename: 'Image'
 }
 
