@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.2](https://github.com/good-idea/sane-shopify/compare/v0.11.1...v0.11.2) (2020-04-29)
+
+### Bug Fixes
+
+- **server:** better error catching for webhooks ([6da2dea](https://github.com/good-idea/sane-shopify/commit/6da2deab301fde55e2dd0696ca49222a053e3e28))
+- **sync-utils:** fetch more variants, add image sizes ([4f2b304](https://github.com/good-idea/sane-shopify/commit/4f2b304e8e5611a88f89bea5b82b6dc4f5029525))
+- **sync-utils:** fix empty relationships when archiving ([1935ac8](https://github.com/good-idea/sane-shopify/commit/1935ac8db7f764c0b10fba5fe1dfc5748da614d9))
+- **types:** add more image sizes ([a3e88a3](https://github.com/good-idea/sane-shopify/commit/a3e88a3409c42b55b19649c3145525361968d058))
+
 ## [0.11.1](https://github.com/good-idea/sane-shopify/compare/v0.11.0...v0.11.1) (2020-04-25)
 
 ### Bug Fixes

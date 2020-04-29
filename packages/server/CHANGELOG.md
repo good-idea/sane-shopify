@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.2](https://github.com/good-idea/sane-shopify/compare/v0.11.1...v0.11.2) (2020-04-29)
+
+### Bug Fixes
+
+- **server:** better error catching for webhooks ([6da2dea](https://github.com/good-idea/sane-shopify/commit/6da2deab301fde55e2dd0696ca49222a053e3e28))
+
 # [0.11.0](https://github.com/good-idea/sane-shopify/compare/v0.10.2...v0.11.0) (2020-04-25)
 
 ### Features
