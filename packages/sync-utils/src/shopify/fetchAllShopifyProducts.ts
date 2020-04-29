@@ -21,7 +21,7 @@ export const PRODUCTS_QUERY = gql`
         cursor
         node {
           ...ProductFragment
-          collections(first: 20) {
+          collections(first: 99) {
             pageInfo {
               hasNextPage
               hasPreviousPage

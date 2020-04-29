@@ -24,6 +24,8 @@ const imageFragment = /* GraphQL */ `
     w100: transformedSrc(maxWidth: 100, crop: CENTER)
     w300: transformedSrc(maxWidth: 300, crop: CENTER)
     w800: transformedSrc(maxWidth: 800, crop: CENTER)
+    w1200: transformedSrc(maxWidth: 1200, crop: CENTER)
+    w1600: transformedSrc(maxWidth: 1600, crop: CENTER)
   }
 `
 
@@ -70,7 +72,7 @@ export const productFragment = gql`
       name
       values
     }
-    variants(first: 20) {
+    variants(first: 99) {
       pageInfo {
         hasNextPage
         hasPreviousPage
