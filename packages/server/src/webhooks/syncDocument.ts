@@ -19,9 +19,12 @@ export const syncDocument = ({
     throw new Error(`Cannot sync document of type ${type}`)
   }
   const storefrontId = btoa(`gid://shopify/${docType}/${id}`)
-  await syncUtils.syncItemByID(storefrontId).catch((err) => {
+  try {
+    await syncUtils.syncItemByID(storefrontId)
+    log(`synced item ${storefrontId} (/${docType}/${id})`)
+  } catch (err) {
+    log(`failed to sync item ${storefrontId} (/${docType}/${id})`)
     log(err)
     onError(err)
-  })
-  log(`synced item ${storefrontId}`)
+  }
 }
