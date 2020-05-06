@@ -89,5 +89,15 @@ export const shopifyImage = {
       name: 'w800',
       type: 'string',
     },
+    {
+      title: 'w1200',
+      name: 'w1200',
+      type: 'string',
+    },
+    {
+      title: 'w1600',
+      name: 'w1600',
+      type: 'string',
+    },
   ],
 }
