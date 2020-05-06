@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.3](https://github.com/good-idea/sane-shopify/compare/v0.11.2...v0.11.3) (2020-05-06)
+
+### Bug Fixes
+
+- **sanity-plugin:** add w1200 and 1600 to schema document ([2327430](https://github.com/good-idea/sane-shopify/commit/2327430c2ff8769157efab2ab4101118fc7b7fc7))
+
 ## [0.11.2](https://github.com/good-idea/sane-shopify/compare/v0.11.1...v0.11.2) (2020-04-29)
 
 **Note:** Version bump only for package @sane-shopify/sanity-plugin

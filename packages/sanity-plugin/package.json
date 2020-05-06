@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/sanity-plugin",
-	"version": "0.11.2",
+	"version": "0.11.3",
 	"description": "A Sanity.io field for selecting products & collections from a Shopify storefront",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
