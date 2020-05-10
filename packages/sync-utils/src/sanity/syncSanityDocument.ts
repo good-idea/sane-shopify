@@ -115,12 +115,17 @@ export const createSyncSanityDocument = (
   ): Promise<SyncOperation> => {
     const docInfo = prepareDocument(item)
     const existingDoc = await getSanityDocByShopifyId(item.id)
-
     /* If the document exists and is up to date, skip */
     if (
       existingDoc &&
       isMatch(docInfo, existingDoc, {
-        ignoreKeys: ['products', 'collections', 'sourceData.__cursor'],
+        ignoreKeys: [
+          'products',
+          'collections',
+          'sourceData',
+          'productKeys',
+          'collectionKeys',
+        ],
       })
     ) {
       return {
