@@ -39,7 +39,7 @@ export interface SanityShopifyProductDocument
   title: string
   handle: string
   sourceData: Product
-  collections: SanityShopifyDocumentNode[]
+  collections: SanityShopifyCollectionDocument[]
 }
 
 export interface SanityShopifyCollectionDocument
@@ -48,7 +48,7 @@ export interface SanityShopifyCollectionDocument
   title: string
   handle: string
   sourceData: Collection
-  products: SanityShopifyDocumentNode[]
+  products: SanityShopifyProductDocument[]
 }
 
 export type SanityShopifyDocument =
