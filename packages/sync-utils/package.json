@@ -53,6 +53,7 @@
 		"@sanity/client": "^1.149.7",
 		"axios": "^0.19.2",
 		"debug": "^4.1.1",
+		"deepmerge": "^4.2.2",
 		"es6-promise": "^4.2.8",
 		"graphql-tag": "^2.10.3",
 		"isomorphic-fetch": "^2.2.1",

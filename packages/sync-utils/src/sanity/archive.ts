@@ -5,7 +5,8 @@ export const createArchiveSanityDocument = (client: SanityClient) => async (
 ): Promise<SanityShopifyDocument> => {
   const relationshipsKey =
     doc.sourceData.__typename === 'Collection' ? 'products' : 'collections'
-  const removeRelationships = async (relatedDoc: SanityShopifyDocument) => {
+  const removeRelationships = async (relatedDoc?: SanityShopifyDocument) => {
+    if (!relatedDoc) return
     const type =
       relatedDoc.sourceData.__typename === 'Collection'
         ? 'products'
@@ -18,7 +19,7 @@ export const createArchiveSanityDocument = (client: SanityClient) => async (
 
     const relationshipsToRemove = [`${type}[_key=="${related._key}"]`]
 
-    const result = await client
+    await client
       .patch(relatedDoc._id)
       // @ts-ignore
       .unset(relationshipsToRemove)

@@ -5,18 +5,45 @@ import {
   SyncOperation,
   SanityShopifyDocument,
 } from '@sane-shopify/types'
-import { isMatch } from 'lodash'
-import { prepareDocument, sleep } from './utils'
+import deepMerge from 'deepmerge'
+import { omit } from 'lodash'
+import { prepareDocument, sleep, isMatch, uniqueObjects } from './utils'
 import { SanityCache } from './sanityUtils'
 
 const mergeExistingFields = (
   docInfo: any,
   existingDoc: SanityShopifyDocument
-) => {
+): SanityShopifyDocument => {
+  // @ts-ignore
+  const merged = deepMerge(docInfo, existingDoc)
+  if (existingDoc._type !== 'shopifyProduct') {
+    return {
+      ...merged,
+      sourceData: {
+        ...docInfo.sourceData,
+        products: {
+          ...docInfo.sourceData.products,
+          edges: uniqueObjects(docInfo.sourceData.products.edges),
+        },
+      },
+    }
+  }
   const variants = docInfo.variants || []
   const options = docInfo.options || []
   return {
-    ...docInfo,
+    ...merged,
+    sourceData: {
+      ...docInfo.sourceData,
+      collections: {
+        ...docInfo.sourceData.collections,
+        edges: uniqueObjects(docInfo.sourceData.collections.edges),
+      },
+      images: {
+        ...docInfo.sourceData.images,
+        edges: uniqueObjects(docInfo.sourceData.images.edges),
+      },
+    },
+
     options: options.map((updatedOption) => {
       const existingOption = existingDoc.options
         ? existingDoc.options.find((o) => o._key === updatedOption._key) || {}
@@ -63,13 +90,14 @@ export const createSyncSanityDocument = (
     if (cached) return cached
 
     const doc = await client.fetch<SanityShopifyDocument>(
-      `*[shopifyId == $shopifyId]{
+      `
+      *[shopifyId == $shopifyId]{
         products[]->,
         collections[]->,
         "collectionKeys": collections[]{
           ...
         },
-        "productKeys": products[] {
+        "productKeys": products[]{
           ...
         },
         ...
@@ -89,7 +117,12 @@ export const createSyncSanityDocument = (
     const existingDoc = await getSanityDocByShopifyId(item.id)
 
     /* If the document exists and is up to date, skip */
-    if (existingDoc && isMatch(existingDoc, docInfo)) {
+    if (
+      existingDoc &&
+      isMatch(docInfo, existingDoc, {
+        ignoreKeys: ['products', 'collections', 'sourceData.__cursor'],
+      })
+    ) {
       return {
         type: 'skip' as 'skip',
         sanityDocument: existingDoc,
@@ -120,9 +153,15 @@ export const createSyncSanityDocument = (
 
     /* Otherwise, update the existing doc */
 
+    const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
+      'products',
+      'collections',
+      'productKeys',
+      'collectionKeys',
+    ])
     const updatedDoc = await client
       .patch<SanityShopifyDocument>(existingDoc._id)
-      .set(mergeExistingFields(docInfo, existingDoc))
+      .set(patchData)
       .commit()
 
     const refetchedDoc = await getSanityDocByShopifyId(updatedDoc.shopifyId)
@@ -131,6 +170,7 @@ export const createSyncSanityDocument = (
         `Could not fetch updated document with shopifyId ${updatedDoc.shopifyId}`
       )
     }
+
     cache.set(refetchedDoc)
 
     return {

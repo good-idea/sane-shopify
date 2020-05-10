@@ -9,6 +9,9 @@ import {
   SyncOperationResult,
   SaneShopifyConfig,
   RelatedPair,
+  SanityShopifyDocument,
+  SanityShopifyProductDocument,
+  SanityShopifyCollectionDocument,
   ShopifySecrets,
   LinkOperation,
   SubscriptionCallbacks,
@@ -164,22 +167,33 @@ export const syncUtils = (
         []
       )
       .map(({ sanityDocument }) => sanityDocument)
-    const existingRelationships =
-      sanityDocument.products || sanityDocument.collections || []
+    const existingRelationships: SanityShopifyDocument[] =
+      sanityDocument._type == 'shopifyCollection'
+        ? sanityDocument.products
+        : sanityDocument._type === 'shopifyProduct'
+        ? sanityDocument.collections
+        : []
+    // sanityDocument.products || sanityDocument.collections || []
     const relationshipsToRemove = existingRelationships.filter(
-      (r) => !Boolean(related.find((ri) => ri.id === r.shopifyId))
+      (r) => r && !Boolean(related.find((ri) => ri.id === r.shopifyId))
     )
+
     await removeRelationships(sanityDocument, relationshipsToRemove)
 
     const linkOperation = await syncRelationships(sanityDocument, relatedDocs)
 
     const reverseRelationshipsQueue = new PQueue({ concurrency: 1 })
 
-    await reverseRelationshipsQueue.addAll(
-      relatedDocs.map((doc) => async () => {
+    const reverseRelationships = [
+      ...relatedDocs.map((doc) => async () => {
         await syncRelationships(doc, [sanityDocument])
-      })
-    )
+      }),
+      ...relationshipsToRemove.map((doc) => async () => {
+        const docWithRelationsihps = await documentByShopifyId(doc.shopifyId)
+        await removeRelationships(docWithRelationsihps, [sanityDocument])
+      }),
+    ]
+    await reverseRelationshipsQueue.addAll(reverseRelationships)
 
     return linkOperation
   }

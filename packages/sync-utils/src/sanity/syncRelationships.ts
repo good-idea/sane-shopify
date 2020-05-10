@@ -29,7 +29,7 @@ export const createRemoveRelationships = (
       from[keys].find((reference) => reference._ref === itemToRemove._id)
     )
     .map((reference) => `${type}[_key=="${reference._key}"]`)
-  await client
+  const r = await client
     .patch(from._id)
     // @ts-ignore
     .unset(relationshipsToRemove)
@@ -60,7 +60,7 @@ export const createSyncRelationships = (
     ? toDocs.reduce<boolean>(
         (prev: boolean, current: SanityShopifyDocument) => {
           if (prev === false) return false
-          return existingLinks.some((l) => l._id === current._id)
+          return existingLinks.some((l) => l && l._id === current._id)
         },
         true
       )
@@ -89,8 +89,12 @@ export const createSyncRelationships = (
 
   const pairs: SanityPair[] = await rQueue.addAll(
     toDocs.map((toDoc) => async () => {
-      const relationships =
-        toDoc._type === 'shopifyCollection' ? toDoc.products : toDoc.collections
+      const relationships: SanityShopifyDocument[] =
+        toDoc._type === 'shopifyCollection'
+          ? toDoc.products
+          : toDoc._type === 'shopifyProduct'
+          ? toDoc.collections
+          : []
       const pair = {
         from: from,
         to: toDoc,
