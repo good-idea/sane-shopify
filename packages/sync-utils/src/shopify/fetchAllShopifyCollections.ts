@@ -21,7 +21,7 @@ export const COLLECTIONS_QUERY = gql`
         cursor
         node {
           ...CollectionFragment
-          products(first: 50) {
+          products(first: 25) {
             pageInfo {
               hasNextPage
               hasPreviousPage
@@ -63,7 +63,7 @@ export const createFetchAllShopifyCollections = (
 
     const now = new Date()
     const result = await query<QueryResult>(COLLECTIONS_QUERY, {
-      first: 50,
+      first: 25,
       after,
     })
 

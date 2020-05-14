@@ -62,7 +62,7 @@ export const createFetchAllShopifyProducts = (
     const after = prevPage ? getLastCursor(prevPage) : undefined
     const now = new Date()
     const result = await query<QueryResult>(PRODUCTS_QUERY, {
-      first: 50,
+      first: 25,
       after,
     })
     const duration = new Date().getTime() - now.getTime()
