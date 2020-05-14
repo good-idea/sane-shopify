@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/sync-utils",
-	"version": "0.11.5",
+	"version": "0.11.6",
 	"description": "Syncing utility for Node & the browser",
 	"author": "Joseph Thomas | Good Idea Studio",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
