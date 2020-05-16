@@ -15022,9 +15022,9 @@ y18n@^4.0.0:
   integrity sha512-r9S/ZyXu/Xu9q1tYlpsLIsa3EeLXXk0VwlxqTcFRfg9EhMW+17kbt9G0NrgCmhGb5vT2hyhJZLfDGx+7+5Uj/w==
 
 yalc@^1.0.0-pre.34:
-  version "1.0.0-pre.34"
-  resolved "https://registry.yarnpkg.com/yalc/-/yalc-1.0.0-pre.34.tgz#137cfaded3417b7d66a69864a02aa691b6ef7856"
-  integrity sha512-Gqx567+kayHS1XbatQJcB9HnUcVMarWxPw8tPdVNte6oxZkC7pfoRKOCqjEGw8OkXioQd/Vrq+SbfkzAEDh98g==
+  version "1.0.0-pre.35"
+  resolved "https://registry.yarnpkg.com/yalc/-/yalc-1.0.0-pre.35.tgz#c997d6694e6bdad3e988d6e183bc05158dd102fe"
+  integrity sha512-EGZN0Z+9nVzX8nWaEL4yRCNUNepGz7ouXa8eLA9orqtgwVv+iCtZGzhe3rngR71h01Xy2bwlDjJt0PsC5fkHoA==
   dependencies:
     fs-extra "^8.0.1"
     glob "^7.1.4"
