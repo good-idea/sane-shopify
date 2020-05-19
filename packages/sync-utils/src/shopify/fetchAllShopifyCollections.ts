@@ -56,6 +56,7 @@ export const createFetchAllShopifyCollections = (
   onProgress: ProgressHandler<Collection> = noop
 ): Promise<Collection[]> => {
   const allStartTimer = new Date()
+
   const fetchCollections = async (
     prevPage?: Paginated<Collection>
   ): Promise<Collection[]> => {
@@ -63,7 +64,7 @@ export const createFetchAllShopifyCollections = (
 
     const now = new Date()
     const result = await query<QueryResult>(COLLECTIONS_QUERY, {
-      first: 25,
+      first: 10,
       after,
     })
 
@@ -73,14 +74,15 @@ export const createFetchAllShopifyCollections = (
     const [batch] = unwindEdges(fetchedCollections)
     onProgress(batch)
 
-    const collections = prevPage
+    const mergedCollections = prevPage
       ? mergePaginatedResults(prevPage, fetchedCollections)
       : fetchedCollections
-    if (!collections.pageInfo) {
+    if (!mergedCollections.pageInfo) {
       throw new Error('Pagination info was not fetched')
     }
-    if (collections.pageInfo.hasNextPage) return fetchCollections(collections)
-    const [unwound] = unwindEdges(fetchedCollections)
+    if (mergedCollections.pageInfo.hasNextPage)
+      return fetchCollections(mergedCollections)
+    const [unwound] = unwindEdges(mergedCollections)
     unwound.forEach((collection) => cache.set(collection))
     return unwound
   }

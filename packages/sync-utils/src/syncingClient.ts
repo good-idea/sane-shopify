@@ -10,8 +10,6 @@ import {
   SaneShopifyConfig,
   RelatedPair,
   SanityShopifyDocument,
-  SanityShopifyProductDocument,
-  SanityShopifyCollectionDocument,
   ShopifySecrets,
   LinkOperation,
   SubscriptionCallbacks,

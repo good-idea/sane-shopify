@@ -61,6 +61,11 @@ interface Patch<ExpectedResult = any> {
   ) => {
     commit: () => Promise<ExpectedResult>
   }
+  unset: (
+    document: object
+  ) => {
+    commit: () => Promise<ExpectedResult>
+  }
 }
 
 export interface SanityFetchParams {

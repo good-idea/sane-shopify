@@ -119,13 +119,7 @@ export const createSyncSanityDocument = (
     if (
       existingDoc &&
       isMatch(docInfo, existingDoc, {
-        ignoreKeys: [
-          'products',
-          'collections',
-          'sourceData',
-          'productKeys',
-          'collectionKeys',
-        ],
+        keys: ['title', 'handle', 'shopifyId', 'sourceData', '_type'],
       })
     ) {
       return {
@@ -164,10 +158,21 @@ export const createSyncSanityDocument = (
       'productKeys',
       'collectionKeys',
     ])
+
     const updatedDoc = await client
       .patch<SanityShopifyDocument>(existingDoc._id)
       .set(patchData)
       .commit()
+
+    if (
+      existingDoc._type === 'shopifyCollection' &&
+      (existingDoc.variants || existingDoc.options)
+    ) {
+      await client
+        .patch(existingDoc._id)
+        .unset(['variants', 'options'])
+        .commit()
+    }
 
     const refetchedDoc = await getSanityDocByShopifyId(updatedDoc.shopifyId)
     if (!refetchedDoc) {

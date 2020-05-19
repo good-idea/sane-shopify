@@ -1,6 +1,6 @@
 import { unwindEdges, Edge } from '@good-idea/unwind-edges'
 import { Collection, Product } from '@sane-shopify/types'
-import { isMatch as lodashIsMatch, omit } from 'lodash'
+import { isMatch as lodashIsMatch, pick } from 'lodash'
 import { slugify } from '../utils'
 
 export const sleep = (ms: number) =>
@@ -160,6 +160,7 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
       __cursor: sourceData.id,
     },
   }
+
   switch (item.__typename) {
     case 'Product':
       return {
@@ -175,10 +176,8 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
 }
 
 interface IsMatchConfig {
-  ignoreKeys: string[]
+  keys: string[]
 }
-
-const defaultIgnoreKeys = ['_createdAt', '_updatedAt', '_id', '_rev']
 
 /**
  * Compares if a prepared document and original document are a match.
@@ -186,10 +185,8 @@ const defaultIgnoreKeys = ['_createdAt', '_updatedAt', '_id', '_rev']
  * in the prepared document.
  *
  */
-export const isMatch = (a: any, b: any, config?: IsMatchConfig): boolean => {
-  const additionalKeys = config?.ignoreKeys ?? []
-  const ignoreKeys = [...defaultIgnoreKeys, ...additionalKeys]
-  return lodashIsMatch(omit(a, ignoreKeys), omit(b, ignoreKeys))
+export const isMatch = (a: any, b: any, { keys }: IsMatchConfig): boolean => {
+  return lodashIsMatch(pick(a, keys), pick(b, keys))
 }
 
 export const uniqueObjects = <T extends object>(arr: T[]): T[] =>
