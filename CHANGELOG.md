@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/good-idea/sane-shopify/compare/v0.11.6...v0.12.0) (2020-05-20)
+
+### Bug Fixes
+
+- **sync-utils:** improve match check, reduce pagination ([78a33d6](https://github.com/good-idea/sane-shopify/commit/78a33d6a810a1b9e74475cda9615a0034e9ea843))
+
+### Features
+
+- **sync-utils:** delete documents, archive if they have relationships ([3133cef](https://github.com/good-idea/sane-shopify/commit/3133cefe2f1ff623266e198e7b1d12318b125420))
+- **types:** update types for deleting ([d4e6fe3](https://github.com/good-idea/sane-shopify/commit/d4e6fe31683402f4f1d544db2ad30b69be0f5989))
+
 ## [0.11.6](https://github.com/good-idea/sane-shopify/compare/v0.11.5...v0.11.6) (2020-05-14)
 
 ### Bug Fixes
