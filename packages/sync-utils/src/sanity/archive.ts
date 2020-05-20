@@ -5,6 +5,7 @@ export const createArchiveSanityDocument = (client: SanityClient) => async (
 ): Promise<SanityShopifyDocument> => {
   const relationshipsKey =
     doc.sourceData.__typename === 'Collection' ? 'products' : 'collections'
+
   const removeRelationships = async (relatedDoc?: SanityShopifyDocument) => {
     if (!relatedDoc) return
     const type =
@@ -28,9 +29,13 @@ export const createArchiveSanityDocument = (client: SanityClient) => async (
   const relationships = doc[relationshipsKey]
   if (!relationships) return doc
   await Promise.all(relationships.map((r) => removeRelationships(r)))
-  await client
-    .patch(doc._id)
-    .set({ archived: true, [relationshipsKey]: [] })
-    .commit()
+  try {
+    await client.delete(doc._id)
+  } catch (err) {
+    await client
+      .patch(doc._id)
+      .set({ archived: true, shopifyId: null, [relationshipsKey]: [] })
+      .commit()
+  }
   return doc
 }

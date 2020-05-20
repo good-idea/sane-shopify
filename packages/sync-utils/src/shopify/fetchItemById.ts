@@ -55,12 +55,16 @@ interface NodeResult {
 export const createFetchItemById = (
   query: ShopifyClient['query'],
   cache: ShopifyCache
-) => async (id: string): Promise<Product | Collection | null> => {
+) => async (
+  id: string,
+  fetchRelated: boolean
+): Promise<Product | Collection | null> => {
   const cached = cache.getCollectionById(id) || cache.getProductById(id)
   if (cached) return cached
   const result = await query<NodeResult>(NODE_QUERY, { id })
   const item = result?.data?.node
   if (!item) return null
+  if (!fetchRelated) return item
   if (item.__typename === 'Product') {
     return fetchAllProductCollections(query, item)
   }

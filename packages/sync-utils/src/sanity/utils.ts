@@ -152,6 +152,7 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
   const sourceData = prepareSourceData(item)
   const docInfo = {
     _type,
+    archived: false,
     title: item.title,
     shopifyId: item.id,
     handle: item.handle,

@@ -91,7 +91,7 @@ export const createSyncSanityDocument = (
 
     const doc = await client.fetch<SanityShopifyDocument>(
       `
-      *[shopifyId == $shopifyId]{
+      *[shopifyId == $shopifyId && defined(archived) && archived != true]{
         products[]->,
         collections[]->,
         "collectionKeys": collections[]{
@@ -115,6 +115,7 @@ export const createSyncSanityDocument = (
   ): Promise<SyncOperation> => {
     const docInfo = prepareDocument(item)
     const existingDoc = await getSanityDocByShopifyId(item.id)
+
     /* If the document exists and is up to date, skip */
     if (
       existingDoc &&
@@ -134,6 +135,7 @@ export const createSyncSanityDocument = (
 
     /* Create a new document if none exists */
     if (!existingDoc) {
+      // @ts-ignore
       const newDoc = await client.create<SanityShopifyDocument>(docInfo)
       const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
       if (!refetchedDoc) {
@@ -160,7 +162,7 @@ export const createSyncSanityDocument = (
     ])
 
     const updatedDoc = await client
-      .patch<SanityShopifyDocument>(existingDoc._id)
+      .patch(existingDoc._id)
       .set(patchData)
       .commit()
 

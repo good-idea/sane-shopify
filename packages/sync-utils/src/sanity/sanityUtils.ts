@@ -95,7 +95,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
     if (cached) return cached
 
     const doc = await client.fetch<SanityShopifyDocument>(
-      `*[shopifyId == $shopifyId]{
+      `*[shopifyId == $shopifyId && defined(archived) && archived != true]{
         products[]->,
         collections[]->,
         "collectionKeys": collections[]{
@@ -119,7 +119,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
     if (cached) return cached
 
     const doc = await client.fetch<SanityShopifyDocument>(
-      `*[handle == $handle]{
+      `*[handle == $handle && defined(archived) && archived != true]{
         products[]->,
         collections[]->,
         "collectionKeys": collections[]{

@@ -9,15 +9,16 @@ import {
 } from '@sane-shopify/types'
 import Debug from 'debug'
 
-const log = Debug('sane-shopify')
+const log = Debug('sane-shopify:log')
 
-interface Logger {
+export interface Logger {
   logFetched: (
     fetchedItems: Product | Collection | Array<Product | Collection>
   ) => void
   logSynced: (op: SyncOperation) => void
   logLinked: (sourceDoc: SanityShopifyDocument, pairs: SanityPair[]) => void
   logComplete: (op: OperationComplete | OperationComplete[]) => void
+  logArchived: (sourceDoc: SanityShopifyDocument) => void
 }
 
 export const createLogger = (cbs: SubscriptionCallbacks = {}): Logger => {
@@ -51,11 +52,20 @@ export const createLogger = (cbs: SubscriptionCallbacks = {}): Logger => {
       })
   }
 
+  const logArchived = (sourceDoc: SanityShopifyDocument) => {
+    log('archived document:', sourceDoc)
+    cbs.onProgress &&
+      cbs.onProgress({
+        type: 'archive',
+        sourceDoc,
+      })
+  }
+
   const logComplete = (op: OperationComplete | OperationComplete[]) => {
     log('completed sync operations', op)
     const ops = Array.isArray(op) ? op : [op]
     cbs.onComplete && cbs.onComplete(ops, 'completed sync operations')
   }
 
-  return { logFetched, logLinked, logSynced, logComplete }
+  return { logFetched, logLinked, logSynced, logComplete, logArchived }
 }

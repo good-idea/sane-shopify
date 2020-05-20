@@ -29,7 +29,7 @@ export const createRemoveRelationships = (
       from[keys].find((reference) => reference._ref === itemToRemove._id)
     )
     .map((reference) => `${type}[_key=="${reference._key}"]`)
-  const r = await client
+  await client
     .patch(from._id)
     // @ts-ignore
     .unset(relationshipsToRemove)
@@ -47,65 +47,67 @@ export const createSyncRelationships = (
   const toDocs = arrayify(to).map(removeDraftId)
 
   const aToBKey = from._type === 'shopifyProduct' ? 'collections' : 'products'
-  const aToBRelationships = toDocs.map((toDoc) => ({
-    _type: 'reference',
-    _ref: toDoc._id,
-    _key: `${toDoc._rev}-${toDoc._id}`,
-  }))
-
+  const existingRelationships: SanityShopifyDocument[] = from[aToBKey] || []
   // determine if the FROM doc already has the
   // links in place. If so, skip the patch.
-  const existingLinks: SanityShopifyDocument[] = from[aToBKey]
-  const alreadyLinked = existingLinks
-    ? toDocs.reduce<boolean>(
-        (prev: boolean, current: SanityShopifyDocument) => {
-          if (prev === false) return false
-          return existingLinks.some((l) => l && l._id === current._id)
-        },
-        true
+  const alreadyLinked =
+    toDocs.length === existingRelationships.length &&
+    toDocs.every((toDoc) =>
+      Boolean(
+        existingRelationships.find((er) => toDoc.shopifyId === er.shopifyId)
       )
-    : false
+    )
 
   if (alreadyLinked) {
-    const pairs = toDocs.map((toDoc) => ({
-      from: from,
-      to: toDoc,
-    }))
     return {
-      type: 'link' as 'link',
+      type: 'link',
       sourceDoc: from,
-      pairs,
+      pairs: toDocs.map((toDoc) => ({ from, to: toDoc })),
     }
   }
 
-  await client
-    .patch(from._id)
-    .set({ [aToBKey]: aToBRelationships })
-    .commit()
+  const newLinks = toDocs.filter(
+    (toDoc) =>
+      !Boolean(
+        existingRelationships.find((er) => toDoc.shopifyId === er.shopifyId)
+      )
+  )
+
+  if (newLinks.length) {
+    const aToBRelationships = toDocs.map((toDoc) => ({
+      _type: 'reference',
+      _ref: toDoc._id,
+      _key: `${toDoc._rev}-${toDoc._id}`,
+    }))
+
+    await client
+      .patch(from._id)
+      .setIfMissing({ [aToBKey]: [] })
+      .append(aToBKey, aToBRelationships)
+      .commit()
+  }
+
+  const archivedRelationships = existingRelationships.filter(
+    (er) => er.archived === true
+  )
+
+  if (archivedRelationships.length) {
+    const removeRelationships = createRemoveRelationships(client)
+    await removeRelationships(from, archivedRelationships)
+  }
 
   const bToAKey = from._type === 'shopifyProduct' ? 'products' : 'collections'
 
   const rQueue = new PQueue({ concurrency: 1 })
 
   const pairs: SanityPair[] = await rQueue.addAll(
-    toDocs.map((toDoc) => async () => {
-      const relationships: SanityShopifyDocument[] =
-        toDoc._type === 'shopifyCollection'
-          ? toDoc.products
-          : toDoc._type === 'shopifyProduct'
-          ? toDoc.collections
-          : []
+    newLinks.map((toDoc) => async () => {
       const pair = {
         from: from,
         to: toDoc,
       }
 
-      if (relationships && relationships.find(({ _id }) => _id === from._id)) {
-        // If the relationship is already set, just return as is
-        return pair
-      }
-      await client
-        // @ts-ignore
+      client
         .patch(toDoc._id)
         // @ts-ignore
         .setIfMissing({ [bToAKey]: [] })
