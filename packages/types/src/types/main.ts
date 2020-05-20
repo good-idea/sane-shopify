@@ -90,13 +90,19 @@ export interface FetchOperation {
   shopifyDocuments: Array<Collection | Product>
 }
 
-export type Operation = SyncOperation | LinkOperation | FetchOperation
+export interface ArchiveOperation {
+  type: 'archive'
+  sourceDoc: SanityShopifyDocument
+}
+
+export type Operation =
+  | SyncOperation
+  | LinkOperation
+  | FetchOperation
+  | ArchiveOperation
 
 export interface SubscriptionCallbacks {
-  onProgress?: (
-    operation: FetchOperation | SyncOperation | LinkOperation,
-    message?: string
-  ) => void
+  onProgress?: (operation: Operation, message?: string) => void
   onError?: (err: Error) => void
   onComplete?: (ops: OperationComplete[], message?: string) => void
 }

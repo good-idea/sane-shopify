@@ -1,5 +1,8 @@
+import { SanityClient as _SanityClient } from '@sanity/client'
 import { Product, Collection, ShopifyItem, ShopifySecrets } from './shopify'
 import { LinkOperation, SyncOperation } from './main'
+
+export type SanityClient = _SanityClient
 
 export interface SanityPair {
   from: SanityShopifyDocument
@@ -107,20 +110,6 @@ export interface SanityUtils {
 //   Skip = 'skip',
 //   Link = 'link'
 // }
-
-export interface SanityClient {
-  fetch: <ExpectedResult = SanityDocument | SanityDocument[]>(
-    query: string,
-    params?: object
-  ) => Promise<ExpectedResult>
-  createIfNotExists: <ExpectedResult = SanityDocument>(
-    doc: SanityDocument
-  ) => Promise<ExpectedResult>
-  create: <ExpectedResult = SanityDocument>(
-    input: object
-  ) => Promise<ExpectedResult>
-  patch: <ExpectedResult = SanityDocument>(id: string) => Patch<ExpectedResult>
-}
 
 export interface RelatedPair {
   shopifyNode: ShopifyItem
