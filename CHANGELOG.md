@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/good-idea/sane-shopify/compare/v0.12.0...v0.13.0) (2020-05-28)
+
+### Features
+
+- **sanity-plugin:** use syncByID instead of byHandle ([46ebcb3](https://github.com/good-idea/sane-shopify/commit/46ebcb36d65ca345ce2858b4ac877d9f21507afc))
+- **sync-utils:** remove syncByHandle ([f35ea69](https://github.com/good-idea/sane-shopify/commit/f35ea69e2b65c2e43482839a923e6db2a2e93777))
+- **types:** remove syncByHandle methods ([5a3b997](https://github.com/good-idea/sane-shopify/commit/5a3b99705f4c5803b83b1d8017e5e906146433ed))
+
 # [0.12.0](https://github.com/good-idea/sane-shopify/compare/v0.11.6...v0.12.0) (2020-05-20)
 
 ### Bug Fixes
