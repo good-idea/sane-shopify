@@ -42,16 +42,6 @@ export interface SyncUtils {
   syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void>
   /* Syncs all collections */
   syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs a product by handle*/
-  syncProductByHandle: (
-    handle: string,
-    cbs?: SubscriptionCallbacks
-  ) => Promise<any>
-  /* Syncs a collection by handle*/
-  syncCollectionByHandle: (
-    handle: string,
-    cbs?: SubscriptionCallbacks
-  ) => Promise<any>
   /* Syncs a collection or product by storefront id */
   syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
   /* Manage Secrets */
