@@ -260,68 +260,6 @@ export const syncUtils = (
     onClearedSecrets()
   }
 
-  /* Syncs a product and any collections it is related to */
-  const syncProductByHandle = async (
-    handle: string,
-    cbs: SubscriptionCallbacks = {}
-  ) => {
-    startSync()
-    const logger = createLogger(cbs)
-    const shopifyProduct = await fetchShopifyProduct({ handle })
-    if (!shopifyProduct) {
-      onFetchComplete()
-      const sanityDoc = await documentByHandle(handle, 'product')
-      archiveSanityDocument(sanityDoc)
-      onComplete()
-      return
-    }
-    logger.logFetched(shopifyProduct)
-
-    onDocumentsFetched([shopifyProduct])
-    onFetchComplete()
-    const syncResult = await syncProduct(shopifyProduct)
-
-    const { sanityDocument } = syncResult.operation
-    logger.logSynced(syncResult.operation)
-    onDocumentSynced(syncResult.operation)
-    const linkOperation = await makeRelationships(syncResult)
-
-    onDocumentLinked(linkOperation)
-    logger.logLinked(sanityDocument, linkOperation.pairs)
-    logger.logComplete({
-      type: 'complete',
-      sanityDocument,
-      shopifySource: shopifyProduct,
-    })
-    onComplete()
-  }
-
-  /* Syncs a collection and any products it is related to */
-  const syncCollectionByHandle = async (
-    handle: string,
-    cbs: SubscriptionCallbacks = {}
-  ) => {
-    startSync()
-    const logger = createLogger(cbs)
-    const shopifyCollection = await fetchShopifyCollection({ handle })
-    if (!shopifyCollection) {
-      onFetchComplete()
-      const sanityDoc = await documentByHandle(handle, 'collection')
-      archiveSanityDocument(sanityDoc)
-      onComplete()
-      return
-    }
-
-    onDocumentsFetched([shopifyCollection])
-    onFetchComplete()
-    logger.logFetched(shopifyCollection)
-    const syncResult = await syncCollection(shopifyCollection)
-    onDocumentSynced(syncResult.operation)
-    const linkOperation = await makeRelationships(syncResult)
-    onDocumentLinked(linkOperation)
-    onComplete()
-  }
-
   /* Sync an item by ID */
   const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
     startSync()
@@ -525,8 +463,6 @@ export const syncUtils = (
     saveSecrets,
     clearSecrets,
     testSecrets,
-    syncCollectionByHandle,
-    syncProductByHandle,
     syncProducts,
     syncCollections,
     syncAll,
