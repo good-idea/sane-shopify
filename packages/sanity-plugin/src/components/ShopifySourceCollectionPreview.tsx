@@ -19,13 +19,13 @@ const ShopifySourceCollectionPreviewInner = ({
   const { value: syncStateValue } = syncState
   if (!value) return null
 
-  const syncCollectionByHandle = syncingClient
-    ? syncingClient.syncCollectionByHandle
+  const syncItemByID = syncingClient
+    ? syncingClient.syncItemByID
     : () => undefined
-  const { title, handle, description } = value
+  const { title, id, description } = value
 
   const reSync = async () => {
-    syncCollectionByHandle(handle)
+    syncItemByID(id)
   }
 
   if (syncState.context.error)

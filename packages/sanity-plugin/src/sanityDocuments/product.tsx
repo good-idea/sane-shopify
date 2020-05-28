@@ -172,9 +172,9 @@ export const createProductDocument = ({
       {
         title: 'Title',
         name: 'title',
-        readOnly: true,
+        // readOnly: true,
         type: 'string',
-        hidden: true,
+        // hidden: true,
         ...namedFields.title,
       },
       {

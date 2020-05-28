@@ -20,12 +20,12 @@ const ShopifySourceProductPreviewInner = ({
   const { value: syncStateValue } = syncState
   if (!value) return null
 
-  const syncProductByHandle = syncingClient
-    ? syncingClient.syncProductByHandle
+  const syncItemByID = syncingClient
+    ? syncingClient.syncItemByID
     : () => undefined
   const {
     title,
-    handle,
+    id,
     tags,
     productType,
     availableForSale,
@@ -38,7 +38,7 @@ const ShopifySourceProductPreviewInner = ({
   }`
 
   const reSync = async () => {
-    syncProductByHandle(handle)
+    syncItemByID(id)
   }
 
   if (syncState.context.error)

@@ -12,8 +12,7 @@ interface State {
 }
 
 export interface SyncRenderProps extends State {
-  syncProductByHandle: (handle: string) => Promise<void>
-  syncCollectionByHandle: (handle: string) => Promise<void>
+  syncItemByID: (id: string) => Promise<void>
   syncProducts: () => Promise<void>
   syncCollections: () => Promise<void>
   syncAll: () => Promise<void>
@@ -94,17 +93,10 @@ class SyncBase extends React.Component<Props, State> {
 
   /** Public Methods */
 
-  public syncProductByHandle = async (handle: string) => {
+  public syncItemByID = async (id: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    this.props.syncingClient.syncProductByHandle(handle)
-    this.setState({ syncState: 'complete' as 'complete' })
-  }
-
-  public syncCollectionByHandle = async (handle: string) => {
-    await this.reset()
-    this.setState({ syncState: 'syncing' as 'syncing' })
-    this.props.syncingClient.syncProductByHandle(handle)
+    this.props.syncingClient.syncItemByID(id)
     this.setState({ syncState: 'complete' as 'complete' })
   }
 
@@ -131,18 +123,11 @@ class SyncBase extends React.Component<Props, State> {
 
   public render() {
     const { children } = this.props
-    const {
-      syncProductByHandle,
-      syncCollectionByHandle,
-      syncProducts,
-      syncCollections,
-      syncAll,
-    } = this
+    const { syncItemByID, syncProducts, syncCollections, syncAll } = this
 
     const renderProps = {
       ...this.state,
-      syncProductByHandle,
-      syncCollectionByHandle,
+      syncItemByID,
       syncProducts,
       syncCollections,
       syncAll,
