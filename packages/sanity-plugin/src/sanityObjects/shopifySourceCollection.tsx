@@ -50,6 +50,10 @@ export const shopifyCollectionSource = {
   readOnly: true,
   name: 'shopifySourceCollection',
   type: 'object',
+  options: {
+    collapsible: true,
+    collapsed: true,
+  },
   inputComponent: ShopifySourceCollectionPreview,
   fields: [
     { title: 'Title', name: 'title', type: 'string' },

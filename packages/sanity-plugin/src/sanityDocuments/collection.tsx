@@ -43,7 +43,7 @@ export const createCollectionDocument = ({
       {
         title: 'Title',
         name: 'title',
-        // readOnly: true,
+        readOnly: true,
         type: 'string',
         // hidden: true,
         ...namedFields.title,
@@ -78,19 +78,8 @@ export const createCollectionDocument = ({
       {
         title: 'Products',
         name: 'products',
-        type: 'array',
+        type: 'linkedProducts',
         description: 'Synced from Shopify',
-        // readOnly: true,
-        of: [
-          {
-            type: 'reference',
-            to: [
-              {
-                type: 'shopifyProduct',
-              },
-            ],
-          },
-        ],
         ...namedFields.products,
       },
       ...additionalFields,

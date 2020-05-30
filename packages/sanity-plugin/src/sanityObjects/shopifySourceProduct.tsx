@@ -128,6 +128,10 @@ export const shopifyProductSource = {
   name: 'shopifySourceProduct',
   readOnly: true,
   type: 'object',
+  options: {
+    collapsible: true,
+    collapsed: true,
+  },
   inputComponent: ShopifySourceProductPreview,
   fields: [
     { title: 'Title', name: 'title', type: 'string' },

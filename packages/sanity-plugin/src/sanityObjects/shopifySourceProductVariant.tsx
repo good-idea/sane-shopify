@@ -12,6 +12,10 @@ export const shopifySourceProductVariant = {
   name: 'shopifySourceProductVariant',
   readOnly: true,
   type: 'object',
+  options: {
+    collapsible: true,
+    collapsed: true,
+  },
   fields: [
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },
     { name: 'id', title: 'ID', type: 'string' },
