@@ -91,7 +91,7 @@ export const createSyncSanityDocument = (
 
     const doc = await client.fetch<SanityShopifyDocument>(
       `
-      *[shopifyId == $shopifyId && defined(archived) && archived != true]{
+      *[shopifyId == $shopifyId]{
         products[]->,
         collections[]->,
         "collectionKeys": collections[]{

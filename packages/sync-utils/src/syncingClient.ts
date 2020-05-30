@@ -45,8 +45,6 @@ export const syncUtils = (
    */
   const {
     fetchItemById,
-    fetchShopifyProduct,
-    fetchShopifyCollection,
     fetchAllShopifyProducts,
     fetchAllShopifyCollections,
     testSecrets,
@@ -58,7 +56,6 @@ export const syncUtils = (
     syncRelationships,
     fetchRelatedDocs,
     documentByShopifyId,
-    documentByHandle,
     fetchSecrets,
     archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,

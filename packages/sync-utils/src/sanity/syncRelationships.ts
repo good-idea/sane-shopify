@@ -74,11 +74,15 @@ export const createSyncRelationships = (
   )
 
   if (newLinks.length) {
-    const aToBRelationships = toDocs.map((toDoc) => ({
-      _type: 'reference',
-      _ref: toDoc._id,
-      _key: `${toDoc._rev}-${toDoc._id}`,
-    }))
+    const aToBRelationships = toDocs
+      .map((toDoc) => ({
+        _type: 'reference',
+        _ref: toDoc._id,
+        _key: `${toDoc._rev}-${toDoc._id}`,
+      }))
+      .filter(
+        (toDoc) => !existingRelationships.some((er) => er._id === toDoc._ref)
+      )
 
     await client
       .patch(from._id)
@@ -88,7 +92,7 @@ export const createSyncRelationships = (
   }
 
   const archivedRelationships = existingRelationships.filter(
-    (er) => er.archived === true
+    (er) => er.archived === true || er.shopifyId === null
   )
 
   if (archivedRelationships.length) {
