@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/good-idea/sane-shopify/compare/v0.13.1...v0.14.0) (2020-06-03)
+
+### Features
+
+- **sanity-plugin:** add min/max price fields to product documents ([db83ccf](https://github.com/good-idea/sane-shopify/commit/db83ccfa86e60bdf2d68164585fba6e3ecfa2216))
+
 ## [0.13.1](https://github.com/good-idea/sane-shopify/compare/v0.13.0...v0.13.1) (2020-05-30)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/good-idea/sane-shopify/compare/v0.13.1...v0.14.0) (2020-06-03)
+
+### Features
+
+- **sync-utils:** parse product prices to numbers on product docs ([2a27125](https://github.com/good-idea/sane-shopify/commit/2a2712592fe2224bd5be8adaf2bdf5292c697e65))
+
 ## [0.13.1](https://github.com/good-idea/sane-shopify/compare/v0.13.0...v0.13.1) (2020-05-30)
 
 ### Bug Fixes
