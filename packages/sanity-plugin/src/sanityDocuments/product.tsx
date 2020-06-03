@@ -192,6 +192,22 @@ export const createProductDocument = ({
         ...namedFields.shopifyId,
       },
       {
+        title: 'Min Variant Price',
+        name: 'minVariantPrice',
+        readOnly: true,
+        hidden: true,
+        type: 'number',
+        ...namedFields.minVariantPrice,
+      },
+      {
+        title: 'Max Variant Price',
+        name: 'maxVariantPrice',
+        readOnly: true,
+        hidden: true,
+        type: 'number',
+        ...namedFields.maxVariantPrice,
+      },
+      {
         title: 'Archived',
         name: 'archived',
         type: 'boolean',
