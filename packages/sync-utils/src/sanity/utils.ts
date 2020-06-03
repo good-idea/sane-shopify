@@ -147,6 +147,9 @@ const createProductVariantObjects = (item: Product) => {
   )
 }
 
+const parsePrice = (amount?: string): number =>
+  amount ? parseInt(amount, 10) : 0
+
 export const prepareDocument = <T extends Product | Collection>(item: T) => {
   const _type = getItemType(item)
   const sourceData = prepareSourceData(item)
@@ -164,8 +167,19 @@ export const prepareDocument = <T extends Product | Collection>(item: T) => {
 
   switch (item.__typename) {
     case 'Product':
+      const minVariantPrice = parsePrice(
+        // @ts-ignore
+        item.priceRange?.minVariantPrice?.amount
+      )
+      const maxVariantPrice = parsePrice(
+        // @ts-ignore
+        item?.priceRange?.maxVariantPrice?.amount
+      )
+
       return {
         ...docInfo,
+        minVariantPrice,
+        maxVariantPrice,
         // @ts-ignore
         options: createProductOptions(item),
         // @ts-ignore
