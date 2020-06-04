@@ -120,7 +120,15 @@ export const createSyncSanityDocument = (
     if (
       existingDoc &&
       isMatch(docInfo, existingDoc, {
-        keys: ['title', 'handle', 'shopifyId', 'sourceData', '_type'],
+        keys: [
+          'title',
+          'handle',
+          'shopifyId',
+          'minVariantPrice',
+          'maxVariantPrice',
+          'sourceData',
+          '_type',
+        ],
       })
     ) {
       return {

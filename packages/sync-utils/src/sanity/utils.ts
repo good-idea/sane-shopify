@@ -201,7 +201,7 @@ interface IsMatchConfig {
  *
  */
 export const isMatch = (a: any, b: any, { keys }: IsMatchConfig): boolean => {
-  return lodashIsMatch(pick(a, keys), pick(b, keys))
+  return lodashIsMatch(pick(b, keys), pick(a, keys))
 }
 
 export const uniqueObjects = <T extends object>(arr: T[]): T[] =>
