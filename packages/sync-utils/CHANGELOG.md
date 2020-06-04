@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.1](https://github.com/good-idea/sane-shopify/compare/v0.14.0...v0.14.1) (2020-06-04)
+
+### Bug Fixes
+
+- **sync-utils:** fix minVariant/maxVariant syncing ([5257571](https://github.com/good-idea/sane-shopify/commit/5257571c6021d9e9f7ec798b6330ac268341fd54))
+
 # [0.14.0](https://github.com/good-idea/sane-shopify/compare/v0.13.1...v0.14.0) (2020-06-03)
 
 ### Features
