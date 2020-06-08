@@ -31,11 +31,11 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public keyInputId = uniqueId('storefrontKeyInput')
 
   public state = {
-    shopName: this.props.secrets.shopName || '',
-    accessToken: this.props.secrets.accessToken || '',
+    shopName: this.props?.secrets?.shopName || '',
+    accessToken: this.props?.secrets?.accessToken || '',
     loading: false,
     success: false,
-    error: undefined,
+    error: false,
   }
 
   public handleInputChange = (field: 'shopName' | 'accessToken') => (e) => {
@@ -45,8 +45,8 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 
   public clear = () => {
     this.setState({
-      shopName: this.props.secrets.shopName || '',
-      accessToken: this.props.secrets.accessToken || '',
+      shopName: this.props?.secrets?.shopName || '',
+      accessToken: this.props?.secrets?.accessToken || '',
       error: false,
     })
   }
@@ -61,12 +61,12 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 
   public handleUnlink = async () => {
     this.setState({ loading: true })
-    await this.props.syncingClient.clearSecrets()
+    if (this.props.syncingClient) await this.props.syncingClient.clearSecrets()
     this.setState({ loading: false })
   }
 
   public render() {
-    const { shopName, accessToken, loading, error, success } = this.state
+    const { shopName, accessToken, loading, success } = this.state
     const { syncState } = this.props
     const { ready, valid, errorMessage } = syncState.context
 

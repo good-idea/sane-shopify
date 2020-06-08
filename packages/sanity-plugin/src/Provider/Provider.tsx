@@ -56,6 +56,11 @@ interface ClientContextState {
   syncState?: SyncState
 }
 
+const emptySecrets = {
+  shopName: '',
+  accessToken: '',
+}
+
 export class Provider extends React.Component<
   ClientContextProps,
   ClientContextState
@@ -76,15 +81,16 @@ export class Provider extends React.Component<
     this.createSyncingClient(shopifySecrets)
   }
 
-  private async createSyncingClient(secrets: ShopifySecrets) {
+  private async createSyncingClient(secrets?: ShopifySecrets) {
     const shopifyClient = createShopifyClient(secrets)
+    this.shopifyClient = shopifyClient
     this.syncingClient = syncUtils(
       shopifyClient,
       defaultSanityClient,
       this.handleStateChange
     )
 
-    const { shopName, accessToken } = secrets || {}
+    const { shopName, accessToken } = secrets || emptySecrets
     this.setState(
       {
         secrets: {
@@ -103,12 +109,12 @@ export class Provider extends React.Component<
     })
   }
 
-  public fetchSecrets = async (): Promise<ShopifySecrets | null> => {
+  public fetchSecrets = async (): Promise<ShopifySecrets | undefined> => {
     const results: ShopifySecrets[] = await this.sanityClient.fetch(
       `*[_id == "${KEYS_ID}"]`
     )
     if (results.length) return results[0]
-    return null
+    return undefined
   }
 
   /**
@@ -116,11 +122,11 @@ export class Provider extends React.Component<
    */
 
   public saveSecrets = async (secrets: ShopifySecrets): Promise<void> => {
-    await this.syncingClient.saveSecrets(secrets)
+    if (this.syncingClient) await this.syncingClient.saveSecrets(secrets)
   }
 
   public clearSecrets = async (): Promise<void> => {
-    this.syncingClient.clearSecrets()
+    if (this.syncingClient) this.syncingClient.clearSecrets()
   }
 
   public render() {
@@ -133,6 +139,16 @@ export class Provider extends React.Component<
       shopifyClient,
       sanityClient,
     } = this
+
+    if (
+      !syncingClient ||
+      !shopifyClient ||
+      !sanityClient ||
+      !syncState ||
+      !secrets
+    ) {
+      return null
+    }
 
     const value = {
       saveSecrets,
