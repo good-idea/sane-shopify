@@ -1,5 +1,11 @@
 import { SanityClient as _SanityClient } from '@sanity/client'
-import { Product, Collection, ShopifyItem, ShopifySecrets } from './shopify'
+import {
+  Product,
+  Collection,
+  ShopifyItem,
+  Variant,
+  ShopifySecrets,
+} from './shopify'
 import { LinkOperation, SyncOperation } from './main'
 
 export type SanityClient = _SanityClient
@@ -26,32 +32,75 @@ export interface SanityDocument {
   [key: string]: any
 }
 
+export type SanityArray<T> = Array<T & { _key: string }>
+
 interface SanityReference {
   _key: string
   _ref: string
   _type: 'reference'
 }
 
-interface SanityShopifyDocumentNode extends SanityDocument {
-  shopifyId: string
+export type SanityShopifyDocumentPartial =
+  | SanityShopifyProductDocumentPartial
+  | SanityShopifyCollectionDocumentPartial
+
+export type SanityShopifyProductDocumentPartial = Omit<
+  SanityShopifyProductDocument,
+  '_id' | 'collections'
+>
+export type SanityShopifyCollectionDocumentPartial = Omit<
+  SanityShopifyCollectionDocument,
+  '_id' | 'products'
+>
+
+interface SanityShopifyProductOptionValue {
+  value: string
 }
 
-export interface SanityShopifyProductDocument
-  extends SanityShopifyDocumentNode {
-  _type: 'shopifyProduct'
+export interface SanityShopifyProductOption {
+  shopifyOptionId: string
+  name: string
+  values: SanityArray<SanityShopifyProductOptionValue>
+}
+
+export interface SanityShopifyProductVariant {
+  shopifyVariantID: string
+  title: string
+  sourceData: Variant
+}
+
+export interface SanityShopifyProductDocument {
+  _id: string
+  _rev?: string
+  _type: string
+  _ref?: string
+  _key?: string
+  shopifyId: string
   title: string
   handle: string
+  archived?: boolean
+  minVariantPrice: number
+  maxVariantPrice: number
   sourceData: Product
   collections: SanityShopifyCollectionDocument[]
+  collectionKeys?: string[]
+  options: SanityArray<SanityShopifyProductOption>
+  variants: SanityArray<SanityShopifyProductVariant>
 }
 
-export interface SanityShopifyCollectionDocument
-  extends SanityShopifyDocumentNode {
-  _type: 'shopifyCollection'
+export interface SanityShopifyCollectionDocument {
+  _id: string
+  _rev?: string
+  _type: string
+  _ref?: string
+  _key?: string
+  shopifyId: string
   title: string
   handle: string
+  archived?: boolean
   sourceData: Collection
   products: SanityShopifyProductDocument[]
+  productKeys?: string[]
 }
 
 export type SanityShopifyDocument =
