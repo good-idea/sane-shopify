@@ -1,4 +1,4 @@
-import { Machine, State, assign } from 'xstate'
+import { Machine, assign } from 'xstate'
 import {
   LinkOperation,
   SyncOperation,
@@ -11,8 +11,6 @@ import {
 /** Actions */
 const READY = 'READY'
 const SAVED_SECRETS = 'SAVED_SECRETS'
-const SECRETS_ERROR = 'SECRETS_ERROR'
-const CLEARED_SECRETS = 'CLEARED_SECRETS'
 const DOCUMENTS_FETCHED = 'DOCUMENTS_FETCHED'
 
 interface ReadyAction {

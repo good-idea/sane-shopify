@@ -1,7 +1,18 @@
 import { unwindEdges, Edge } from '@good-idea/unwind-edges'
-import { Collection, Product } from '@sane-shopify/types'
+import {
+  Collection,
+  Product,
+  ShopifyImage,
+  SanityArray,
+  SanityShopifyDocumentPartial,
+  SanityShopifyProductOption,
+  SanityShopifyProductVariant,
+  SanityShopifyProductDocumentPartial,
+  SanityShopifyCollectionDocumentPartial,
+} from '@sane-shopify/types'
 import { isMatch as lodashIsMatch, pick } from 'lodash'
-import { slugify } from '../utils'
+import { slugify, definitely } from '../utils'
+import { isShopifyProduct, isShopifyCollection } from '../typeGuards'
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms))
@@ -30,75 +41,56 @@ const addKeyByCursor = <T extends Edge<any>>(edges: T[], _type: string) =>
     _key: cursor,
   }))
 
-const missingImage = {
+const missingImage: ShopifyImage = {
+  __typename: 'Image',
   altText: '',
   id: '',
   originalSrc: '',
   w100: '',
   w300: '',
   w800: '',
+  w1200: '',
+  w1600: '',
 }
 
 // Pretty much just adds keys to arrays
-const prepareSourceData = <T extends Product | Collection>(item: T) => {
-  if (item.__typename === 'Product') {
+const prepareSourceData = <T extends Product | Collection>(item: T): T => {
+  if (isShopifyProduct(item)) {
     // Add keys to product images
     return {
       ...item,
       _type: 'shopifySourceProduct',
-      // @ts-ignore
       options: item.options.map(({ id, ...option }) => ({
         ...option,
         _key: id,
       })),
       collections: {
-        // @ts-ignore
         ...item.collections,
         edges: addKeyByCursor(
-          // @ts-ignore
-          item.collections.edges,
+          definitely(item?.collections?.edges),
           'shopifySourceCollectionEdge'
         ),
       },
       variants: {
-        // @ts-ignore
         ...item.variants,
         edges: addKeyByCursor(
-          // @ts-ignore
-          item.variants.edges,
+          definitely(item?.variants.edges),
           'shopifySourceProductVariantEdges'
         ),
-        // .map((variant) => {
-        //   const { node } = variant
-        //   return {
-        //     ...variant,
-        //     node: {
-        //       ...node,
-        //       image: node.image ? node.image : missingImage
-        //     }
-        //   }
-        // })
       },
       images: {
-        // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         ...item.images,
-        // @ts-ignore -- not sure how to tell typescript that this is definitely a product
         edges: addKeyByCursor(item.images.edges, 'shopifySourceImageEdge'),
       },
     }
   }
-  if (item.__typename === 'Collection') {
-    // @ts-ignore eslint-disable-next line
+  if (isShopifyCollection(item)) {
     return {
-      // @ts-ignore omfg
       ...item,
       _type: 'shopifySourceCollection',
-      // @ts-ignore -- not sure how to tell typescript that this is definitely a Collection
       image: item.image || {},
       products: {
-        // @ts-ignore
         ...item.products,
-        // @ts-ignore
         edges: addKeyByCursor(item.products.edges, 'shopifySourceProductEdge'),
       },
     }
@@ -106,7 +98,9 @@ const prepareSourceData = <T extends Product | Collection>(item: T) => {
   throw new Error('prepareImages can only be used for Products and Collections')
 }
 
-const createProductOptions = (item: Product) => {
+const createProductOptions = (
+  item: Product
+): SanityArray<SanityShopifyProductOption> => {
   const { options } = item
   return options.map((option) => ({
     _type: 'shopifyProductOption',
@@ -121,7 +115,9 @@ const createProductOptions = (item: Product) => {
   }))
 }
 
-const createProductVariantObjects = (item: Product) => {
+const createProductVariantObjects = (
+  item: Product
+): SanityArray<SanityShopifyProductVariant> => {
   const [variants] = unwindEdges(item.variants)
   return (
     variants.map((v) => ({
@@ -150,44 +146,50 @@ const createProductVariantObjects = (item: Product) => {
 const parsePrice = (amount?: string): number =>
   amount ? parseInt(amount, 10) : 0
 
-export const prepareDocument = <T extends Product | Collection>(item: T) => {
+export const prepareDocument = <T extends Product | Collection>(
+  item: T
+): SanityShopifyDocumentPartial => {
   const _type = getItemType(item)
-  const sourceData = prepareSourceData(item)
-  const docInfo = {
-    _type,
-    archived: false,
-    title: item.title,
-    shopifyId: item.id,
-    handle: item.handle,
-    sourceData: {
-      ...sourceData,
-      __cursor: sourceData.id,
-    },
-  }
+  if (isShopifyProduct(item)) {
+    const sourceData = prepareSourceData<Product>(item)
 
-  switch (item.__typename) {
-    case 'Product':
-      const minVariantPrice = parsePrice(
-        // @ts-ignore
-        item.priceRange?.minVariantPrice?.amount
-      )
-      const maxVariantPrice = parsePrice(
-        // @ts-ignore
-        item?.priceRange?.maxVariantPrice?.amount
-      )
+    const minVariantPrice = parsePrice(item.priceRange?.minVariantPrice?.amount)
+    const maxVariantPrice = parsePrice(
+      item?.priceRange?.maxVariantPrice?.amount
+    )
 
-      return {
-        ...docInfo,
-        minVariantPrice,
-        maxVariantPrice,
-        // @ts-ignore
-        options: createProductOptions(item),
-        // @ts-ignore
-        variants: createProductVariantObjects(item),
-      }
-    default:
-      return docInfo
+    const options = createProductOptions(item)
+    const variants = createProductVariantObjects(item)
+
+    const productDocInfo: SanityShopifyProductDocumentPartial = {
+      _type,
+      archived: false,
+      minVariantPrice,
+      maxVariantPrice,
+      title: item.title,
+      shopifyId: item.id,
+      handle: item.handle,
+      sourceData: {
+        ...sourceData,
+      },
+      options,
+      variants,
+    }
+    return productDocInfo
   }
+  if (isShopifyCollection(item)) {
+    const sourceData = prepareSourceData<Collection>(item)
+    const docInfo: SanityShopifyCollectionDocumentPartial = {
+      _type,
+      archived: false,
+      title: item.title,
+      shopifyId: item.id,
+      handle: item.handle,
+      sourceData,
+    }
+    return docInfo
+  }
+  throw new Error(`Could not prepare document with type "${item.__typename}"`)
 }
 
 interface IsMatchConfig {

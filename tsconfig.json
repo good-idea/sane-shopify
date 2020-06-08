@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
     "plugins": [{ "name": "typescript-tslint-plugin" }],
-    /* compiling settings */
     "target": "es5",
     "declaration": true,
-    "module": "es6",
+    "module": "esnext",
+    "strict": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "jsx": "react",
-    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-
-    /* type-checking settings */
-
-    // "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
     "removeComments": true,
     "noLib": false,
     "emitDecoratorMetadata": true,

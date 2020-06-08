@@ -6,6 +6,8 @@ import {
   SanityPair,
   SanityShopifyDocument,
 } from '@sane-shopify/types'
+import { isSanityProduct, isSanityCollection } from '../typeGuards'
+import { definitely } from '../utils'
 
 const arrayify = <T>(i: T | T[]) => (Array.isArray(i) ? i : [i])
 
@@ -20,21 +22,27 @@ export const createRemoveRelationships = (
   from: SanityShopifyDocument,
   toRemove: SanityShopifyDocument | SanityShopifyDocument[]
 ): Promise<null> => {
-  const type = from._type === 'shopifyProduct' ? 'collections' : 'products'
-  const keys =
-    from._type === 'shopifyProduct' ? 'collectionKeys' : 'productKeys'
+  const related = isSanityProduct(from)
+    ? from.collections
+    : isSanityCollection(from)
+    ? from.products
+    : []
 
   const relationshipsToRemove = arrayify(toRemove)
     .map((itemToRemove) =>
-      from[keys].find((reference) => reference._ref === itemToRemove._id)
+      // @ts-ignore
+      related.find((reference) => reference._ref === itemToRemove._id)
     )
-    .map((reference) => `${type}[_key=="${reference._key}"]`)
-  await client
-    .patch(from._id)
-    // @ts-ignore
-    .unset(relationshipsToRemove)
-    .commit()
+    .map((reference) =>
+      reference && isSanityProduct(from)
+        ? `collections[_key=="${reference._key}"]`
+        : reference && isSanityCollection(from)
+        ? `products[_key=${reference._key}]`
+        : ''
+    )
+    .filter(Boolean)
 
+  await client.patch(from._id).unset(relationshipsToRemove).commit()
   return null
 }
 
@@ -47,13 +55,18 @@ export const createSyncRelationships = (
   const toDocs = arrayify(to).map(removeDraftId)
 
   const aToBKey = from._type === 'shopifyProduct' ? 'collections' : 'products'
-  const existingRelationships: SanityShopifyDocument[] = from[aToBKey] || []
+  const existingRelationships = isSanityProduct(from)
+    ? from.collections || []
+    : isSanityCollection(from)
+    ? from.products || []
+    : []
   // determine if the FROM doc already has the
   // links in place. If so, skip the patch.
   const alreadyLinked =
     toDocs.length === existingRelationships.length &&
     toDocs.every((toDoc) =>
       Boolean(
+        // @ts-ignore
         existingRelationships.find((er) => toDoc.shopifyId === er.shopifyId)
       )
     )
@@ -69,6 +82,7 @@ export const createSyncRelationships = (
   const newLinks = toDocs.filter(
     (toDoc) =>
       !Boolean(
+        // @ts-ignore
         existingRelationships.find((er) => toDoc.shopifyId === er.shopifyId)
       )
   )
@@ -81,6 +95,7 @@ export const createSyncRelationships = (
         _key: `${toDoc._rev}-${toDoc._id}`,
       }))
       .filter(
+        // @ts-ignore
         (toDoc) => !existingRelationships.some((er) => er._id === toDoc._ref)
       )
 
@@ -91,7 +106,9 @@ export const createSyncRelationships = (
       .commit()
   }
 
+  // @ts-ignore
   const archivedRelationships = existingRelationships.filter(
+    // @ts-ignore
     (er) => er.archived === true || er.shopifyId === null
   )
 
@@ -113,7 +130,6 @@ export const createSyncRelationships = (
 
       client
         .patch(toDoc._id)
-        // @ts-ignore
         .setIfMissing({ [bToAKey]: [] })
         .append(bToAKey, [
           {

@@ -31,7 +31,9 @@ const deduplicateFragments = (queryString: string | undefined): string => {
     }, [])
     .join('\n\n')
 }
-export const createShopifyClient = (secrets: ShopifySecrets): ShopifyClient => {
+export const createShopifyClient = (
+  secrets?: ShopifySecrets
+): ShopifyClient => {
   if (!secrets) {
     return {
       query: async () => {

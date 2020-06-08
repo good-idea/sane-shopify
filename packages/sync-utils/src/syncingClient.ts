@@ -273,11 +273,14 @@ export const syncUtils = (
 
     onDocumentsFetched([shopifyItem])
     logger.logFetched(shopifyItem)
+    onFetchComplete()
     if (shopifyItem.__typename === 'Product') {
       const syncResult = await syncProduct(shopifyItem)
       onDocumentSynced(syncResult.operation)
+      logger.logSynced(syncResult.operation)
       const linkOperation = await makeRelationships(syncResult)
       onDocumentLinked(linkOperation)
+      logger.logLinked(syncResult.operation.sanityDocument, linkOperation.pairs)
       onComplete()
       return
     }
@@ -285,8 +288,10 @@ export const syncUtils = (
     if (shopifyItem.__typename === 'Collection') {
       const syncResult = await syncCollection(shopifyItem)
       onDocumentSynced(syncResult.operation)
+      logger.logSynced(syncResult.operation)
       const linkOperation = await makeRelationships(syncResult)
       onDocumentLinked(linkOperation)
+      logger.logLinked(syncResult.operation.sanityDocument, linkOperation.pairs)
       onComplete()
       return
     }
