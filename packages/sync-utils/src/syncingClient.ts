@@ -35,6 +35,14 @@ import { definitely } from './utils'
 
 const noop = () => undefined
 
+// TODO:
+// might make sense to turn this into a class. The shopify client and/or
+// sanity client might be updated, for instance, when saving a set of new
+// shopify secrets.
+//
+// Making these clients stateful would allow for updating it when new secrets
+// are saved. For now, the consumer should just re-create a new syncing client.
+
 export const syncUtils = (
   shopifyClient: ShopifyClient,
   sanityClient: SanityClient,

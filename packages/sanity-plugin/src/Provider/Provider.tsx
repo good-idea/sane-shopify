@@ -123,6 +123,8 @@ export class Provider extends React.Component<
 
   public saveSecrets = async (secrets: ShopifySecrets): Promise<void> => {
     if (this.syncingClient) await this.syncingClient.saveSecrets(secrets)
+    // update with a new client with valid secrets
+    this.createSyncingClient(secrets)
   }
 
   public clearSecrets = async (): Promise<void> => {
