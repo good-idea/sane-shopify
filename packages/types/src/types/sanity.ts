@@ -34,7 +34,7 @@ export interface SanityDocument {
 
 export type SanityArray<T> = Array<T & { _key: string }>
 
-interface SanityReference {
+export interface SanityReference {
   _key: string
   _ref: string
   _type: 'reference'
@@ -83,7 +83,7 @@ export interface SanityShopifyProductDocument {
   maxVariantPrice: number
   sourceData: Product
   collections: SanityShopifyCollectionDocument[]
-  collectionKeys?: string[]
+  collectionKeys?: SanityReference[]
   options: SanityArray<SanityShopifyProductOption>
   variants: SanityArray<SanityShopifyProductVariant>
 }
@@ -100,7 +100,7 @@ export interface SanityShopifyCollectionDocument {
   archived?: boolean
   sourceData: Collection
   products: SanityShopifyProductDocument[]
-  productKeys?: string[]
+  productKeys?: SanityReference[]
 }
 
 export type SanityShopifyDocument =
