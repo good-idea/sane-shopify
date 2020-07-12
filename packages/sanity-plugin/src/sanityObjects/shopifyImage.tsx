@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Paginated } from '@good-idea/unwind-edges'
 import { ShopifyImage } from '@sane-shopify/types'
+import { definitely } from '@sane-shopify/sync-utils'
 
 interface ImagesPreviewProps {
   value: Paginated<ShopifyImage>
@@ -8,11 +9,11 @@ interface ImagesPreviewProps {
 const ImagesPreview = (props: ImagesPreviewProps) => {
   return (
     <>
-      {props.value.edges.map((edge) => (
+      {definitely(props.value.edges).map((edge) => (
         <img
-          key={edge.cursor}
-          src={edge.node.transformedSrc}
-          alt={edge.node.altText}
+          key={edge.cursor || 'some-key'}
+          src={edge?.node?.transformedSrc}
+          alt={edge?.node?.altText}
         />
       ))}
     </>
