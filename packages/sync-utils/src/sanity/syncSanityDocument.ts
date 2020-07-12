@@ -27,7 +27,7 @@ const mergeExistingFields = (
         ...docInfo.sourceData,
         products: {
           ...docInfo.sourceData.products,
-          edges: uniqueObjects(docInfo.sourceData.products.edges),
+          edges: uniqueObjects(definitely(docInfo.sourceData.products.edges)),
         },
       },
     }
@@ -49,7 +49,7 @@ const mergeExistingFields = (
         },
         images: {
           ...docInfo.sourceData.images,
-          edges: uniqueObjects(docInfo.sourceData.images.edges),
+          edges: uniqueObjects(definitely(docInfo.sourceData.images.edges)),
         },
       },
 

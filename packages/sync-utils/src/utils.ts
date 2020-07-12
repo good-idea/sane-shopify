@@ -1,17 +1,19 @@
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import {
   SanityShopifyProductDocument,
+  Edge,
+  ShopifyImage,
   Collection,
   Product,
   SanityClient,
 } from '@sane-shopify/types'
 import { isShopifyProduct, isShopifyCollection } from './typeGuards'
 
-type Maybe<T> = T | null
+type Maybe<T> = T | null | undefined | void
 
 export function definitely<T>(items?: Maybe<T>[] | null): T[] {
   if (!items) return []
-  return items.reduce<T[]>((acc, item) => (item ? [...acc, item] : acc), [])
+  return items.filter((i): i is T => Boolean(i))
 }
 
 export const slugify = (text: string) =>
@@ -40,10 +42,17 @@ export const getItemType = (item: Product | Collection) => {
   }
 }
 
-export const getLastCursor = <NodeType>(connection: Paginated<NodeType>) =>
-  connection.edges && connection.edges.length > 0
-    ? connection.edges[connection.edges.length - 1].cursor
-    : null
+const last = <T>(arr: T[]): T => arr[arr.length - 1]
+
+export const getLastCursor = <NodeType>(connection: Paginated<NodeType>) => {
+  if (!connection.edges || connection.edges.length === 0) return null
+  const lastEdge = last(connection?.edges)
+  if (!lastEdge) return null
+  return lastEdge.cursor
+}
+// connection.edges && connection.edges.length > 0
+//   ? connection.edges[connection.edges.length - 1].cursor ?? null
+//   : null
 
 export const mergePaginatedResults = <NodeType>(
   p1: Paginated<NodeType>,
@@ -56,7 +65,7 @@ export const mergePaginatedResults = <NodeType>(
       hasPreviousPage: p1.pageInfo.hasPreviousPage,
       hasNextPage: p2.pageInfo.hasNextPage,
     },
-    edges: [...p1.edges, ...p2.edges],
+    edges: [...definitely(p1.edges), ...definitely(p2.edges)],
   }
 }
 
@@ -84,6 +93,8 @@ export const buildProductReferences = async (
   return productRefs
 }
 
+const isImageEdge = (edge: any): edge is Edge<ShopifyImage> => false
+
 export const prepareSourceData = <T extends Product | Collection>(item: T) => {
   if (isShopifyProduct(item)) {
     // Add keys to product images
@@ -95,13 +106,15 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
       })),
       images: {
         ...item.images,
-        edges: item.images.edges.map(({ cursor, node }) => {
-          return {
-            cursor,
-            node,
-            _key: cursor,
-          }
-        }),
+        edges: definitely(item.images.edges)
+          .filter(isImageEdge)
+          .map(({ cursor, node }) => {
+            return {
+              cursor,
+              node,
+              _key: cursor,
+            }
+          }),
       },
     }
   }

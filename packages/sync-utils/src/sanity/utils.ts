@@ -14,7 +14,7 @@ import { isMatch as lodashIsMatch, pick } from 'lodash'
 import { slugify, definitely } from '../utils'
 import { isShopifyProduct, isShopifyCollection } from '../typeGuards'
 
-export const sleep = (ms: number) =>
+export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms))
 
 const getItemType = (item: Product | Collection) => {
@@ -80,7 +80,10 @@ const prepareSourceData = <T extends Product | Collection>(item: T): T => {
       },
       images: {
         ...item.images,
-        edges: addKeyByCursor(item.images.edges, 'shopifySourceImageEdge'),
+        edges: addKeyByCursor(
+          definitely(item.images.edges),
+          'shopifySourceImageEdge'
+        ),
       },
     }
   }
@@ -91,7 +94,10 @@ const prepareSourceData = <T extends Product | Collection>(item: T): T => {
       image: item.image || {},
       products: {
         ...item.products,
-        edges: addKeyByCursor(item.products.edges, 'shopifySourceProductEdge'),
+        edges: addKeyByCursor(
+          definitely(item.products.edges),
+          'shopifySourceProductEdge'
+        ),
       },
     }
   }
