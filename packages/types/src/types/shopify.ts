@@ -50,6 +50,7 @@ export interface Variant {
   image: ShopifyImage
   price: string
   priceV2: MoneyV2
+  compareAtPriceV2: MoneyV2
   title: string
   selectedOptions?: SelectedOption[]
   weight?: number
