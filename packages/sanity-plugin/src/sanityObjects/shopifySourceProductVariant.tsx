@@ -23,6 +23,7 @@ export const shopifySourceProductVariant = {
     //       The sync plugin needs to figure out how to deal with this.
     { name: 'image', type: 'shopifySourceImage' },
     { name: 'priceV2', type: 'shopifyMoneyV2' },
+    { name: 'compareAtPriceV2', type: 'shopifyMoneyV2' },
     {
       name: 'selectedOptions',
       type: 'array',
