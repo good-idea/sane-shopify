@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/good-idea/sane-shopify/compare/v0.15.2...v0.16.0) (2020-07-12)
+
+### Features
+
+- **sync-utils:** add compareAtPriceV2 ([8915a92](https://github.com/good-idea/sane-shopify/commit/8915a92944bfdf090a28845b242fb7a66595a686))
+
 ## [0.15.2](https://github.com/good-idea/sane-shopify/compare/v0.15.0...v0.15.2) (2020-06-14)
 
 ### Bug Fixes
