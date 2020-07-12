@@ -7,6 +7,7 @@ import { createFetchAllShopifyCollections } from './fetchAllShopifyCollections'
 import { createFetchAllShopifyProducts } from './fetchAllShopifyProducts'
 import { testSecrets } from './testSecrets'
 
+/* eslint-disable-next-line */
 require('es6-promise').polyfill()
 require('isomorphic-fetch')
 

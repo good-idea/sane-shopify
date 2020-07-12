@@ -15,9 +15,9 @@
     "watch": "nodemon --watch src -e ts -x yarn build",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
-    "fix:tslint": "tslint --fix --project .",
+    "fix:lint": "eslint --fix ./src",
     "test": "run-s test:lint",
-    "test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+    "test:lint": "eslint ./src && prettier \"src/**/*.ts\" --list-different",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -39,8 +39,7 @@
   "module": "lib/index.es.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@good-idea/unwind-edges": "^1.4.0",
-    "tslint": "^6.1.2"
+    "@good-idea/unwind-edges": "^1.4.0"
   },
   "gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }

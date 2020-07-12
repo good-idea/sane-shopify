@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "plugins": [{ "name": "typescript-tslint-plugin" }],
     "target": "es5",
     "declaration": true,
     "module": "esnext",
