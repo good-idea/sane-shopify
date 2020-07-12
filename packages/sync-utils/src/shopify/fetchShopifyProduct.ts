@@ -32,6 +32,7 @@ export const PRODUCT_BY_HANDLE = gql`
   }
   ${productFragment}
 `
+
 interface ByHandleResult {
   data?: {
     productByHandle: Product

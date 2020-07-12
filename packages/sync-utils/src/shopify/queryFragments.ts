@@ -43,6 +43,9 @@ export const productVariantFragment = gql`
     priceV2 {
       ...MoneyV2Fragment
     }
+    compareAtPriceV2 {
+      ...MoneyV2Fragment
+    }
     selectedOptions {
       value
       name

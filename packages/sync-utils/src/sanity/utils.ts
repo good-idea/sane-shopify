@@ -115,6 +115,11 @@ const createProductOptions = (
   }))
 }
 
+const defaultMissingPrice = {
+  amount: '0',
+  currencyCode: 'NONE',
+}
+
 const createProductVariantObjects = (
   item: Product
 ): SanityArray<SanityShopifyProductVariant> => {
@@ -129,6 +134,7 @@ const createProductVariantObjects = (
       sourceData: {
         ...v,
         _type: 'shopifySourceProductVariant',
+        compareAtPriceV2: v.compareAtPriceV2 ?? defaultMissingPrice,
         image: v.image ? v.image : missingImage,
         selectedOptions: v.selectedOptions
           ? v.selectedOptions.map(({ name, value }) => ({
