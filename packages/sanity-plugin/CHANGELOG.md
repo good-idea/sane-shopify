@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.1](https://github.com/good-idea/sane-shopify/compare/v0.16.0...v0.16.1) (2020-07-12)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix type errors ([d2ecd8f](https://github.com/good-idea/sane-shopify/commit/d2ecd8f769ec74165d3ba09fef7da564d59b76dd))
+
 # [0.16.0](https://github.com/good-idea/sane-shopify/compare/v0.15.2...v0.16.0) (2020-07-12)
 
 ### Features
