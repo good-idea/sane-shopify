@@ -2925,14 +2925,14 @@
     eventsource "^1.0.6"
 
 "@sanity/form-builder@^1.149.16":
-  version "1.149.16"
-  resolved "https://registry.yarnpkg.com/@sanity/form-builder/-/form-builder-1.149.16.tgz#511fa70640f05878edaad7ca7675cc6cfa1e0285"
-  integrity sha512-5niK6dCXUA4HpFPj6FJIMC1B2RBn9nriDQAUWYmEYIkR2JgnLXOhp4Y9XN0owTj8j/oH4M8ev1daO/RD/UTu/A==
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/form-builder/-/form-builder-1.149.18.tgz#18673599205a4d94b3e5240737cf34e3224b8c9b"
+  integrity sha512-FrN3eZ/ixI+PeZLq1EH66UsXIc5f+U+J4kSZ0KUB1/M6TX+kzUmwmZCot8voFbPvxZ5BJWEAG1Vml7BKj3P7EA==
   dependencies:
     "@sanity/block-tools" "1.149.16"
     "@sanity/generate-help-url" "1.149.16"
-    "@sanity/imagetool" "1.149.16"
-    "@sanity/mutator" "1.149.16"
+    "@sanity/imagetool" "1.149.18"
+    "@sanity/mutator" "1.149.18"
     "@sanity/util" "1.149.16"
     "@sanity/uuid" "1.149.16"
     attr-accept "^1.1.0"
@@ -2976,10 +2976,10 @@
   resolved "https://registry.yarnpkg.com/@sanity/image-url/-/image-url-0.140.15.tgz#7b8afc49130398e1a6e7bde03b5961d2384f7676"
   integrity sha512-SlL3JNWLmWEbnUW7B2vVIUazoRD/a6bg5D8nA4PNvRhu8EEE3WykrONQj7Ibpv/fAwTyxm1u2Hh+sy6f2FHvXg==
 
-"@sanity/imagetool@1.149.16":
-  version "1.149.16"
-  resolved "https://registry.yarnpkg.com/@sanity/imagetool/-/imagetool-1.149.16.tgz#98673911cd18c3c48598e0b6bbe5fe91978311eb"
-  integrity sha512-ugSXhtrOTtXFMAV9t4LTmmykG4+9wT7BK9ngyMJk+G9MFuS7teiVZrF7kUOtEFLyXtobc4LN6U51uvE7/1GgNQ==
+"@sanity/imagetool@1.149.18":
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/imagetool/-/imagetool-1.149.18.tgz#d1d456055bde8a6f9888857a795a53763e52d9a8"
+  integrity sha512-t2yGTngdh9cXMgO/iPStj8aTnfl0RrE4AocHyLxh8ckBCiUdVsP5zd/mtil4f5Q8xhrXFFUmwRfjug6N0P/bGA==
   dependencies:
     debug "^3.1.0"
     dom-event "1.0.0"
@@ -3002,6 +3002,16 @@
   version "1.149.16"
   resolved "https://registry.yarnpkg.com/@sanity/mutator/-/mutator-1.149.16.tgz#8c8016b54b7b432def41243a03f8e30de6c694e9"
   integrity sha512-sLBBWQw6O5GQTOQPocAO8RhF6NAQMmuRiBmTZjCs+zt+GOiTDAvCKHT/qaYGMkRTsbcxLxZNl0LfNlVl6BQ37A==
+  dependencies:
+    "@types/diff-match-patch" "^1.0.32"
+    debug "^4.1.1"
+    diff-match-patch "^1.0.0"
+    lodash "^4.17.15"
+
+"@sanity/mutator@1.149.18":
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/mutator/-/mutator-1.149.18.tgz#b88c3545031f076eb29ccd766b7fce0acd3789bf"
+  integrity sha512-0vWoJ9zIEU2398gjnjJgWocWd1GcYj42B8Rbh8smpI6QV587EEaTg9XXd8FT+xfg6KrWSDsqDtq5D+SmhDVFrQ==
   dependencies:
     "@types/diff-match-patch" "^1.0.32"
     debug "^4.1.1"
