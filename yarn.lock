@@ -2831,7 +2831,7 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@sanity/base@1.149.16", "@sanity/base@^1.149.16":
+"@sanity/base@1.149.16":
   version "1.149.16"
   resolved "https://registry.yarnpkg.com/@sanity/base/-/base-1.149.16.tgz#37cee8eeb116f8f446c78c603fd1e14e90e8d812"
   integrity sha512-Gzd/1aEXSQxoAI2btAbBWa8cgBmkjU7bXxlcgZuWFy8Ck0CgN/pFqeP4puQPMD68TejYrNa0hq9INmxvOWaJCQ==
@@ -2864,6 +2864,39 @@
     semver-compare "^1.0.0"
     shallow-equals "^1.0.0"
 
+"@sanity/base@^1.149.16":
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/base/-/base-1.149.18.tgz#1ad39f2843acc8194a97fd5dd0d6f8b68f36bd62"
+  integrity sha512-jMrB5n/hQPtGfCrOtlDEWxVjZ7jMW52iBCwp6dO8JDJBOx0K8s3sPcqSgqoFVNukbat056Tb1W84Sp2jOLcrjA==
+  dependencies:
+    "@sanity/client" "1.149.18"
+    "@sanity/generate-help-url" "1.149.16"
+    "@sanity/image-url" "0.140.15"
+    "@sanity/initial-value-templates" "1.149.16"
+    "@sanity/mutator" "1.149.18"
+    "@sanity/observable" "1.149.16"
+    "@sanity/preview" "1.149.16"
+    "@sanity/schema" "1.149.16"
+    "@sanity/state-router" "1.149.18"
+    "@sanity/structure" "1.149.16"
+    "@sanity/transaction-collator" "1.149.16"
+    "@sanity/util" "1.149.16"
+    "@sanity/uuid" "1.149.16"
+    "@sanity/validation" "1.149.16"
+    history "^4.6.3"
+    lodash "^4.17.15"
+    nano-pubsub "^1.0.2"
+    oneline "^1.0.3"
+    promise-props "^1.0.0"
+    react-fast-compare "^2.0.2"
+    react-icon-base "^2.1.2"
+    react-icons "^2.2.7"
+    react-intl "^2.2.2"
+    react-props-stream "^1.0.0"
+    rxjs "^6.5.3"
+    semver-compare "^1.0.0"
+    shallow-equals "^1.0.0"
+
 "@sanity/block-tools@1.149.16":
   version "1.149.16"
   resolved "https://registry.yarnpkg.com/@sanity/block-tools/-/block-tools-1.149.16.tgz#3182a576b6d6d5c42c122a53aa47f8623552c674"
@@ -2872,10 +2905,23 @@
     get-random-values "^1.2.0"
     lodash "^4.17.15"
 
-"@sanity/client@1.149.16", "@sanity/client@^1.149.16":
+"@sanity/client@1.149.16":
   version "1.149.16"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-1.149.16.tgz#7b569830617614be2427be0a0daf50ce26af5a1d"
   integrity sha512-wrclKcS8iNHjZqcatVAaIUei3v9DWVJfqRtR5cO6niNxUqu1vj3SnHgf7roo4s3V3js/6uHeuuF257v4jZbX5Q==
+  dependencies:
+    "@sanity/eventsource" "1.149.16"
+    "@sanity/generate-help-url" "1.149.16"
+    "@sanity/observable" "1.149.16"
+    deep-assign "^2.0.0"
+    get-it "^5.0.3"
+    make-error "^1.3.0"
+    object-assign "^4.1.1"
+
+"@sanity/client@1.149.18", "@sanity/client@^1.149.16":
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-1.149.18.tgz#b69da5a9339ced013de961971e737133e1501e8a"
+  integrity sha512-yuJt7t56jkgrSkg3rXGSsrD81+a/0CLnj18JyTqLWAkojihqD2/KjYy0XOTELFUVk74Z6d6pHnNt0CpqTzlGLQ==
   dependencies:
     "@sanity/eventsource" "1.149.16"
     "@sanity/generate-help-url" "1.149.16"
@@ -3008,6 +3054,16 @@
     diff-match-patch "^1.0.0"
     lodash "^4.17.15"
 
+"@sanity/mutator@1.149.18":
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/mutator/-/mutator-1.149.18.tgz#b88c3545031f076eb29ccd766b7fce0acd3789bf"
+  integrity sha512-0vWoJ9zIEU2398gjnjJgWocWd1GcYj42B8Rbh8smpI6QV587EEaTg9XXd8FT+xfg6KrWSDsqDtq5D+SmhDVFrQ==
+  dependencies:
+    "@types/diff-match-patch" "^1.0.32"
+    debug "^4.1.1"
+    diff-match-patch "^1.0.0"
+    lodash "^4.17.15"
+
 "@sanity/observable@1.149.16":
   version "1.149.16"
   resolved "https://registry.yarnpkg.com/@sanity/observable/-/observable-1.149.16.tgz#d76727ed1e0218fcc4e6a82265eaddcbd55d3e1d"
@@ -3045,6 +3101,14 @@
   version "1.149.16"
   resolved "https://registry.yarnpkg.com/@sanity/state-router/-/state-router-1.149.16.tgz#926876d827a49761bd0f2734d02d87e885a663d0"
   integrity sha512-qpQvWEIZ5hyiwMc+wg/4SPy3WdPNtbVAdgjyoEWmMRNhxvjBuQud/+1j5BZAEXpfM+SYBj9ddp4NujNZEttg9A==
+  dependencies:
+    lodash "^4.17.15"
+    nano-pubsub "^1.0.2"
+
+"@sanity/state-router@1.149.18":
+  version "1.149.18"
+  resolved "https://registry.yarnpkg.com/@sanity/state-router/-/state-router-1.149.18.tgz#19c7b39a820c422376cf33cb27297ba822796dba"
+  integrity sha512-nc3z0nmOMeHC3EFD7OxNtnXYIEN7KyA5W7DkExJ5UoEsWAXltkEAEQU6kUv9UbpoPya/6Hn+okJmnS3sdvz7+w==
   dependencies:
     lodash "^4.17.15"
     nano-pubsub "^1.0.2"
