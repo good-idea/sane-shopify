@@ -1,4 +1,4 @@
-import { SyncUtils, SaneShopifyConfig } from './index'
+import { SaneShopifyConfig } from './index'
 
 export interface WebhookData {
   id: string

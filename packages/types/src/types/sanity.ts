@@ -107,19 +107,6 @@ export type SanityShopifyDocument =
   | SanityShopifyProductDocument
   | SanityShopifyCollectionDocument
 
-interface Patch<ExpectedResult = any> {
-  set: (
-    document: object
-  ) => {
-    commit: () => Promise<ExpectedResult>
-  }
-  unset: (
-    document: object
-  ) => {
-    commit: () => Promise<ExpectedResult>
-  }
-}
-
 export interface SanityFetchParams {
   types?: string[]
 }
