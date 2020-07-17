@@ -8,6 +8,9 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -27,14 +30,7 @@
     "sanity",
     "shopify"
   ],
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
+ "repository": {
     "type": "git",
     "url": "git+https://github.com/good-idea/sane-shopify.git"
   },

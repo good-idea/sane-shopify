@@ -8,6 +8,9 @@
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
 	"typings": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
@@ -30,14 +33,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"directories": {
-		"lib": "lib",
-		"test": "src/__tests__"
-	},
-	"files": [
-		"lib"
-	],
-	"bugs": {
+"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
 	"dependencies": {

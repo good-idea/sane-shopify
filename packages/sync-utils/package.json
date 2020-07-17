@@ -6,7 +6,7 @@
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "MIT",
 	"files": [
-		"lib"
+		"dist"
 	],
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
@@ -39,10 +39,6 @@
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"directories": {
-		"lib": "lib",
-		"test": "src/__tests__"
 	},
 	"bugs": {
 		"url": "https://github.com/good-idea/sane-shopify/issues"

@@ -9,6 +9,10 @@
 	"module": "dist/index.esm.js",
 	"typings": "dist/index.d.ts",
 	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"sanity.json"
+	],
 	"keywords": [
 		"sanity",
 		"shopify"
@@ -20,15 +24,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"directories": {
-		"dist": "dist",
-		"test": "__tests__"
-	},
-	"files": [
-		"dist",
-		"sanity.json"
-	],
-	"scripts": {
+  "scripts": {
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.{ts,tsx}\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.{ts,tsx}",
