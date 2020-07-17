@@ -1,13 +1,13 @@
 {
   "name": "@sane-shopify/types",
-  "version": "0.16.1",
+  "version": "0.17.0",
   "description": "Common typescript typings for @sane-shopify projects",
   "author": "Joseph Thomas <joseph@good-idea.studio>",
   "homepage": "https://github.com/good-idea/sane-shopify#readme",
   "license": "MIT",
-	"main": "dist/index.js",
-	"module": "dist/index.esm.js",
-	"typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },

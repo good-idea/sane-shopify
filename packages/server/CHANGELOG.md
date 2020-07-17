@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/good-idea/sane-shopify/compare/v0.16.1...v0.17.0) (2020-07-17)
+
+### Bug Fixes
+
+- **server:** fix type errors ([8b0e781](https://github.com/good-idea/sane-shopify/commit/8b0e781d23184634e683a7db99b9c5b51929a596))
+
+### Features
+
+- **server:** install sourcemap support ([cffd0df](https://github.com/good-idea/sane-shopify/commit/cffd0df36493a1180b6e8e0dc43b1cea68065206))
+
 ## [0.16.1](https://github.com/good-idea/sane-shopify/compare/v0.16.0...v0.16.1) (2020-07-12)
 
 **Note:** Version bump only for package @sane-shopify/server

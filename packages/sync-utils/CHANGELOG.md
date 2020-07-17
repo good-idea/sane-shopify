@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/good-idea/sane-shopify/compare/v0.16.1...v0.17.0) (2020-07-17)
+
+### Bug Fixes
+
+- **sync-utils:** fix type errors ([84c5740](https://github.com/good-idea/sane-shopify/commit/84c5740809d31f9c5c51c4a56aae8bbaf0426171))
+- **sync-utils:** fix window undefined error ([88d1019](https://github.com/good-idea/sane-shopify/commit/88d10194baa62d031ed636a2329474693027bc79)), closes [#115](https://github.com/good-idea/sane-shopify/issues/115)
+
 ## [0.16.1](https://github.com/good-idea/sane-shopify/compare/v0.16.0...v0.16.1) (2020-07-12)
 
 ### Bug Fixes

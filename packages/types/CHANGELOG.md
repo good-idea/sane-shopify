@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/good-idea/sane-shopify/compare/v0.16.1...v0.17.0) (2020-07-17)
+
+### Bug Fixes
+
+- **types:** remove unused types ([b0873d7](https://github.com/good-idea/sane-shopify/commit/b0873d7901f3738c2bd1e5029f75e60d53a935b4))
+
 ## [0.16.1](https://github.com/good-idea/sane-shopify/compare/v0.16.0...v0.16.1) (2020-07-12)
 
 **Note:** Version bump only for package @sane-shopify/types

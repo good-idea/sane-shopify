@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/good-idea/sane-shopify/compare/v0.16.1...v0.17.0) (2020-07-17)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix type errors ([5336947](https://github.com/good-idea/sane-shopify/commit/5336947c71b82e5ca8bcb6a7e8425df9cc69d1e4))
+- **server:** fix type errors ([8b0e781](https://github.com/good-idea/sane-shopify/commit/8b0e781d23184634e683a7db99b9c5b51929a596))
+- **sync-utils:** fix type errors ([84c5740](https://github.com/good-idea/sane-shopify/commit/84c5740809d31f9c5c51c4a56aae8bbaf0426171))
+- **sync-utils:** fix window undefined error ([88d1019](https://github.com/good-idea/sane-shopify/commit/88d10194baa62d031ed636a2329474693027bc79)), closes [#115](https://github.com/good-idea/sane-shopify/issues/115)
+- **types:** remove unused types ([b0873d7](https://github.com/good-idea/sane-shopify/commit/b0873d7901f3738c2bd1e5029f75e60d53a935b4))
+
+### Features
+
+- **server:** install sourcemap support ([cffd0df](https://github.com/good-idea/sane-shopify/commit/cffd0df36493a1180b6e8e0dc43b1cea68065206))
+
 ## [0.16.1](https://github.com/good-idea/sane-shopify/compare/v0.16.0...v0.16.1) (2020-07-12)
 
 ### Bug Fixes
