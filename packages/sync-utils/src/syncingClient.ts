@@ -464,8 +464,10 @@ export const syncUtils = (
     )
   }
 
-  // @ts-ignore
-  window.deleteArchivedDocuments = deleteArchivedDocuments
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.deleteArchivedDocuments = deleteArchivedDocuments
+  }
 
   return {
     initialize,
