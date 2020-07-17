@@ -5,20 +5,23 @@
   "author": "Joseph Thomas <joseph@good-idea.studio>",
   "homepage": "https://github.com/good-idea/sane-shopify#readme",
   "license": "MIT",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"typings": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "linky": "yalc publish",
     "linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
-    "build": "rollup -c",
+    "build": "rimraf dist && tsdx build",
     "watch": "nodemon --watch src -e ts -x yarn build",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
     "fix:lint": "eslint --fix ./src",
     "test": "run-s test:lint",
     "test:lint": "eslint ./src && prettier \"src/**/*.ts\" --list-different",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "yarn build"
   },
   "keywords": [
     "sanity",
@@ -35,9 +38,6 @@
     "type": "git",
     "url": "git+https://github.com/good-idea/sane-shopify.git"
   },
-  "main": "lib/index.ts",
-  "module": "lib/index.es.js",
-  "types": "lib/index.d.ts",
   "devDependencies": {
     "@good-idea/unwind-edges": "^1.4.0"
   },
