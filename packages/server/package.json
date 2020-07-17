@@ -5,6 +5,9 @@
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "MIT",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"typings": "dist/index.d.ts",
 	"scripts": {
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
@@ -12,8 +15,8 @@
 		"test": "run-s test:lint test:unit",
 		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",
-		"build": "yarn test && rollup -c",
-		"watch": "rollup -cw",
+		"build": "yarn test && tsdx build",
+		"watch": "tsdx watch",
 		"prepublishOnly": "yarn build"
 	},
 	"keywords": [
@@ -27,9 +30,6 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"main": "lib/index.js",
-	"module": "lib/index.es.js",
-	"types": "lib/index.d.ts",
 	"directories": {
 		"lib": "lib",
 		"test": "src/__tests__"
@@ -44,9 +44,9 @@
 		"@sane-shopify/sync-utils": "^0.16.1",
 		"apollo-link": "^1.2.14",
 		"apollo-link-http": "^1.5.17",
-		"apollo-server-lambda": "^2.15.1",
+		"apollo-server-lambda": "^2.16.0",
 		"graphql": "^15.3.0",
-		"graphql-tools": "^6.0.12",
+		"graphql-tools": "^6.0.14",
 		"node-fetch": "^2.6.0",
 		"source-map-support": "^0.5.19"
 	},

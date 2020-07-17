@@ -38,10 +38,8 @@
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",
 		"rimraf": "^3.0.2",
-		"rollup": "^2.21.0",
-		"rollup-plugin-ts-paths": "^1.0.5",
-		"rollup-plugin-typescript2": "^0.27.1",
 		"ts-jest": "^26.1.1",
+		"tsdx": "^0.13.2",
 		"typescript": "^3.9.6",
 		"typesync": "^0.7.0",
 		"yalc": "^1.0.0-pre.37"

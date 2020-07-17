@@ -4,6 +4,7 @@
 node_modules
 
 # build
+dist
 lerna-debug.log
 npm-debug.log
 packages/*/lib

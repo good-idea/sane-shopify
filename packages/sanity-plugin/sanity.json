@@ -1,27 +1,28 @@
 {
-	"paths": {
-		"source": "./src",
-		"compiled": "./lib"},
-	"parts": [
-		{
-			"implements": "part:@sanity/base/tool",
-			"path": "./lib/index.js"
-		},
-		{
-			"name": "part:@sanity/form-builder/input/shopifySelector",
-			"description": "A shopify item selector for Sanity"
-		},
-		{
-			"implements": "part:@sanity/form-builder/input/shopifySelector",
-			"path": "index.js"
-		},
-		{
-			"name": "part:@sanity/form-builder/input/shopifySelector/schema",
-			"description": "A shopify item selector for Sanity"
-		},
-		{
-			"implements": "part:@sanity/form-builder/input/shopifySelector/schema",
-			"path": "schema.js"
-		}
-	]
+  "paths": {
+    "source": "./src",
+    "compiled": "./dist"
+  },
+  "parts": [
+    {
+      "implements": "part:@sanity/base/tool",
+      "path": "./dist/index.js"
+    },
+    {
+      "name": "part:@sanity/form-builder/input/shopifySelector",
+      "description": "A shopify item selector for Sanity"
+    },
+    {
+      "implements": "part:@sanity/form-builder/input/shopifySelector",
+      "path": "index.js"
+    },
+    {
+      "name": "part:@sanity/form-builder/input/shopifySelector/schema",
+      "description": "A shopify item selector for Sanity"
+    },
+    {
+      "implements": "part:@sanity/form-builder/input/shopifySelector/schema",
+      "path": "schema.js"
+    }
+  ]
 }

@@ -5,6 +5,10 @@
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
 	"license": "MIT",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"typings": "dist/index.d.ts",
+	"types": "dist/index.d.ts",
 	"keywords": [
 		"sanity",
 		"shopify"
@@ -17,16 +21,13 @@
 		"access": "public"
 	},
 	"directories": {
-		"lib": "lib",
+		"dist": "dist",
 		"test": "__tests__"
 	},
 	"files": [
-		"lib",
+		"dist",
 		"sanity.json"
 	],
-	"main": "lib/index.js",
-	"module": "lib/index.es.js",
-	"types": "lib/index.d.ts",
 	"scripts": {
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.{ts,tsx}\" --write --loglevel warn",
@@ -39,8 +40,8 @@
 		"test:watch": "jest --watch",
 		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
 		"test:coverage:send": "codecov",
-		"build": "rimraf lib && yarn test && rollup -c",
-		"watch": "rollup -cw",
+		"build": "rimraf dist && yarn test && tsdx build",
+		"watch": "tsdx watch",
 		"prepublishOnly": "npm run build"
 	},
 	"bugs": {
@@ -52,8 +53,8 @@
 		"react-dom": "16.13"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.10.4",
-		"@babel/core": "^7.10.4",
+		"@babel/cli": "^7.10.5",
+		"@babel/core": "^7.10.5",
 		"@babel/plugin-proposal-class-properties": "^7.10.4",
 		"@babel/plugin-proposal-object-rest-spread": "^7.10.4",
 		"@babel/preset-env": "^7.10.4",
@@ -72,9 +73,9 @@
 		"@good-idea/unwind-edges": "^1.4.0",
 		"@sane-shopify/sync-utils": "^0.16.1",
 		"@sane-shopify/types": "^0.16.1",
-		"@sanity/base": "^1.149.16",
-		"@sanity/components": "^1.149.16",
-		"@sanity/form-builder": "^1.149.16",
+		"@sanity/base": "^1.149.18",
+		"@sanity/components": "^1.149.18",
+		"@sanity/form-builder": "^1.149.18",
 		"lodash": "^4.17.19",
 		"react-icons": "^3.10.0"
 	},

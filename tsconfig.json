@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "target": "es5",
     "declaration": true,
+    "importHelpers": true,
     "module": "esnext",
     "strict": true,
     "moduleResolution": "node",
