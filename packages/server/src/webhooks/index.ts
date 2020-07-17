@@ -4,7 +4,7 @@ import { syncDocument } from './syncDocument'
 import { COLLECTION, PRODUCT } from './constants'
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-const noop = (err: Error) => undefined
+const noop = (_: Error) => undefined
 
 export const createWebhooks = ({
   config,
