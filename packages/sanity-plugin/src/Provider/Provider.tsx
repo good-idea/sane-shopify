@@ -76,7 +76,7 @@ export class Provider extends React.Component<
 
   public syncingClient?: SyncUtils = undefined
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     const shopifySecrets = await this.fetchSecrets()
     this.createSyncingClient(shopifySecrets)
   }

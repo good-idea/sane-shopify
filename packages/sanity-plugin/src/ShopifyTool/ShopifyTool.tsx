@@ -1,13 +1,7 @@
 import * as React from 'react'
-import { ClientContextValue } from '../Provider'
 import { Setup } from './Setup'
 import { SyncPane } from './Sync'
 import { Provider, useSaneContext } from '../Provider'
-
-interface Props {
-  clientProps: ClientContextValue
-  inputProps: any
-}
 
 const Inner = () => {
   const { syncState } = useSaneContext()
