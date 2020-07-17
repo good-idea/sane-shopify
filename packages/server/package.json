@@ -47,11 +47,14 @@
 		"apollo-server-lambda": "^2.15.1",
 		"graphql": "^15.3.0",
 		"graphql-tools": "^6.0.12",
-		"node-fetch": "^2.6.0"
+		"node-fetch": "^2.6.0",
+		"source-map-support": "^0.5.19"
 	},
 	"devDependencies": {
 		"@sane-shopify/types": "^0.16.1",
 		"@types/aws-lambda": "^8.10.59",
+		"@types/node-fetch": "^2.5.7",
+		"@types/source-map-support": "^0.5.2",
 		"aws-lambda": "^1.0.6",
 		"next": "^9.4.4"
 	},
