@@ -1,8 +1,6 @@
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import {
   SanityShopifyProductDocument,
-  Edge,
-  ShopifyImage,
   Collection,
   Product,
   SanityClient,
@@ -93,8 +91,6 @@ export const buildProductReferences = async (
   return productRefs
 }
 
-const isImageEdge = (edge: any): edge is Edge<ShopifyImage> => false
-
 export const prepareSourceData = <T extends Product | Collection>(item: T) => {
   if (isShopifyProduct(item)) {
     // Add keys to product images
@@ -106,15 +102,13 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
       })),
       images: {
         ...item.images,
-        edges: definitely(item.images.edges)
-          .filter(isImageEdge)
-          .map(({ cursor, node }) => {
-            return {
-              cursor,
-              node,
-              _key: cursor,
-            }
-          }),
+        edges: definitely(item.images.edges).map(({ cursor, node }) => {
+          return {
+            cursor,
+            node,
+            _key: cursor,
+          }
+        }),
       },
     }
   }

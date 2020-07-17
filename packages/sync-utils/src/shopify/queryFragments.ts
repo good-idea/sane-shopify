@@ -11,10 +11,6 @@ const moneyFragment = /* GraphQL */ `
   }
 `
 
-interface ShopifyError {
-  message: string
-}
-
 const imageFragment = /* GraphQL */ `
   fragment ImageFragment on Image {
     __typename

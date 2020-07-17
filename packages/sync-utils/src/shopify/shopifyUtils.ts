@@ -11,8 +11,6 @@ import { testSecrets } from './testSecrets'
 require('es6-promise').polyfill()
 require('isomorphic-fetch')
 
-type Variables = object
-
 interface StringCache<NodeType> {
   [key: string]: NodeType | null
 }

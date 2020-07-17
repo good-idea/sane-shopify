@@ -83,7 +83,7 @@ const syncMachine = Machine<SyncContext>({
             ...initialContext,
             valid: true,
             ready: true,
-            shopName: (context, action) => action.shopName,
+            shopName: (_, action) => action.shopName,
           }),
         },
         INVALID: {
@@ -100,7 +100,7 @@ const syncMachine = Machine<SyncContext>({
         VALID: {
           target: 'ready',
           actions: assign<SyncContext, SavedSecretsAction>({
-            shopName: (context, action) => action.shopName,
+            shopName: (_, action) => action.shopName,
             errorMessage: undefined,
             error: undefined,
             valid: true,
@@ -110,8 +110,8 @@ const syncMachine = Machine<SyncContext>({
         INVALID: {
           target: 'setup',
           actions: assign<SyncContext, ErrorAction>({
-            errorMessage: (context, action) => action.errorMessage,
-            error: (context, action) => action.error,
+            errorMessage: (_, action) => action.errorMessage,
+            error: (_, action) => action.error,
             valid: false,
           }),
         },
@@ -167,8 +167,8 @@ const syncMachine = Machine<SyncContext>({
         ERRORED: {
           target: 'syncError',
           actions: assign<SyncContext, ErrorAction>({
-            errorMessage: (context, action) => action.errorMessage,
-            error: (context, action) => action.error,
+            errorMessage: (_, action) => action.errorMessage,
+            error: (_, action) => action.error,
           }),
         },
       },

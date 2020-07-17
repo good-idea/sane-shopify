@@ -12,14 +12,6 @@ const getErrorMessage = (r: Response): string => {
   }
 }
 
-interface GraphQLAST {
-  loc: {
-    source: {
-      body: string
-    }
-  }
-}
-
 const deduplicateFragments = (queryString: string | undefined): string => {
   if (!queryString) throw new Error('No query string provided')
   return queryString
