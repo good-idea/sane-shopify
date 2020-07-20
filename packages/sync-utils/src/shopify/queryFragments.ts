@@ -66,6 +66,8 @@ export const productFragment = gql`
     productType
     tags
     vendor
+    createdAt
+    publishedAt
     options {
       id
       name
@@ -109,13 +111,15 @@ export const productFragment = gql`
  * Collection Queries
  */
 
-export const collectionFragment = /* GraphQL */ `
+export const collectionFragment = gql`
   fragment CollectionFragment on Collection {
     id
     handle
     title
     description
     descriptionHtml
+    createdAt
+    publishedAt
     __typename
     image {
       ...ImageFragment

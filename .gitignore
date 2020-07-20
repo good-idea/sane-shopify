@@ -21,3 +21,4 @@ coverage
 
 test-store
 test-frontend
+/.gtm/

@@ -59,6 +59,7 @@ export const createSyncRelationships = (
     : isSanityCollection(from)
     ? from.products || []
     : []
+
   // determine if the FROM doc already has the
   // links in place. If so, skip the patch.
   const alreadyLinked =
@@ -103,9 +104,9 @@ export const createSyncRelationships = (
   const relationshipsToRemove = existingRelationships.reduce<
     SanityShopifyDocument[]
   >((acc, item) => {
-    if (item.archived === true || item.shopifyId === null) return acc
-    if (acc.find((i) => i._id === item._id)) return acc
-    return [...acc, item]
+    if (item.archived === true || item.shopifyId === null) return [...acc, item]
+    if (acc.find((i) => i._id === item._id)) return [...acc, item]
+    return acc
   }, [])
 
   if (relationshipsToRemove.length) {
