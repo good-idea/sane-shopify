@@ -118,8 +118,6 @@ export const collectionFragment = gql`
     title
     description
     descriptionHtml
-    createdAt
-    publishedAt
     __typename
     image {
       ...ImageFragment

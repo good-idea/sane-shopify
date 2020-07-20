@@ -50,6 +50,9 @@ interface NodeResult {
   data?: {
     node?: Product | Collection
   }
+  errors?: Array<{
+    message: string
+  }>
 }
 
 export const createFetchItemById = (
@@ -63,6 +66,10 @@ export const createFetchItemById = (
   if (cached) return cached
   const result = await query<NodeResult>(NODE_QUERY, { id })
   const item = result?.data?.node
+  if (result.errors) {
+    const messages = result.errors.map(({ message }) => message).join(' | ')
+    throw new Error(messages)
+  }
   if (!item) return null
   if (!fetchRelated) return item
   if (item.__typename === 'Product') {
