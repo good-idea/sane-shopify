@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.3](https://github.com/good-idea/sane-shopify/compare/v0.17.2...v0.17.3) (2020-07-20)
+
+### Bug Fixes
+
+- **sync-utils:** throw error when shopify fetch fails ([b29443f](https://github.com/good-idea/sane-shopify/commit/b29443f64ceafa3e25c5f1857db11bb6c4f797ac))
+
 ## [0.17.2](https://github.com/good-idea/sane-shopify/compare/v0.17.1...v0.17.2) (2020-07-20)
 
 ### Bug Fixes
