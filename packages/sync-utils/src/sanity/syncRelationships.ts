@@ -64,10 +64,11 @@ export const createSyncRelationships = (
   // links in place. If so, skip the patch.
   const alreadyLinked =
     toDocs.length === existingRelationships.length &&
-    toDocs.every((toDoc) =>
+    toDocs.every((toDoc, index) =>
       Boolean(
         // @ts-ignore
-        existingRelationships.find((er) => toDoc.shopifyId === er.shopifyId)
+        existingRelationships[index] &&
+          existingRelationships[index].shopifyId === toDoc.shopifyId
       )
     )
 
