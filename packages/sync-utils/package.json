@@ -52,9 +52,9 @@
 		"debug": "^4.1.1",
 		"deepmerge": "^4.2.2",
 		"es6-promise": "^4.2.8",
-		"graphql-tag": "^2.10.4",
+		"graphql-tag": "^2.11.0",
 		"isomorphic-fetch": "^2.2.1",
-		"p-queue": "^6.5.0",
+		"p-queue": "^6.6.0",
 		"xstate": "^4.11.0"
 	},
 	"devDependencies": {

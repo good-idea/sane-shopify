@@ -79,8 +79,8 @@ export interface SanityShopifyProductDocument {
   title: string
   handle: string
   archived?: boolean
-  minVariantPrice: number
-  maxVariantPrice: number
+  minVariantPrice?: number
+  maxVariantPrice?: number
   sourceData: Product
   collections: SanityShopifyCollectionDocument[]
   collectionKeys?: SanityReference[]
