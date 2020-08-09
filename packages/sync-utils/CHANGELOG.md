@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.4](https://github.com/good-idea/sane-shopify/compare/v0.17.3...v0.17.4) (2020-08-09)
+
+### Bug Fixes
+
+- **sync-utils:** fix archiving when there are no relationships ([abf10b0](https://github.com/good-idea/sane-shopify/commit/abf10b034093479deeb9d530069a1a173e5ad2cd))
+- **sync-utils:** fix min/maxVariantPrice with decimals ([7bc7a4e](https://github.com/good-idea/sane-shopify/commit/7bc7a4e9b0d40a232a6914de0c947beb617d2602)), closes [#117](https://github.com/good-idea/sane-shopify/issues/117)
+- **sync-utils:** fix sort order of relationships ([84992a3](https://github.com/good-idea/sane-shopify/commit/84992a3d274661120eb3734d29011bf36e57b95c))
+- **sync-utils:** fix type error ([495b610](https://github.com/good-idea/sane-shopify/commit/495b610e467c10f09efca9cbb30824ce5235b284))
+- **sync-utils:** only archive a document if it exists ([02f9803](https://github.com/good-idea/sane-shopify/commit/02f9803a533d7aaaa966c2c3f0a5301d89dd0f31))
+
 ## [0.17.3](https://github.com/good-idea/sane-shopify/compare/v0.17.2...v0.17.3) (2020-07-20)
 
 ### Bug Fixes
