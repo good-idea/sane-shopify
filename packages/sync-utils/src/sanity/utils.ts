@@ -155,8 +155,8 @@ const createProductVariantObjects = (
   )
 }
 
-const parsePrice = (amount?: string): number =>
-  amount ? parseInt(amount, 10) : 0
+const parsePrice = (amount?: string): number | undefined =>
+  amount ? parseFloat(amount) : undefined
 
 export const prepareDocument = <T extends Product | Collection>(
   item: T
