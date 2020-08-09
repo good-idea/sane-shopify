@@ -40,6 +40,7 @@ export const createArchiveSanityDocument = (client: SanityClient) => async (
     : isSanityCollection(doc)
     ? doc.products
     : undefined
+
   if (!relationships) return doc
   // @ts-ignore
   await Promise.all(relationships.map((r) => removeRelationships(r)))

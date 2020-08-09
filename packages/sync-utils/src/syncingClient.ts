@@ -274,7 +274,9 @@ export const syncUtils = (
     if (!shopifyItem) {
       onFetchComplete()
       const sanityDoc = await documentByShopifyId(id)
-      archiveSanityDocument(sanityDoc)
+      if (sanityDoc) {
+        archiveSanityDocument(sanityDoc)
+      }
       onComplete()
       return
     }
