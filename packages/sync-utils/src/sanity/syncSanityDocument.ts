@@ -7,6 +7,7 @@ import {
   SanityShopifyDocumentPartial,
   SanityShopifyCollectionDocumentPartial,
   SanityShopifyProductDocumentPartial,
+  SanityShopifyProductOptionValue,
 } from '@sane-shopify/types'
 import deepMerge from 'deepmerge'
 import { omit } from 'lodash'
@@ -59,19 +60,32 @@ const mergeExistingFields = (
           : undefined
 
         const existingOptionValues = existingOption ? existingOption.values : []
+        const updatedOptionValues = updatedOption ? updatedOption.values : []
+
+        const values = [...existingOptionValues, ...updatedOptionValues].reduce<
+          SanityShopifyProductOptionValue[]
+        >((acc, value) => {
+          const existsIndex = acc.findIndex((v) => v._key === value._key)
+
+          if (existsIndex > -1) {
+            const mergedValue = {
+              ...acc[existsIndex],
+              ...value,
+            }
+            return [
+              ...acc.slice(0, existsIndex),
+              mergedValue,
+              ...acc.slice(existsIndex + 1),
+            ]
+          } else {
+            return [...acc, value]
+          }
+        }, [])
 
         return {
           ...existingOption,
           ...updatedOption,
-          values: updatedOption.values.map((updatedOptionValue) => {
-            const existingOptionValue = existingOptionValues.find(
-              (v) => v._key === updatedOptionValue._key
-            )
-            return {
-              ...existingOptionValue,
-              ...updatedOptionValue,
-            }
-          }),
+          values,
         }
       }),
 

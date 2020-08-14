@@ -19,7 +19,7 @@
 		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",
 		"build": "yarn test && tsdx build",
-		"watch": "tsdx watch",
+		"start": "tsdx watch",
 		"prepublishOnly": "yarn build"
 	},
 	"keywords": [

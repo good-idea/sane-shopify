@@ -53,7 +53,8 @@ export type SanityShopifyCollectionDocumentPartial = Omit<
   '_id' | 'products'
 >
 
-interface SanityShopifyProductOptionValue {
+export interface SanityShopifyProductOptionValue {
+  _key: string
   value: string
 }
 

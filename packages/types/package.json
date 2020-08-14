@@ -20,7 +20,7 @@
     "build": "yarn build:clean && yarn build:compile",
     "build:clean": "rimraf dist",
     "build:compile": "tsdx build",
-    "watch": "nodemon --watch src -e ts -x yarn build:compile",
+    "start": "nodemon --watch src -e ts -x yarn build:compile",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
     "fix:lint": "eslint --fix ./src",
