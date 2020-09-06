@@ -3,7 +3,7 @@ import {
   ShopifyClient,
   ShopifySecrets,
   SyncUtils,
-  SyncState,
+  SyncMachineState,
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
@@ -41,7 +41,7 @@ interface SecretUtils {
 
 export interface ClientContextValue extends SecretUtils {
   secrets: ShopifySecrets
-  syncState: SyncState
+  syncState: SyncMachineState
   syncingClient: SyncUtils
   shopifyClient: ShopifyClient
   sanityClient: SanityClient
@@ -53,7 +53,7 @@ interface ClientContextProps {
 
 interface ClientContextState {
   secrets?: ShopifySecrets
-  syncState?: SyncState
+  syncState?: SyncMachineState
 }
 
 const emptySecrets = {
@@ -103,7 +103,7 @@ export class Provider extends React.Component<
     )
   }
 
-  public handleStateChange = (newState: SyncState) => {
+  public handleStateChange = (newState: SyncMachineState) => {
     this.setState({
       syncState: newState,
     })

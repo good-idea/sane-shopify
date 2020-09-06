@@ -1,17 +1,11 @@
-import { ShopifyClient, ShopifyClientConfig } from '@sane-shopify/types'
-import { testSecrets } from './Provider/utils'
+import { ShopifyClient, SaneShopifyConfig } from '@sane-shopify/types'
 
 /**
  * Client Context
  */
 
-interface SecretUtils {
-  saveSecrets: (secrets: ShopifyClientConfig) => Promise<boolean>
-  testSecrets: typeof testSecrets
-}
-
-export interface ClientContextValue extends SecretUtils {
-  secrets: ShopifyClientConfig
+export interface ClientContextValue {
+  secrets: SaneShopifyConfig
   valid: boolean
   ready: boolean
   shopifyClient: ShopifyClient
