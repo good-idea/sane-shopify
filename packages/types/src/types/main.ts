@@ -1,5 +1,4 @@
 import { SanityClientConfig, SanityShopifyDocument, SanityPair } from './sanity'
-import { State } from 'xstate'
 import {
   ShopifySecrets,
   Product,
@@ -7,6 +6,7 @@ import {
   ShopifyItem,
   TestSecretsResponse,
 } from './shopify'
+import { SyncMachineState } from './syncState'
 
 export interface Secrets {
   sanity: SanityClientConfig
@@ -15,27 +15,12 @@ export interface Secrets {
 
 export interface SaneShopifyConfig {
   secrets: Secrets
-  onStateChange?: (state: SyncState) => void
+  onStateChange?: (state: SyncMachineState) => void
 }
-
-export interface SyncContext {
-  documentsFetched: Array<Product | Collection>
-  toSync: Array<Product | Collection>
-  syncOperations: SyncOperation[]
-  toLink: Array<Product | Collection>
-  linkOperations: LinkOperation[]
-  error: Error | void
-  errorMessage: string | void
-  valid: boolean
-  ready: boolean
-  shopName: string | void
-}
-
-export type SyncState = State<SyncContext>
 
 export interface SyncUtils {
   initialize: () => void
-  initialState: SyncState
+  initialState: SyncMachineState
   /* Syncs all items */
   syncAll: (cbs?: SubscriptionCallbacks) => Promise<void>
   /* Syncs all products */
