@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/sync-utils",
-	"version": "0.17.5",
+	"version": "0.17.6",
 	"description": "Syncing utility for Node & the browser",
 	"author": "Joseph Thomas | Good Idea Studio",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -19,7 +19,7 @@
 		"linky": "yalc publish",
 		"linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
 		"test": "run-s test:tsc test:lint test:unit",
-    "test:tsc": "tsc --noEmit",
+		"test:tsc": "tsc --noEmit",
 		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",
 		"test:coverage": "jest --collectCoverage",
@@ -47,7 +47,7 @@
 	"dependencies": {
 		"@good-idea/leaky-bucket": "^3.1.2",
 		"@good-idea/unwind-edges": "^1.4.0",
-		"@sane-shopify/types": "^0.17.5",
+		"@sane-shopify/types": "^0.17.6",
 		"@sanity/client": "^1.150.1",
 		"debug": "^4.1.1",
 		"deepmerge": "^4.2.2",

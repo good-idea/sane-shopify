@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.6](https://github.com/good-idea/sane-shopify/compare/v0.17.5...v0.17.6) (2020-09-06)
+
+### Bug Fixes
+
+- **repo:** reinstall jest-cli for failing tests ([4837704](https://github.com/good-idea/sane-shopify/commit/483770465dc19c325c644d28762984904fc79d8e))
+- **sanity-plugin:** fix type errors ([d141ce9](https://github.com/good-idea/sane-shopify/commit/d141ce91a73e1fb155324e52fe560edf576f7e0b))
+
 ## [0.17.5](https://github.com/good-idea/sane-shopify/compare/v0.17.4...v0.17.5) (2020-08-14)
 
 ### Bug Fixes
