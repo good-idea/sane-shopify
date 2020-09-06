@@ -5,14 +5,14 @@
 	"scripts": {
 		"ncu": "lerna exec -- ncu",
 		"ncu:u": "lerna exec -- ncu -u && lerna bootstrap",
-		"test:coverage:send": "echo 'No tests yet, write some tests!'",
 		"fix": "lerna run fix",
 		"bootstrap": "lerna bootstrap",
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"test": "lerna run test",
+		"test:coverage:send": "echo 'No tests yet, write some tests!'",
 		"build": "lerna run build",
 		"watch": "lerna run --parallel watch",
-		"release": "yarn build && lerna publish --yes"
+		"release": "yarn test && yarn build && lerna publish --yes"
 	},
 	"workspaces": [
 		"packages/*"

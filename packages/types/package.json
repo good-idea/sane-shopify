@@ -24,7 +24,8 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
     "fix:lint": "eslint --fix ./src",
-    "test": "run-s test:lint",
+		"test": "run-s test:tsc test:lint",
+    "test:tsc": "tsc --noEmit",
     "test:lint": "eslint ./src && prettier \"src/**/*.ts\" --list-different",
     "prepublishOnly": "yarn build"
   },

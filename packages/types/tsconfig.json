@@ -4,7 +4,6 @@
     "composite": true,
     "rootDir": "src",
     "jsx": "react",
-    "lib": ["esnext"],
     "inlineSourceMap": false,
     "sourceMap": true,
     "baseUrl": "."

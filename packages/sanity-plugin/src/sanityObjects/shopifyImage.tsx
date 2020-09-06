@@ -3,9 +3,10 @@ import { Paginated } from '@good-idea/unwind-edges'
 import { ShopifyImage } from '@sane-shopify/types'
 import { definitely } from '@sane-shopify/sync-utils'
 
-interface ImagesPreviewProps {
+export interface ImagesPreviewProps {
   value: Paginated<ShopifyImage>
 }
+
 const ImagesPreview = (props: ImagesPreviewProps) => {
   return (
     <>

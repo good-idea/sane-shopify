@@ -22,3 +22,4 @@ coverage
 test-store
 test-frontend
 /.gtm/
+tsconfig.tsbuildinfo
