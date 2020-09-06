@@ -1,10 +1,9 @@
 import { unwindEdges } from '@good-idea/unwind-edges'
 import PQueue from 'p-queue'
-import createSanityClient from '@sanity/client'
+import createSanityClient, { SanityClient } from '@sanity/client'
 import {
   Collection,
   Product,
-  SanityClient,
   ShopifyClient,
   SyncOperationResult,
   SaneShopifyConfig,
@@ -13,8 +12,8 @@ import {
   LinkOperation,
   SubscriptionCallbacks,
   RelatedPairPartial,
-  SyncState,
   SyncUtils,
+  SyncMachineState,
 } from '@sane-shopify/types'
 import { syncStateMachine } from './syncState'
 import { createLogger, Logger } from './logger'
@@ -46,7 +45,7 @@ const noop = () => undefined
 export const syncUtils = (
   shopifyClient: ShopifyClient,
   sanityClient: SanityClient,
-  onStateChange: (state: SyncState) => void = noop
+  onStateChange: (state: SyncMachineState) => void = noop
 ): SyncUtils => {
   /**
    * Client Setup
@@ -253,7 +252,7 @@ export const syncUtils = (
   const saveSecrets = async (secrets: ShopifySecrets) => {
     const { isError, message } = await testSecrets(secrets)
     if (isError) {
-      onSavedSecretsError(message)
+      onSavedSecretsError(new Error(message))
       return
     }
     await saveSecretsToSanity(secrets)

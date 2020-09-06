@@ -1,8 +1,5 @@
-import {
-  SanityClient,
-  SanityUtils,
-  SanityShopifyDocument,
-} from '@sane-shopify/types'
+import { SanityClient } from '@sanity/client'
+import { SanityUtils, SanityShopifyDocument } from '@sane-shopify/types'
 import { createSyncSanityDocument } from './syncSanityDocument'
 import { createFetchRelatedDocs } from './fetchRelatedDocs'
 import {
