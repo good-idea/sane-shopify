@@ -49,16 +49,16 @@
 		"react-dom": "16.13"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.10.5",
-		"@babel/core": "^7.11.1",
+		"@babel/cli": "^7.11.6",
+		"@babel/core": "^7.11.6",
 		"@babel/plugin-proposal-class-properties": "^7.10.4",
 		"@babel/plugin-proposal-object-rest-spread": "^7.11.0",
-		"@babel/preset-env": "^7.11.0",
+		"@babel/preset-env": "^7.11.5",
 		"@babel/preset-typescript": "^7.10.4",
 		"@types/babel__core": "^7.1.9",
 		"@types/babel__preset-env": "^7.9.0",
-		"@types/lodash": "^4.14.159",
-		"@types/react": "16.9.45",
+		"@types/lodash": "^4.14.161",
+		"@types/react": "16.9.49",
 		"@types/react-dom": "16.9.8",
 		"babel-polyfill": "^6.26.0",
 		"react": "^16.13.0",
@@ -69,11 +69,11 @@
 		"@good-idea/unwind-edges": "^1.4.0",
 		"@sane-shopify/sync-utils": "^0.17.5",
 		"@sane-shopify/types": "^0.17.5",
-		"@sanity/base": "^1.149.19",
-		"@sanity/components": "^1.149.19",
-		"@sanity/form-builder": "^1.149.19",
-		"lodash": "^4.17.19",
-		"react-icons": "^3.10.0"
+		"@sanity/base": "^1.150.5",
+		"@sanity/components": "^1.150.5",
+		"@sanity/form-builder": "^1.150.5",
+		"lodash": "^4.17.20",
+		"react-icons": "^3.11.0"
 	},
 	"gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }

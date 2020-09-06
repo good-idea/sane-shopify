@@ -40,19 +40,19 @@
 		"@sane-shopify/sync-utils": "^0.17.5",
 		"apollo-link": "^1.2.14",
 		"apollo-link-http": "^1.5.17",
-		"apollo-server-lambda": "^2.16.1",
+		"apollo-server-lambda": "^2.17.0",
 		"graphql": "^15.3.0",
-		"graphql-tools": "^6.0.16",
-		"node-fetch": "^2.6.0",
+		"graphql-tools": "^6.2.1",
+		"node-fetch": "^2.6.1",
 		"source-map-support": "^0.5.19"
 	},
 	"devDependencies": {
 		"@sane-shopify/types": "^0.17.5",
-		"@types/aws-lambda": "^8.10.59",
+		"@types/aws-lambda": "^8.10.62",
 		"@types/node-fetch": "^2.5.7",
-		"@types/source-map-support": "^0.5.2",
+		"@types/source-map-support": "^0.5.3",
 		"aws-lambda": "^1.0.6",
-		"next": "^9.5.1"
+		"next": "^9.5.3"
 	},
 	"gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }
