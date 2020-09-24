@@ -46,6 +46,19 @@ export const productVariantFragment = gql`
       value
       name
     }
+    presentmentPrices(first: 100) {
+      edges {
+        cursor
+        node {
+          compareAtPrice {
+            ...MoneyV2Fragment
+          }
+          price {
+            ...MoneyV2Fragment
+          }
+        }
+      }
+    }
     requiresShipping
     sku
     title
@@ -68,6 +81,19 @@ export const productFragment = gql`
     vendor
     createdAt
     publishedAt
+    presentmentPriceRanges(first: 100) {
+      edges {
+        cursor
+        node {
+          minVariantPrice {
+            ...MoneyV2Fragment
+          }
+          maxVariantPrice {
+            ...MoneyV2Fragment
+          }
+        }
+      }
+    }
     options {
       id
       name
