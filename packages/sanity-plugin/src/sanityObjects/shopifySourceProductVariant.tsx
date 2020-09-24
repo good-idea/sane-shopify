@@ -7,6 +7,44 @@ export const selectedOptions = {
   ],
 }
 
+export const shopifySourceProductVariantPricePair = {
+  name: 'shopifySourceProductVariantPricePair',
+  type: 'object',
+  fields: [
+    {
+      name: 'compareAtPrice',
+      type: 'shopifyMoneyV2',
+    },
+    {
+      name: 'price',
+      type: 'shopifyMoneyV2',
+    },
+  ],
+}
+
+export const shopifySourceProductPricePresentmentEdge = {
+  name: 'shopifySourceProductPricePresentmentEdge',
+  type: 'object',
+  fields: [
+    { name: 'cursor', type: 'string' },
+    { name: 'node', type: 'shopifySourceProductVariantPricePair' },
+  ],
+}
+
+export const shopifySoureProductVariantPricePresentmentEdges = {
+  name: 'shopifySoureProductVariantPricePresentmentEdges',
+  type: 'array',
+  of: [{ type: 'shopifySourceProductPricePresentmentEdge' }],
+}
+
+export const shopifySourceProductVariantPricePresenentmentConnection = {
+  name: 'shopifySourceProductVariantPricePresenentmentConnection',
+  type: 'object',
+  fields: [
+    { name: 'edges', type: 'shopifySoureProductVariantPricePresentmentEdges' },
+  ],
+}
+
 export const shopifySourceProductVariant = {
   title: 'Shopify Product Data',
   name: 'shopifySourceProductVariant',

@@ -31,6 +31,30 @@ export const shopifyMoneyV2 = {
   ],
 }
 
+export const shopifySourceProductPriceRangeEdge = {
+  name: 'shopifySourceProductPriceRangeEdge',
+  type: 'object',
+  fields: [
+    {
+      name: 'cursor',
+      type: 'string',
+    },
+    { name: 'node', type: 'shopifySourceProductPriceRange' },
+  ],
+}
+
+export const shopifySourceProductPresentmentPriceRangeConnection = {
+  name: 'shopifySourceProductPresentmentPriceRangeConnection',
+  type: 'object',
+  fields: [
+    {
+      name: 'edges',
+      type: 'array',
+      of: [{ type: 'shopifySourceProductPriceRangeEdge' }],
+    },
+  ],
+}
+
 export const shopifySourceProductPriceRange = {
   name: 'shopifySourceProductPriceRange',
   type: 'object',
@@ -136,11 +160,19 @@ export const shopifyProductSource = {
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },
+    { name: 'createdAt', type: 'date', readOnly: true },
+    { name: 'publishedAt', type: 'date', readOnly: true },
     {
       name: 'priceRange',
       title: 'Price Range',
       hidden: true,
       type: 'shopifySourceProductPriceRange',
+    },
+    {
+      name: 'presentmentPriceRanges',
+      title: 'Presentment Price Ranges',
+      hidden: false,
+      type: 'shopifySourceProductPresentmentPriceRangeConnection',
     },
     {
       name: 'productType',
