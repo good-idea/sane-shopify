@@ -1,3 +1,4 @@
+import { Transaction } from '@sanity/client'
 import {
   Collection,
   Product,
@@ -112,7 +113,12 @@ const mergeExistingFields = (
 export const createSyncSanityDocument = (
   client: SanityClient,
   cache: SanityCache
-) => async (item: Product | Collection): Promise<SyncOperation> => {
+) => async (
+  item: Product | Collection,
+  previousTrx?: Transaction
+): Promise<SyncOperation> => {
+  const trx = previousTrx ?? client.transaction()
+
   const getSanityDocByShopifyId = async (
     shopifyId: string
   ): Promise<SanityShopifyDocument | void> => {
@@ -175,15 +181,19 @@ export const createSyncSanityDocument = (
 
     /* Create a new document if none exists */
     if (!existingDoc) {
-      const newDoc = await client.create<SanityShopifyDocumentPartial>(docInfo)
-      const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
-      if (!refetchedDoc) {
-        throw new Error(
-          `Could not fetch updated document with shopifyId ${newDoc.shopifyId}`
-        )
+      const newDoc = trx.create<SanityShopifyDocumentPartial>(docInfo)
+      if (!previousTrx) {
+        const result = await trx.commit()
+        console.log({ result })
+        // cache.set(result)
       }
+      // const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
+      // if (!refetchedDoc) {
+      //   throw new Error(
+      //     `Could not fetch updated document with shopifyId ${newDoc.shopifyId}`
+      //   )
+      // }
 
-      cache.set(refetchedDoc)
       return {
         type: 'create' as 'create',
         // @ts-ignore

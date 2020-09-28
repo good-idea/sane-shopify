@@ -165,7 +165,7 @@ interface SyncStateMachineArgs {
   onStateChange: (state: SyncMachineState) => void
 }
 
-interface SyncStateMachineValues {
+export interface SyncStateMachine {
   initialState: SyncMachineState
   init: (valid: boolean, shopName: string) => void
   startSync: () => void
@@ -182,7 +182,7 @@ interface SyncStateMachineValues {
 
 export const syncStateMachine = ({
   onStateChange,
-}: SyncStateMachineArgs): SyncStateMachineValues => {
+}: SyncStateMachineArgs): SyncStateMachine => {
   const { initialState } = syncMachine
   const service = interpret<SyncContext, SyncSchema, SyncEvent>(syncMachine)
   service.start()

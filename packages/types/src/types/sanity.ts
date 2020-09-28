@@ -1,4 +1,4 @@
-import { SanityClient as _SanityClient } from '@sanity/client'
+import { SanityClient as _SanityClient, Transaction } from '@sanity/client'
 import {
   Product,
   Collection,
@@ -26,9 +26,14 @@ export interface SanityClientConfig {
   authToken?: string
 }
 
+export enum SaneShopifyDocumentType {
+  Product = 'shopifyProduct',
+  Collection = 'shopifyCollection',
+}
+
 export interface SanityDocument {
   _id: string
-  _type: string
+  _type: SaneShopifyDocumentType
   [key: string]: any
 }
 
@@ -113,14 +118,19 @@ export interface SanityFetchParams {
 }
 
 export interface SanityUtils {
-  syncSanityDocument: (item: Product | Collection) => Promise<SyncOperation>
+  syncSanityDocument: (
+    item: Product | Collection,
+    transaction: Transaction
+  ) => Promise<SyncOperation>
   syncRelationships: (
     from: SanityShopifyDocument,
-    to: SanityShopifyDocument | SanityShopifyDocument[]
+    to: SanityShopifyDocument | SanityShopifyDocument[],
+    transaction: Transaction
   ) => Promise<LinkOperation>
   removeRelationships: (
     from: SanityShopifyDocument,
-    toRemove: SanityShopifyDocument | SanityShopifyDocument[]
+    toRemove: SanityShopifyDocument | SanityShopifyDocument[],
+    transaction: Transaction
   ) => Promise<null>
   fetchRelatedDocs: (related: ShopifyItem[]) => Promise<RelatedPairPartial[]>
   fetchAllSanityDocuments: (
@@ -132,7 +142,8 @@ export interface SanityUtils {
     type: string
   ) => Promise<SanityShopifyDocument>
   archiveSanityDocument: (
-    doc: SanityShopifyDocument
+    doc: SanityShopifyDocument,
+    transaction: Transaction
   ) => Promise<SanityShopifyDocument>
   saveSecrets: (secrets: ShopifySecrets) => Promise<void>
   clearSecrets: () => Promise<void>

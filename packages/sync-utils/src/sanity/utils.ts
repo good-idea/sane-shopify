@@ -1,18 +1,26 @@
 import { unwindEdges, Edge } from '@good-idea/unwind-edges'
+import deepMerge from 'deepmerge'
+import { isMatch as lodashIsMatch, pick } from 'lodash'
 import {
   Collection,
   Product,
   ShopifyImage,
   SanityArray,
+  SanityShopifyDocument,
   SanityShopifyDocumentPartial,
   SanityShopifyProductOption,
+  SanityShopifyProductOptionValue,
   SanityShopifyProductVariant,
   SanityShopifyProductDocumentPartial,
   SanityShopifyCollectionDocumentPartial,
 } from '@sane-shopify/types'
-import { isMatch as lodashIsMatch, pick } from 'lodash'
 import { slugify, definitely } from '../utils'
-import { isShopifyProduct, isShopifyCollection } from '../typeGuards'
+import {
+  isSanityProduct,
+  isSanityCollection,
+  isShopifyProduct,
+  isShopifyCollection,
+} from '../typeGuards'
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms))
@@ -214,9 +222,27 @@ interface IsMatchConfig {
  * in the prepared document.
  *
  */
-export const isMatch = (a: any, b: any, { keys }: IsMatchConfig): boolean => {
+const isMatch = (a: any, b: any, { keys }: IsMatchConfig): boolean => {
   return lodashIsMatch(pick(b, keys), pick(a, keys))
 }
+
+export const documentsMatch = (
+  doc1: SanityShopifyDocumentPartial,
+  doc2: SanityShopifyDocument
+): boolean =>
+  isMatch(doc1, doc2, {
+    keys: [
+      '_type',
+      'title',
+      'handle',
+      'shopifyId',
+      'minVariantPrice',
+      'maxVariantPrice',
+      'sourceData',
+      'options',
+      'variants',
+    ],
+  })
 
 export const uniqueObjects = <T extends object>(arr: T[]): T[] =>
   arr.reduce<T[]>(
@@ -224,3 +250,96 @@ export const uniqueObjects = <T extends object>(arr: T[]): T[] =>
       acc.some((i) => lodashIsMatch(i, item)) ? acc : [...acc, item],
     []
   )
+
+export const mergeExistingFields = (
+  docInfo: SanityShopifyDocumentPartial,
+  existingDoc: SanityShopifyDocumentPartial
+): SanityShopifyDocumentPartial => {
+  if (isSanityCollection(docInfo) && isSanityCollection(existingDoc)) {
+    const merged = deepMerge(existingDoc, docInfo)
+    const doc: SanityShopifyCollectionDocumentPartial = {
+      ...merged,
+      sourceData: {
+        ...docInfo.sourceData,
+        products: {
+          ...docInfo.sourceData.products,
+          edges: uniqueObjects(definitely(docInfo.sourceData.products.edges)),
+        },
+      },
+    }
+    return doc
+  }
+  if (isSanityProduct(docInfo) && isSanityProduct(existingDoc)) {
+    const merged = deepMerge(existingDoc, docInfo)
+    const variants = docInfo.variants || []
+    const options = docInfo.options || []
+    const doc: SanityShopifyProductDocumentPartial = {
+      ...merged,
+      sourceData: {
+        ...docInfo.sourceData,
+        collections: {
+          ...docInfo.sourceData.collections,
+          edges: uniqueObjects(
+            definitely(docInfo?.sourceData?.collections?.edges)
+          ),
+        },
+        images: {
+          ...docInfo.sourceData.images,
+          edges: uniqueObjects(definitely(docInfo.sourceData.images.edges)),
+        },
+      },
+
+      options: options.map((updatedOption) => {
+        const existingOption = existingDoc.options
+          ? existingDoc?.options.find((o) => o._key === updatedOption._key)
+          : undefined
+
+        const existingOptionValues = existingOption ? existingOption.values : []
+        const updatedOptionValues = updatedOption ? updatedOption.values : []
+
+        const values = [...existingOptionValues, ...updatedOptionValues].reduce<
+          SanityShopifyProductOptionValue[]
+        >((acc, value) => {
+          const existsIndex = acc.findIndex((v) => v._key === value._key)
+
+          if (existsIndex > -1) {
+            const mergedValue = {
+              ...acc[existsIndex],
+              ...value,
+            }
+            return [
+              ...acc.slice(0, existsIndex),
+              mergedValue,
+              ...acc.slice(existsIndex + 1),
+            ]
+          } else {
+            return [...acc, value]
+          }
+        }, [])
+
+        return {
+          ...existingOption,
+          ...updatedOption,
+          values,
+        }
+      }),
+
+      variants: variants.map((variant) => {
+        const existingVariant = existingDoc.variants
+          ? existingDoc.variants.find(
+              (v) => v.shopifyVariantID === variant.shopifyVariantID
+            ) || {}
+          : {}
+
+        return {
+          ...existingVariant,
+          ...variant,
+        }
+      }),
+    }
+    return doc
+  }
+  throw new Error(
+    `The document with the shopifyId "${existingDoc.shopifyId}" could not be merged. Be sure that the document includes a _type property`
+  )
+}

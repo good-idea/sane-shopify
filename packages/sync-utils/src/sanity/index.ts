@@ -1,1 +1,1 @@
-export * from './sanityUtils'
+export * from './SanityUtils'

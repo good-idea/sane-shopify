@@ -1,6 +1,7 @@
 import { unwindEdges } from '@good-idea/unwind-edges'
 import PQueue from 'p-queue'
-import createSanityClient, { SanityClient } from '@sanity/client'
+import createSanityClient, { SanityClient, Transaction } from '@sanity/client'
+import Debug from 'debug'
 import {
   Collection,
   Product,
@@ -32,6 +33,8 @@ import { definitely } from './utils'
  * - Calls any callbacks provided by the API end user
  */
 
+const log = Debug('sane-shopify:callcount')
+
 const noop = () => undefined
 
 // TODO:
@@ -41,6 +44,41 @@ const noop = () => undefined
 //
 // Making these clients stateful would allow for updating it when new secrets
 // are saved. For now, the consumer should just re-create a new syncing client.
+//
+
+const debugSanityClient = (client: SanityClient) => {
+  let callCount = 0
+  return {
+    ...client,
+    transaction: (...args) => client.transaction(...args),
+    patch: (...args) => {
+      callCount += 1
+      log('Call Count (patch): ' + callCount)
+      // @ts-ignore
+      return client.patch(...args)
+    },
+
+    query: (...args) => {
+      callCount += 1
+      log('Call Count (query): ' + callCount)
+      // @ts-ignore
+      return client.query(...args)
+    },
+    fetch: (...args) => {
+      callCount += 1
+
+      log('Call count (fetch):' + callCount)
+      // @ts-ignore
+      return client.fetch(...args)
+    },
+    mutate: (...args) => {
+      callCount += 1
+      log('Call count (mutate):' + callCount)
+      // @ts-ignore
+      return client.mutate(...args)
+    },
+  }
+}
 
 export const syncUtils = (
   shopifyClient: ShopifyClient,
@@ -67,7 +105,8 @@ export const syncUtils = (
     archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,
     clearSecrets: clearSecretsFromSanity,
-  } = sanityUtils(sanityClient)
+    // @ts-ignore
+  } = sanityUtils(debugSanityClient(sanityClient))
 
   /**
    * State Management
@@ -93,23 +132,26 @@ export const syncUtils = (
 
   /* Syncs a single document and returns related nodes to sync */
   const syncCollection = async (
-    shopifyCollection: Collection
+    shopifyCollection: Collection,
+    trx: Transaction
   ): Promise<SyncOperationResult> => {
     const [related] = unwindEdges(shopifyCollection.products)
-    const operation = await syncSanityDocument(shopifyCollection)
+    const operation = await syncSanityDocument(shopifyCollection, trx)
     return { operation, related }
   }
 
   const syncProduct = async (
-    shopifyProduct: Product
+    shopifyProduct: Product,
+    transaction: Transaction
   ): Promise<SyncOperationResult> => {
     const [related] = unwindEdges(shopifyProduct.collections)
-    const operation = await syncSanityDocument(shopifyProduct)
+    const operation = await syncSanityDocument(shopifyProduct, transaction)
     return { operation, related }
   }
 
   const completePair = async (
-    partialPair: RelatedPairPartial
+    partialPair: RelatedPairPartial,
+    trx: Transaction
   ): Promise<RelatedPair | null> => {
     const { shopifyNode, sanityDocument } = partialPair
     if (shopifyNode && sanityDocument) return { shopifyNode, sanityDocument }
@@ -141,7 +183,7 @@ export const syncUtils = (
 
       const completeShopifyItem = await fetchItemById(shopifyNode.id, false)
       if (!completeShopifyItem) return null
-      const op = await syncSanityDocument(completeShopifyItem)
+      const op = await syncSanityDocument(completeShopifyItem, trx)
 
       return {
         shopifyNode,
@@ -152,16 +194,16 @@ export const syncUtils = (
     throw new Error('how did we get here?')
   }
 
-  const makeRelationships = async ({
-    operation,
-    related,
-  }: SyncOperationResult): Promise<LinkOperation> => {
+  const makeRelationships = async (
+    { operation, related }: SyncOperationResult,
+    trx: Transaction
+  ): Promise<LinkOperation> => {
     const { sanityDocument } = operation
     const initialPairs = await fetchRelatedDocs(related)
     const pairQueue = new PQueue({ concurrency: 1 })
 
     const completePairs = await pairQueue.addAll(
-      initialPairs.map((pair) => () => completePair(pair))
+      initialPairs.map((pair) => () => completePair(pair, trx))
     )
     // At this point we have the already-synced document,
     // and all of the documents that it should be related to
@@ -169,7 +211,11 @@ export const syncUtils = (
     const relatedDocs = definitely<RelatedPair>(completePairs).map(
       ({ sanityDocument }) => sanityDocument
     )
-    const linkOperation = await syncRelationships(sanityDocument, relatedDocs)
+    const linkOperation = await syncRelationships(
+      sanityDocument,
+      relatedDocs,
+      trx
+    )
 
     return linkOperation
   }
@@ -190,10 +236,12 @@ export const syncUtils = (
         )
     )
 
+    const trx = sanityClient.transaction()
+
     const archiveQueue = new PQueue({ concurrency: 1 })
     await archiveQueue.addAll(
       productsToArchive.map((product) => async () => {
-        await archiveSanityDocument(product)
+        await archiveSanityDocument(product, trx)
         logger.logArchived(product)
       })
     )
@@ -220,10 +268,12 @@ export const syncUtils = (
         )
     )
 
+    const trx = sanityClient.transaction()
+
     const archiveQueue = new PQueue({ concurrency: 1 })
     await archiveQueue.addAll(
       collectionsToArchive.map((collection) => async () => {
-        await archiveSanityDocument(collection)
+        await archiveSanityDocument(collection, trx)
         logger.logArchived(collection)
       })
     )
@@ -267,6 +317,7 @@ export const syncUtils = (
   /* Sync an item by ID */
   const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
     startSync()
+    const trx = sanityClient.transaction()
     const logger = createLogger(cbs)
     const shopifyItem = await fetchItemById(id, true)
 
@@ -274,7 +325,7 @@ export const syncUtils = (
       onFetchComplete()
       const sanityDoc = await documentByShopifyId(id)
       if (sanityDoc) {
-        archiveSanityDocument(sanityDoc)
+        archiveSanityDocument(sanityDoc, trx)
       }
       onComplete()
       return
@@ -284,10 +335,10 @@ export const syncUtils = (
     logger.logFetched(shopifyItem)
     onFetchComplete()
     if (shopifyItem.__typename === 'Product') {
-      const syncResult = await syncProduct(shopifyItem)
+      const syncResult = await syncProduct(shopifyItem, trx)
       onDocumentSynced(syncResult.operation)
       logger.logSynced(syncResult.operation)
-      const linkOperation = await makeRelationships(syncResult)
+      const linkOperation = await makeRelationships(syncResult, trx)
       onDocumentLinked(linkOperation)
       logger.logLinked(syncResult.operation.sanityDocument, linkOperation.pairs)
       onComplete()
@@ -295,10 +346,10 @@ export const syncUtils = (
     }
 
     if (shopifyItem.__typename === 'Collection') {
-      const syncResult = await syncCollection(shopifyItem)
+      const syncResult = await syncCollection(shopifyItem, trx)
       onDocumentSynced(syncResult.operation)
       logger.logSynced(syncResult.operation)
-      const linkOperation = await makeRelationships(syncResult)
+      const linkOperation = await makeRelationships(syncResult, trx)
       onDocumentLinked(linkOperation)
       logger.logLinked(syncResult.operation.sanityDocument, linkOperation.pairs)
       onComplete()
@@ -311,6 +362,7 @@ export const syncUtils = (
   /* Syncs all products */
   const syncProducts = async (cbs: SubscriptionCallbacks = {}) => {
     startSync()
+    const trx = sanityClient.transaction()
 
     // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
@@ -326,9 +378,10 @@ export const syncUtils = (
     onFetchComplete()
 
     const queue = new PQueue({ concurrency: 1 })
+
     const results = await queue.addAll(
       allProducts.map((product) => async () => {
-        const result = await syncProduct(product)
+        const result = await syncProduct(product, trx)
         onDocumentSynced(result.operation)
         logger.logSynced(result.operation)
         return result
@@ -338,7 +391,7 @@ export const syncUtils = (
     const relationshipQueue = new PQueue({ concurrency: 1 })
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        const linkOperation = await makeRelationships(result)
+        const linkOperation = await makeRelationships(result, trx)
         logger.logLinked(result.operation.sanityDocument, linkOperation.pairs)
         onDocumentLinked(linkOperation)
         return linkOperation.pairs
@@ -351,6 +404,7 @@ export const syncUtils = (
   /* Syncs all collections */
   const syncCollections = async (cbs: SubscriptionCallbacks = {}) => {
     startSync()
+    const trx = sanityClient.transaction()
     // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
     const logger = createLogger(cbs)
@@ -367,7 +421,7 @@ export const syncUtils = (
 
     const results = await queue.addAll(
       allCollections.map((collection) => async () => {
-        const result = await syncCollection(collection)
+        const result = await syncCollection(collection, trx)
         onDocumentSynced(result.operation)
         logger.logSynced(result.operation)
         return result
@@ -378,7 +432,7 @@ export const syncUtils = (
 
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        const linkOperation = await makeRelationships(result)
+        const linkOperation = await makeRelationships(result, trx)
         logger.logLinked(result.operation.sanityDocument, linkOperation.pairs)
         onDocumentLinked(linkOperation)
         return linkOperation.pairs
@@ -391,6 +445,7 @@ export const syncUtils = (
 
   const syncAll = async (cbs: SubscriptionCallbacks = {}) => {
     startSync()
+    const trx = sanityClient.transaction()
 
     // do an initial fetch of all docs to populate the cache
     await fetchAllSanityDocuments()
@@ -422,9 +477,9 @@ export const syncUtils = (
       allItems.map((item) => async () => {
         const result =
           item.__typename === 'Collection'
-            ? await syncCollection(item)
+            ? await syncCollection(item, trx)
             : item.__typename === 'Product'
-            ? await syncProduct(item)
+            ? await syncProduct(item, trx)
             : null
         if (result === null) throw new Error('Could not sync item')
 
@@ -438,7 +493,7 @@ export const syncUtils = (
 
     await relationshipQueue.addAll(
       results.map((result) => async () => {
-        const linkOperation = await makeRelationships(result)
+        const linkOperation = await makeRelationships(result, trx)
         logger.logLinked(result.operation.sanityDocument, linkOperation.pairs)
         onDocumentLinked(linkOperation)
         return linkOperation.pairs

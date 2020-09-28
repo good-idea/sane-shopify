@@ -1,98 +1,51 @@
-import { SanityClient } from '@sanity/client'
-import { SanityUtils, SanityShopifyDocument } from '@sane-shopify/types'
-import { createSyncSanityDocument } from './syncSanityDocument'
-import { createFetchRelatedDocs } from './fetchRelatedDocs'
+import { SanityClient, Transaction } from '@sanity/client'
+import { omit } from 'lodash'
 import {
-  createSyncRelationships,
-  createRemoveRelationships,
-} from './syncRelationships'
-import { createArchiveSanityDocument } from './archive'
-import { createFetchAll } from './fetchAll'
-import {
-  createFetchSecrets,
-  createSaveSecrets,
-  createClearSecrets,
-} from './secrets'
+  SanityShopifyDocument,
+  SanityShopifyDocumentPartial,
+  SaneShopifyDocumentType,
+  Product,
+  Collection,
+  SyncOperation,
+  SyncType,
+  ShopifyItem,
+  RelatedPairPartial,
+  ShopifySecrets,
+} from '@sane-shopify/types'
+import { SanityCache } from './SanityCache'
+import { mergeExistingFields, prepareDocument, documentsMatch } from './utils'
+import { KEYS_ID, KEYS_TYPE } from '../constants'
 
-interface StringCache<NodeType> {
-  [key: string]: NodeType | null
+interface CacheResults {
+  cachedDocs: SanityShopifyDocument[]
+  idsNotInCache: string[]
 }
 
-export interface SanityCache {
-  getById: (id: string) => SanityShopifyDocument | null
-  getByHandle: (handle: string, type: string) => SanityShopifyDocument | null
-  getByShopifyId: (id: string) => SanityShopifyDocument | null
-  set: (doc: SanityShopifyDocument) => void
-}
+export class SanityUtils {
+  private sanityClient: SanityClient
+  private cache: SanityCache
+  private transaction: Transaction | null = null
 
-const createCache = (): SanityCache => {
-  const ids: StringCache<SanityShopifyDocument> = {}
-  const collectionHandles: StringCache<SanityShopifyDocument> = {}
-  const productHandles: StringCache<SanityShopifyDocument> = {}
-  const shopifyIds: StringCache<SanityShopifyDocument> = {}
-
-  const getById = (id: string) => {
-    return ids[id] || null
+  constructor(sanityClient: SanityClient) {
+    this.sanityClient = sanityClient
+    this.cache = new SanityCache()
   }
 
-  const getByHandle = (handle: string, type: string) => {
-    const handles =
-      type === 'collection'
-        ? collectionHandles
-        : type === 'product'
-        ? productHandles
-        : null
-    if (!handles) throw new Error(`There is no handle cache for type "${type}"`)
-    return handles[handle] || null
+  private getTransaction(): Transaction {
+    if (this.transaction) return this.transaction
+    const trx = this.sanityClient.transaction()
+    this.transaction = trx
+    return trx
   }
 
-  const getByShopifyId = (shopifyId: string) => {
-    return shopifyIds[shopifyId] || null
-  }
-
-  const set = (doc?: SanityShopifyDocument) => {
-    if (!doc) return
-    ids[doc._id] = doc
-    const handles =
-      doc._type === 'shopifyCollection'
-        ? collectionHandles
-        : doc._type === 'shopifyProduct'
-        ? productHandles
-        : null
-
-    if (!handles)
-      throw new Error(`There is no handle cache for type "${doc._type}"`)
-    handles[doc.handle] = doc
-    if (doc.shopifyId) shopifyIds[doc.shopifyId] = doc
-  }
-
-  return {
-    getById,
-    getByHandle,
-    getByShopifyId,
-    set,
-  }
-}
-
-export const sanityUtils = (client: SanityClient): SanityUtils => {
-  const cache = createCache()
-
-  const fetchAllSanityDocuments = createFetchAll(client, cache)
-  const syncSanityDocument = createSyncSanityDocument(client, cache)
-  const fetchRelatedDocs = createFetchRelatedDocs(client, cache)
-  const syncRelationships = createSyncRelationships(client)
-  const removeRelationships = createRemoveRelationships(client)
-  const archiveSanityDocument = createArchiveSanityDocument(client)
-  const clearSecrets = createClearSecrets(client)
-  const saveSecrets = createSaveSecrets(client)
-  const fetchSecrets = createFetchSecrets(client)
-
-  const documentByShopifyId = async (shopifyId: string) => {
-    const cached = cache.getByShopifyId(shopifyId)
+  private async getSanityDocByShopifyId(
+    shopifyId: string
+  ): Promise<SanityShopifyDocument | void> {
+    const cached = this.cache.getByShopifyId(shopifyId)
     if (cached) return cached
-
-    const doc = await client.fetch<SanityShopifyDocument>(
-      `*[shopifyId == $shopifyId && defined(archived) && archived != true]{
+    const doc = await this.sanityClient.fetch<SanityShopifyDocument>(
+      `
+      *[shopifyId == $shopifyId]{
         products[]->,
         collections[]->,
         "collectionKeys": collections[]{
@@ -107,45 +60,176 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
         shopifyId,
       }
     )
-    if (doc) cache.set(doc)
+    if (doc) this.cache.set(doc)
     return doc
   }
 
-  const documentByHandle = async (handle: string, type: string) => {
-    const cached = cache.getByHandle(handle, type)
-    if (cached) return cached
+  public async saveSecrets(secrets: ShopifySecrets): Promise<void> {
+    const doc = {
+      _id: KEYS_ID,
+      _type: KEYS_TYPE,
+      ...secrets,
+    }
+    await this.sanityClient.createIfNotExists(doc)
+    await this.sanityClient
+      .patch(KEYS_ID)
+      .set({ ...secrets })
+      .commit()
+  }
 
-    const doc = await client.fetch<SanityShopifyDocument>(
-      `*[handle == $handle && defined(archived) && archived != true]{
-        products[]->,
-        collections[]->,
-        "collectionKeys": collections[]{
-          ...
-        },
-        "productKeys": products[]{
-          ...
-        },
-        ...
-      }[0]`,
-      {
-        handle,
+  public async clearSecrets(): Promise<void> {
+    await this.sanityClient
+      .patch(KEYS_ID)
+      .set({
+        shopName: '',
+        accessToken: '',
+      })
+      .commit()
+  }
+
+  public async fetchAllSanityDocuments(
+    type?: SaneShopifyDocumentType
+  ): Promise<SanityShopifyDocument[]> {
+    const filter = type
+      ? `_type == '${type}'`
+      : `_type == ${SaneShopifyDocumentType.Product} || _type == ${SaneShopifyDocumentType.Collection}`
+
+    const allDocs = await this.sanityClient.fetch<SanityShopifyDocument[]>(`
+      *[
+        shopifyId != null &&
+        (${filter})
+       ]{
+          collections[]->,
+          products[]->,
+          "collectionKeys": collections[]{
+            ...
+          },
+          "productKeys": products[]{
+            ...
+          },
+         ...,
+        }
+      `)
+    allDocs.forEach(this.cache.set)
+    return allDocs
+  }
+
+  private async getSyncOperation(
+    shopifyItem: Collection | Product
+  ): Promise<SyncOperation> {
+    const docInfo = prepareDocument(shopifyItem)
+    const existingDoc = await this.getSanityDocByShopifyId(shopifyItem.id)
+    const trx = this.getTransaction()
+
+    /* If the document exists and is up to date, skip */
+    if (existingDoc && documentsMatch(docInfo, existingDoc)) {
+      return {
+        type: SyncType.Skip,
+        sanityDocument: existingDoc,
+        shopifySource: shopifyItem,
       }
-    )
-    if (doc) cache.set(doc)
-    return doc
+    }
+
+    /* If the document does not exist, create it */
+    if (!existingDoc) {
+      trx.create<SanityShopifyDocumentPartial>(docInfo)
+      return {
+        type: SyncType.Create,
+        sanityDocument: docInfo,
+        shopifySource: shopifyItem,
+      }
+    }
+
+    /* Otherwise, update the existing doc */
+
+    const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
+      'products',
+      'collections',
+      'productKeys',
+      'collectionKeys',
+    ])
+
+    trx.patch(existingDoc._id, (p) => p.set(patchData))
+    return {
+      type: SyncType.Update,
+      sanityDocument: docInfo,
+      shopifySource: shopifyItem,
+    }
   }
 
-  return {
-    fetchAllSanityDocuments,
-    syncSanityDocument,
-    syncRelationships,
-    removeRelationships,
-    fetchRelatedDocs,
-    documentByShopifyId,
-    documentByHandle,
-    archiveSanityDocument,
-    clearSecrets,
-    saveSecrets,
-    fetchSecrets,
+  /**
+   * Public Methods
+   */
+  public async syncSanityDocument(
+    shopifyItem: Collection | Product
+  ): Promise<SyncOperation> {
+    this.getTransaction()
+    const operation = await this.getSyncOperation(shopifyItem)
+    this.getTransaction().commit()
+    return operation
+  }
+
+  public async syncSanityDocuments(
+    shopifyItems: Array<Collection | Product>
+  ): Promise<SyncOperation[]> {
+    this.getTransaction()
+    const operations = await Promise.all(
+      shopifyItems.map((item) => this.getSyncOperation(item))
+    )
+    this.getTransaction().commit()
+    return operations
+  }
+
+  public async fetchRelatedDocs(
+    relatedNodes: ShopifyItem[]
+  ): Promise<RelatedPairPartial[]> {
+    const relatedIds = relatedNodes.map((r) => r.id)
+    const { cachedDocs, idsNotInCache } = relatedIds
+      .map((id) => ({
+        cachedItem: this.cache.getByShopifyId(id),
+        id,
+      }))
+      .reduce<CacheResults>(
+        (acc, current) => {
+          if (current.cachedItem === undefined) {
+            return {
+              ...acc,
+              idsNotInCache: [...acc.idsNotInCache, current.id],
+            }
+          }
+          return {
+            ...acc,
+            cachedDocs: [...acc.cachedDocs, current.cachedItem],
+          }
+        },
+        { cachedDocs: [], idsNotInCache: [] }
+      )
+
+    const fetched = idsNotInCache.length
+      ? await this.sanityClient.fetch<SanityShopifyDocument[]>(
+          `
+          *[shopifyId in $relatedIds && defined(archived) && archived != true]{
+            products[]->,
+            collections[]->,
+            "collectionKeys": collections[]{
+              ...
+            },
+            "productKeys": products[]{
+              ...
+            },
+            ...,
+          }
+        `,
+          { relatedIds: idsNotInCache }
+        )
+      : []
+    fetched.forEach(this.cache.set)
+    const relatedDocs = [...cachedDocs, ...fetched]
+    const pairs = relatedNodes.map((shopifyNode) => ({
+      shopifyNode,
+      sanityDocument:
+        relatedDocs.find((d) => d.shopifyId === shopifyNode.id) || null,
+    }))
+    return pairs
   }
 }

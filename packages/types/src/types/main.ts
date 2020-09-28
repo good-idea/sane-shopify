@@ -1,9 +1,16 @@
-import { SanityClientConfig, SanityShopifyDocument, SanityPair } from './sanity'
+import { SanityClient } from '@sanity/client'
+import {
+  SanityClientConfig,
+  SanityShopifyDocumentPartial,
+  SanityShopifyDocument,
+  SanityPair,
+} from './sanity'
 import {
   ShopifySecrets,
   Product,
   Collection,
   ShopifyItem,
+  ShopifyClient,
   TestSecretsResponse,
 } from './shopify'
 import { SyncMachineState } from './syncState'
@@ -11,6 +18,12 @@ import { SyncMachineState } from './syncState'
 export interface Secrets {
   sanity: SanityClientConfig
   shopify: ShopifySecrets
+}
+
+export interface SaneShopifyClientConfig {
+  sanityClient: SanityClient
+  shopifyClient: ShopifyClient
+  onStateChange?: (state: SyncMachineState) => void
 }
 
 export interface SaneShopifyConfig {
@@ -35,9 +48,16 @@ export interface SyncUtils {
   testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
 }
 
+export enum SyncType {
+  Create = 'create',
+  Update = 'update',
+  Delete = 'delete',
+  Skip = 'skip',
+}
+
 export interface SyncOperation {
-  type: 'create' | 'update' | 'delete' | 'skip'
-  sanityDocument: SanityShopifyDocument
+  type: SyncType
+  sanityDocument: SanityShopifyDocument | SanityShopifyDocumentPartial
   shopifySource: Product | Collection
 }
 
