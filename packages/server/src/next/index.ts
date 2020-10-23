@@ -20,7 +20,7 @@ export const createNextWebhooks = ({
     await webhook({ id }).catch((err) => {
       if (onError) onError(err)
       res.status(500)
-      res.send('success')
+      res.send('error')
       return
     })
     res.status(200)
