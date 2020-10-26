@@ -1,165 +1,179 @@
-import { interpret, createMachine, assign } from 'xstate'
 import {
-  LinkOperation,
-  SyncOperation,
+  Machine,
+  EventObject,
+  StateMachine,
+  Typestate,
+  interpret,
+  StateSchema,
+  assign,
+} from 'xstate'
+import {
   Product,
   Collection,
-  SyncContext,
-  SyncMachineState,
-  SyncSchema,
-  SyncEventType as E,
-  SyncEvent,
-  ReadyEvent,
-  ErrorEvent,
-  DocumentsFetchedEvent,
-  DocumentsFetchedCompleteEvent,
-  DocumentsSyncedEvent,
-  DocumentsLinkedEvent,
+  PendingTransaction,
+  CompleteTransaction,
+  ErroredTransaction,
 } from '@sane-shopify/types'
 
-const initialContext = {
-  documentsFetched: [],
-  toSync: [],
-  syncOperations: [],
-  toLink: [],
-  linkOperations: [],
-  error: undefined,
-  errorMessage: undefined,
-  valid: false,
-  ready: false,
-  shopName: undefined,
+interface SyncContext {
+  shopifyDocuments: Array<Product | Collection>
+  transactionsPending: PendingTransaction[]
+  transactionsComplete: CompleteTransaction[]
+  transactionsErrored: ErroredTransaction[]
 }
 
-const syncMachine = createMachine<SyncContext, SyncEvent>(
-  {
-    id: 'syncMachine',
-    initial: 'init' as const,
-    context: initialContext,
-    states: {
-      init: {
-        on: {
-          [E.Valid]: {
-            target: 'ready',
-            actions: ['onReady'],
-          },
-          [E.Invalid]: {
-            target: 'setup',
-            actions: ['onSetup'],
-          },
-        },
-      },
-      setup: {
-        on: {
-          [E.Valid]: {
-            target: 'ready',
-            actions: ['onReady'],
-          },
+const initialContext: SyncContext = {
+  shopifyDocuments: [],
+  transactionsPending: [],
+  transactionsComplete: [],
+  transactionsErrored: [],
+}
 
-          [E.Invalid]: {
-            target: 'setup',
-            actions: ['onError'],
-          },
+enum States {
+  Ready = 'ready',
+  Fetching = 'fetching',
+  PreparingTransactions = 'preparingTransactions',
+  Syncing = 'syncing',
+  Complete = 'complete',
+}
+
+enum EventType {
+  Start = 'start',
+  FetchComplete = 'fetchComplete',
+  Reset = 'reset',
+  TransactionsPrepared = 'transactionsPrepared',
+  SyncProgress = 'syncProgress',
+  SyncError = 'syncError',
+  SyncComplete = 'syncComplete',
+}
+
+interface FetchCompleteEvent extends EventObject {
+  type: EventType.FetchComplete
+  shopifyDocuments: Array<Product | Collection>
+}
+
+interface TransactionsPreparedEvent extends EventObject {
+  type: EventType.TransactionsPrepared
+  transactions: PendingTransaction[]
+}
+
+interface SyncProgressEvent extends EventObject {
+  type: EventType.SyncProgress
+  completedTransactions: CompleteTransaction[]
+  erroredTransactions: ErroredTransaction[]
+}
+
+interface SyncCompleteEvent extends EventObject {
+  type: EventType.SyncComplete
+}
+
+type Events =
+  | { type: EventType.Start }
+  | { type: EventType.Reset }
+  | FetchCompleteEvent
+  | TransactionsPreparedEvent
+  | SyncProgressEvent
+  | SyncCompleteEvent
+
+export interface SyncSchema extends StateSchema<SyncContext> {
+  context: SyncContext
+  initial: string
+  id: string
+  states: {
+    [States.Ready]: Record<string, any>
+    [States.Fetching]: Record<string, any>
+    [States.PreparingTransactions]: Record<string, any>
+    [States.Syncing]: Record<string, any>
+  }
+}
+
+const schema: SyncSchema = {
+  id: 'syncMachine',
+  initial: States.Ready,
+  context: initialContext,
+  states: {
+    [States.Ready]: {
+      on: {
+        [EventType.Start]: States.Fetching,
+      },
+    },
+    [States.Fetching]: {
+      on: {
+        [EventType.FetchComplete]: {
+          target: States.PreparingTransactions,
+          actions: 'saveDocuments',
         },
       },
-      ready: {
-        on: {
-          [E.Sync]: 'syncing',
-          [E.ClearedSecrets]: {
-            target: 'setup',
-            actions: 'reset',
-          },
+    },
+    [States.PreparingTransactions]: {
+      on: {
+        [EventType.TransactionsPrepared]: {
+          target: States.Syncing,
+          actions: 'saveTransactions',
         },
       },
-      syncing: {
-        on: {
-          [E.DocumentsFetched]: {
-            internal: true,
-            actions: ['onDocumentsFetched'],
-          },
-          [E.FetchComplete]: {
-            internal: true,
-            actions: ['onFetchedComplete'],
-          },
-          [E.DocumentsSynced]: {
-            internal: true,
-          },
-          [E.DocumentsLinked]: {
-            internal: true,
-            actions: ['onDocumentLinked'],
-          },
-          [E.Complete]: 'complete',
-          [E.Errored]: {
-            target: 'syncError',
-            actions: ['onError'],
-          },
+    },
+    [States.Syncing]: {
+      on: {
+        [EventType.SyncProgress]: {
+          internal: true,
+          actions: 'saveSyncProgress',
         },
-      },
-      complete: {
-        on: {
-          [E.Reset]: 'ready',
-        },
-      },
-      syncError: {
-        on: {
-          [E.Reset]: 'ready',
+        [EventType.SyncComplete]: {
+          target: States.Syncing,
+          actions: 'saveTransactions',
         },
       },
     },
   },
-  {
-    actions: {
-      // @ts-ignore
-      onReady: assign<SyncContext>((_, event: ReadyEvent) => ({
-        valid: true,
-        ready: true,
-        shopName: event.shopName,
-        errorMessage: undefined,
-        error: undefined,
-      })),
-      onSetup: assign<SyncContext, SyncEvent>({
-        valid: false,
-        ready: true,
-      }),
+}
 
-      // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      onError: assign<SyncContext, ErrorEvent>({
-        errorMessage: (_, event) => event.errorMessage,
-        error: (_, event) => event.error,
-        valid: false,
-      }),
+const syncMachine = Machine<SyncContext, Events>(schema, {
+  actions: {
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    saveDocuments: assign<SyncContext, FetchCompleteEvent>({
+      shopifyDocuments: (context, action) => [
+        ...context.shopifyDocuments,
+        ...action.shopifyDocuments,
+      ],
+    }),
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    saveTransactions: assign<SyncContext, TransactionsPreparedEvent>({
+      transactionsPending: (context, action) => [
+        ...context.transactionsPending,
+        ...action.transactions,
+      ],
+    }),
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    saveSyncProgress: assign<SyncContext, SyncProgressEvent>(
+      (context, action) => {
+        const { completedTransactions, erroredTransactions } = action
 
-      // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      fetchedDocuments: assign<SyncContext, DocumentsFetchedEvent>({
-        documentsFetched: (context, action) => [
-          ...context.documentsFetched,
-          ...action.shopifyDocuments,
-        ],
-      }),
+        const completeIds = [
+          ...completedTransactions,
+          ...erroredTransactions,
+        ].map((t) => t.id)
+        // remove errored & completed transactions from the pending ones
+        const transactionsPending = context.transactionsPending.filter(
+          (t) => !completeIds.includes(t.id)
+        )
 
-      // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      onFetchedComplete: assign<SyncContext, DocumentsFetchedCompleteEvent>({
-        toSync: (context) => context.documentsFetched,
-        toLink: (context) => context.documentsFetched,
-      }),
+        return {
+          transactionsPending,
+          completedTransactions,
+          erroredTransactions,
+        }
+      }
+    ),
+  },
+})
 
-      // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      onDocumentsSynced: assign<SyncContext, DocumentsSyncedEvent>({
-        syncOperations: (context, action) => [
-          ...context.syncOperations,
-          action.op,
-        ],
-      }),
-
-      // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      onDocumentLinked: assign<SyncContext, DocumentsLinkedEvent>({
-        linkOperations: (context, action) => [
-          ...context.linkOperations,
-          action.op,
-        ],
-      }),
-    },
-  }
-)
+export type SyncMachineState = StateMachine<
+  SyncContext,
+  any,
+  Events,
+  Typestate<SyncContext>
+>['initialState']
 
 interface SyncStateMachineArgs {
   onStateChange: (state: SyncMachineState) => void
@@ -167,116 +181,61 @@ interface SyncStateMachineArgs {
 
 export interface SyncStateMachine {
   initialState: SyncMachineState
-  init: (valid: boolean, shopName: string) => void
+  reset: () => void
   startSync: () => void
-  onDocumentsFetched: (docs: Array<Product | Collection>) => void
-  onFetchComplete: (docs?: Array<Product | Collection>) => void
-  onDocumentSynced: (op: SyncOperation) => void
-  onDocumentLinked: (op: LinkOperation) => void
-  onComplete: () => void
-  onError: (error: Error) => void
-  onSavedSecrets: (shopName: string) => void
-  onSavedSecretsError: (error: Error, message?: string) => void
-  onClearedSecrets: () => void
+  onDocumentsFetched: (shopifyDocuments: Array<Product | Collection>) => void
+  onTransactionsCreated: (transactions: PendingTransaction[]) => void
+  onTransactionProgress: (
+    completedTransactions: CompleteTransaction[],
+    erroredTransactions: ErroredTransaction[]
+  ) => void
 }
 
 export const syncStateMachine = ({
   onStateChange,
 }: SyncStateMachineArgs): SyncStateMachine => {
   const { initialState } = syncMachine
-  const service = interpret<SyncContext, SyncSchema, SyncEvent>(syncMachine)
-  service.start()
+  const service = interpret<SyncContext, SyncSchema, Events>(syncMachine)
 
   service.onTransition((newState) => {
     onStateChange(newState)
   })
 
-  const init = (valid: boolean, shopName: string) => {
-    if (valid) {
-      service.send({ type: E.Valid, shopName })
-    } else {
-      service.send(E.Invalid)
-    }
-  }
-
-  const onSavedSecrets = (shopName: string) => {
-    service.send({ type: E.Valid, shopName })
-  }
-
-  const onSavedSecretsError = (error: Error, message?: string) => {
-    const errorMessage = message || error.message
-    service.send({
-      type: E.Errored,
-      error,
-      errorMessage,
-    })
-  }
-
-  const onClearedSecrets = () => {
-    service.send({ type: E.ClearedSecrets })
+  const reset = () => {
+    service.send({ type: EventType.Reset })
   }
 
   const startSync = () => {
-    service.send(E.Sync)
+    service.send({ type: EventType.Start })
   }
 
   const onDocumentsFetched = (
     shopifyDocuments: Array<Product | Collection>
   ) => {
-    service.send({
-      type: E.DocumentsFetched,
-      shopifyDocuments,
-    })
+    service.send({ type: EventType.FetchComplete, shopifyDocuments })
   }
 
-  const onFetchComplete = (shopifyDocuments?: Array<Product | Collection>) => {
-    service.send({
-      type: E.FetchComplete,
-      shopifyDocuments,
-    })
+  const onTransactionsCreated = (transactions: PendingTransaction[]) => {
+    service.send({ type: EventType.TransactionsPrepared, transactions })
   }
 
-  const onDocumentSynced = (op: SyncOperation) => {
+  const onTransactionProgress = (
+    completedTransactions: CompleteTransaction[],
+    erroredTransactions: ErroredTransaction[]
+  ) => {
     service.send({
-      type: E.DocumentsSynced,
-      op,
-    })
-  }
-
-  const onDocumentLinked = (op: LinkOperation) => {
-    service.send({
-      type: E.DocumentsLinked,
-      op,
-    })
-  }
-
-  const onComplete = () => {
-    service.send({
-      type: E.Complete,
-    })
-  }
-
-  const onError = (error: Error) => {
-    service.send({
-      type: E.Errored,
-      errorMessage: error.message,
-      error,
+      type: EventType.SyncProgress,
+      completedTransactions,
+      erroredTransactions,
     })
   }
 
   return {
-    // @ts-ignore
     initialState,
+    reset,
     startSync,
-    init,
-    onSavedSecrets,
-    onSavedSecretsError,
-    onClearedSecrets,
     onDocumentsFetched,
-    onFetchComplete,
-    onDocumentSynced,
-    onDocumentLinked,
-    onComplete,
-    onError,
+    onTransactionsCreated,
+    onTransactionProgress,
   }
 }
