@@ -93,33 +93,4 @@ export interface Product extends ShopifyItem {
   __typename: 'Product'
 }
 
-export interface ShopifyItemParams {
-  id?: string
-  handle?: string
-}
-
 export type ProgressHandler<T> = (docs: T[]) => void
-
-export interface TestSecretsResponse {
-  message: string
-  isError: boolean
-}
-
-export interface ShopifyUtils {
-  client: ShopifyClient
-  fetchItemById: (
-    id: string,
-    withRelated: boolean
-  ) => Promise<Product | Collection | null>
-  fetchShopifyProduct: (args: ShopifyItemParams) => Promise<Product | null>
-  fetchShopifyCollection: (
-    args: ShopifyItemParams
-  ) => Promise<Collection | null>
-  fetchAllShopifyProducts: (
-    onProgress: ProgressHandler<Product>
-  ) => Promise<Product[]>
-  fetchAllShopifyCollections: (
-    onProgress: ProgressHandler<Collection>
-  ) => Promise<Collection[]>
-  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
-}

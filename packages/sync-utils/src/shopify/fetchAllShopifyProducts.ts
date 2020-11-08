@@ -68,8 +68,6 @@ export const createFetchAllShopifyProducts = (
     const duration = new Date().getTime() - now.getTime()
     log(`Fetched page of Shopify Products in ${duration / 1000}s`, result)
     const fetchedProducts = result.data.products
-    const [productsPage] = unwindEdges(fetchedProducts)
-    onProgress(productsPage)
     const products = prevPage
       ? mergePaginatedResults(prevPage, fetchedProducts)
       : fetchedProducts
@@ -78,6 +76,7 @@ export const createFetchAllShopifyProducts = (
     }
     if (products.pageInfo.hasNextPage) return fetchProducts(products)
     const [unwound] = unwindEdges(products)
+    onProgress(unwound)
     unwound.forEach((product) => cache.set(product))
     return unwound
   }

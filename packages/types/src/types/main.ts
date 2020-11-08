@@ -1,18 +1,11 @@
-import { SanityClient } from '@sanity/client'
+import { Mutation, SanityClient } from '@sanity/client'
 import {
   SanityClientConfig,
   SanityShopifyDocumentPartial,
   SanityShopifyDocument,
   SanityPair,
 } from './sanity'
-import {
-  ShopifySecrets,
-  Product,
-  Collection,
-  ShopifyItem,
-  ShopifyClient,
-  TestSecretsResponse,
-} from './shopify'
+import { ShopifySecrets, Product, Collection, ShopifyClient } from './shopify'
 import { SyncMachineState } from './syncState'
 
 export interface Secrets {
@@ -31,73 +24,63 @@ export interface SaneShopifyConfig {
   onStateChange?: (state: SyncMachineState) => void
 }
 
-export interface SyncUtils {
-  initialize: () => void
-  initialState: SyncMachineState
-  /* Syncs all items */
-  syncAll: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs all products */
-  syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs all collections */
-  syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Syncs a collection or product by storefront id */
-  syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
-  /* Manage Secrets */
-  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: () => Promise<void>
-  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
+export enum TransactionStatus {
+  Pending = 'pending',
+  Complete = 'complete',
+  Errored = 'error',
 }
 
-export enum SyncType {
+interface BaseTransaction {
+  id: string
+  status: TransactionStatus
+  shopifySource: Product | Collection
+  mutation: Mutation
+}
+
+export enum TransactionType {
   Create = 'create',
-  Update = 'update',
-  Delete = 'delete',
+  Patch = 'patch',
+  Archive = 'archive',
+  Link = 'link',
   Skip = 'skip',
 }
 
-export interface SyncOperation {
-  type: SyncType
-  sanityDocument: SanityShopifyDocument | SanityShopifyDocumentPartial
-  shopifySource: Product | Collection
+export interface CreateTrx extends BaseTransaction {
+  type: TransactionType.Create
+  sanityDocument: SanityShopifyDocumentPartial
 }
 
-export interface OperationComplete {
-  type: 'complete'
+export interface PatchTrx extends BaseTransaction {
+  type: TransactionType.Patch
   sanityDocument: SanityShopifyDocument
-  shopifySource: Product | Collection
 }
 
-interface SyncResult<OperationType> {
-  operation: OperationType
-  related: ShopifyItem[]
+export interface LinkTrx extends BaseTransaction {
+  type: TransactionType.Link
+  pairs: SanityPair
 }
 
-export type SyncOperationResult = SyncResult<SyncOperation>
-
-export interface LinkOperation {
-  type: 'link'
-  sourceDoc: SanityShopifyDocument
-  pairs: SanityPair[]
+export interface SkipTrx extends Omit<BaseTransaction, 'mutation'> {
+  type: TransactionType.Skip
+  sanityDocument: SanityShopifyDocument
 }
 
-export interface FetchOperation {
-  type: 'fetched'
-  shopifyDocuments: Array<Collection | Product>
+export interface ArchiveTrx extends BaseTransaction {
+  type: TransactionType.Archive
+  sanityDocument: SanityShopifyDocument
 }
 
-export interface ArchiveOperation {
-  type: 'archive'
-  sourceDoc: SanityShopifyDocument
+type Transaction = CreateTrx | PatchTrx | LinkTrx | SkipTrx | ArchiveTrx
+
+export type PendingTransaction = Transaction & {
+  status: TransactionStatus.Pending
 }
 
-export type Operation =
-  | SyncOperation
-  | LinkOperation
-  | FetchOperation
-  | ArchiveOperation
+export type ErroredTransaction = Transaction & {
+  status: TransactionStatus.Errored
+  error: Error
+}
 
-export interface SubscriptionCallbacks {
-  onProgress?: (operation: Operation, message?: string) => void
-  onError?: (err: Error) => void
-  onComplete?: (ops: OperationComplete[], message?: string) => void
+export type CompleteTransaction = Transaction & {
+  status: TransactionStatus.Complete
 }

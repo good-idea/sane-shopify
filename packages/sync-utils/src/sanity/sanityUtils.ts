@@ -1,4 +1,5 @@
-import { SanityClient, Transaction } from '@sanity/client'
+import { unwindEdges } from '@good-idea/unwind-edges'
+import { SanityClient } from '@sanity/client'
 import { omit } from 'lodash'
 import {
   SanityShopifyDocument,
@@ -6,14 +7,21 @@ import {
   SaneShopifyDocumentType,
   Product,
   Collection,
-  SyncOperation,
-  SyncType,
+  TransactionType,
+  LinkTrx,
   ShopifyItem,
   RelatedPairPartial,
   ShopifySecrets,
+  PendingTransaction,
+  TransactionStatus,
+  ErroredTransaction,
+  CompleteTransaction,
+  SyncStateMachine,
 } from '@sane-shopify/types'
+
 import { SanityCache } from './SanityCache'
 import { mergeExistingFields, prepareDocument, documentsMatch } from './utils'
+import { definitely } from '../utils'
 import { KEYS_ID, KEYS_TYPE } from '../constants'
 
 interface CacheResults {
@@ -24,19 +32,20 @@ interface CacheResults {
 export class SanityUtils {
   private sanityClient: SanityClient
   private cache: SanityCache
-  private transaction: Transaction | null = null
+  private stateMachine: SyncStateMachine
 
-  constructor(sanityClient: SanityClient) {
+  constructor(sanityClient: SanityClient, stateMachine: SyncStateMachine) {
     this.sanityClient = sanityClient
+    this.stateMachine = stateMachine
     this.cache = new SanityCache()
   }
 
-  private getTransaction(): Transaction {
-    if (this.transaction) return this.transaction
-    const trx = this.sanityClient.transaction()
-    this.transaction = trx
-    return trx
-  }
+  // private getTransaction(): Transaction {
+  //   if (this.transaction) return this.transaction
+  //   const trx = this.sanityClient.transaction()
+  //   this.transaction = trx
+  //   return trx
+  // }
 
   private async getSanityDocByShopifyId(
     shopifyId: string
@@ -114,96 +123,14 @@ export class SanityUtils {
     return allDocs
   }
 
-  private async getSyncOperation(
-    shopifyItem: Collection | Product
-  ): Promise<SyncOperation> {
-    const docInfo = prepareDocument(shopifyItem)
-    const existingDoc = await this.getSanityDocByShopifyId(shopifyItem.id)
-    const trx = this.getTransaction()
-
-    /* If the document exists and is up to date, skip */
-    if (existingDoc && documentsMatch(docInfo, existingDoc)) {
-      return {
-        type: SyncType.Skip,
-        sanityDocument: existingDoc,
-        shopifySource: shopifyItem,
-      }
-    }
-
-    /* If the document does not exist, create it */
-    if (!existingDoc) {
-      trx.create<SanityShopifyDocumentPartial>(docInfo)
-      return {
-        type: SyncType.Create,
-        sanityDocument: docInfo,
-        shopifySource: shopifyItem,
-      }
-    }
-
-    /* Otherwise, update the existing doc */
-
-    const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
-      'products',
-      'collections',
-      'productKeys',
-      'collectionKeys',
-    ])
-
-    trx.patch(existingDoc._id, (p) => p.set(patchData))
-    return {
-      type: SyncType.Update,
-      sanityDocument: docInfo,
-      shopifySource: shopifyItem,
-    }
-  }
-
-  /**
-   * Public Methods
-   */
-  public async syncSanityDocument(
-    shopifyItem: Collection | Product
-  ): Promise<SyncOperation> {
-    this.getTransaction()
-    const operation = await this.getSyncOperation(shopifyItem)
-    this.getTransaction().commit()
-    return operation
-  }
-
-  public async syncSanityDocuments(
-    shopifyItems: Array<Collection | Product>
-  ): Promise<SyncOperation[]> {
-    this.getTransaction()
-    const operations = await Promise.all(
-      shopifyItems.map((item) => this.getSyncOperation(item))
-    )
-    this.getTransaction().commit()
-    return operations
-  }
-
-  public async fetchRelatedDocs(
+  private async fetchRelatedDocs(
     relatedNodes: ShopifyItem[]
   ): Promise<RelatedPairPartial[]> {
     const relatedIds = relatedNodes.map((r) => r.id)
-    const { cachedDocs, idsNotInCache } = relatedIds
-      .map((id) => ({
-        cachedItem: this.cache.getByShopifyId(id),
-        id,
-      }))
-      .reduce<CacheResults>(
-        (acc, current) => {
-          if (current.cachedItem === undefined) {
-            return {
-              ...acc,
-              idsNotInCache: [...acc.idsNotInCache, current.id],
-            }
-          }
-          return {
-            ...acc,
-            cachedDocs: [...acc.cachedDocs, current.cachedItem],
-          }
-        },
-        { cachedDocs: [], idsNotInCache: [] }
-      )
+
+    const cachedDocs = definitely(relatedIds.map(this.cache.getByShopifyId))
+    const cachedIds = cachedDocs.map((d) => d.shopifyId)
+    const idsNotInCache = relatedIds.filter((id) => !cachedIds.includes(id))
 
     const fetched = idsNotInCache.length
       ? await this.sanityClient.fetch<SanityShopifyDocument[]>(
@@ -218,18 +145,106 @@ export class SanityUtils {
               ...
             },
             ...,
-          }
-        `,
+          }`,
           { relatedIds: idsNotInCache }
         )
       : []
-    fetched.forEach(this.cache.set)
+    fetched.forEach((doc) => this.cache.set(doc))
     const relatedDocs = [...cachedDocs, ...fetched]
+
     const pairs = relatedNodes.map((shopifyNode) => ({
       shopifyNode,
       sanityDocument:
         relatedDocs.find((d) => d.shopifyId === shopifyNode.id) || null,
     }))
     return pairs
+  }
+
+  private async getRelationshipMutations(
+    mutation: PendingTransaction
+  ): Promise<LinkTrx[]> {
+    const { shopifySource } = mutation
+    const [related] =
+      shopifySource.__typename === 'Product'
+        ? unwindEdges(shopifySource.collections)
+        : unwindEdges(shopifySource.products)
+    const relatedDocs = await this.fetchRelatedDocs(related)
+
+    // const mutations = await Promise.all(relatedDocs.map(this.))
+
+    relatedDocs.map(([from, to]) => {
+      //
+    })
+  }
+
+  private async getMutation(
+    shopifyItem: Collection | Product
+  ): Promise<PendingTransaction> {
+    const docInfo = prepareDocument(shopifyItem)
+    const existingDoc = await this.getSanityDocByShopifyId(shopifyItem.id)
+    const id = shopifyItem.id
+
+    /* If the document exists and is up to date, skip */
+    if (existingDoc && documentsMatch(docInfo, existingDoc)) {
+      return {
+        id,
+        status: TransactionStatus.Pending,
+        type: TransactionType.Skip,
+        sanityDocument: existingDoc,
+        shopifySource: shopifyItem,
+      }
+    }
+
+    /* If the document does not exist, create it */
+    if (!existingDoc) {
+      const mutation = {
+        create: docInfo,
+      }
+      return {
+        id,
+        type: TransactionType.Create,
+        status: TransactionStatus.Pending,
+        sanityDocument: docInfo,
+        shopifySource: shopifyItem,
+        mutation,
+      }
+    }
+
+    /* Otherwise, update the existing doc */
+    const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
+      'products',
+      'collections',
+      'productKeys',
+      'collectionKeys',
+    ])
+
+    const mutation = {
+      patch: {
+        id: existingDoc._id,
+        set: patchData,
+      },
+    }
+
+    return {
+      id,
+      status: TransactionStatus.Pending,
+      type: TransactionType.Patch,
+      sanityDocument: existingDoc,
+      shopifySource: shopifyItem,
+      mutation,
+    }
+  }
+
+  /**
+   * Public Methods
+   */
+
+  public async syncSanityDocuments(
+    shopifyItems: Array<Collection | Product>
+  ): Promise<SyncOperation[]> {
+    const operations = await Promise.all(
+      shopifyItems.map((item) => this.getSyncOperation(item))
+    )
+    return operations
   }
 }

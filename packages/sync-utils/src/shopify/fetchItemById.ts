@@ -1,5 +1,10 @@
 import gql from 'graphql-tag'
-import { ShopifyClient, Product, Collection } from '@sane-shopify/types'
+import {
+  ShopifyClient,
+  ProgressHandler,
+  Product,
+  Collection,
+} from '@sane-shopify/types'
 import { ShopifyCache } from './shopifyUtils'
 import { productFragment, collectionFragment } from './queryFragments'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
@@ -55,12 +60,15 @@ interface NodeResult {
   }>
 }
 
+const noop = () => undefined
+
 export const createFetchItemById = (
   query: ShopifyClient['query'],
   cache: ShopifyCache
 ) => async (
   id: string,
-  fetchRelated: boolean
+  fetchRelated: boolean,
+  onProgress: ProgressHandler<Product | Collection> = noop
 ): Promise<Product | Collection | null> => {
   const cached = cache.getCollectionById(id) || cache.getProductById(id)
   if (cached) return cached
@@ -73,10 +81,14 @@ export const createFetchItemById = (
   if (!item) return null
   if (!fetchRelated) return item
   if (item.__typename === 'Product') {
-    return fetchAllProductCollections(query, item)
+    const product = await fetchAllProductCollections(query, item)
+    onProgress([product])
+    return product
   }
   if (item.__typename === 'Collection') {
-    return fetchAllCollectionProducts(query, item)
+    const collection = await fetchAllCollectionProducts(query, item)
+    onProgress([collection])
+    return collection
   }
   // @ts-ignore
   throw new Error(`Cannot fetch item with typename ${item.__typename}`)

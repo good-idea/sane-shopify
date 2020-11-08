@@ -1,101 +1,120 @@
-import { Typestate, StateMachine, StateSchema, EventObject } from 'xstate'
-
+import { EventObject, StateMachine, Typestate, StateSchema } from 'xstate'
 import { Product, Collection } from './shopify'
-import { SyncOperation, LinkOperation } from './main'
+import {
+  PendingTransaction,
+  CompleteTransaction,
+  ErroredTransaction,
+} from './main'
 
-/** Events */
-export enum SyncEventType {
-  Valid = 'VALID',
-  SavedSecrets = 'SAVED_SECRETS',
-  DocumentsFetched = 'DOCUMENTS_FETCHED',
-  FetchComplete = 'FETCHED_COMPLETE',
-  DocumentsSynced = 'DOCUMENTS_SYNCED',
-  DocumentsLinked = 'DOCUMENTS_LINKED',
-  Errored = 'ERRORED',
-  Invalid = 'INVALID',
-  Sync = 'SYNC',
-  ClearedSecrets = 'CLEARED_SECRETS',
-  Complete = 'COMPLETE',
-  Reset = 'RESET',
+export interface SyncContext {
+  ready: boolean
+  complete: boolean
+  error?: Error
+  shopifyDocuments: Array<Product | Collection>
+  transactionsPending: PendingTransaction[]
+  transactionsComplete: CompleteTransaction[]
+  transactionsErrored: ErroredTransaction[]
 }
 
-export interface ReadyEvent extends EventObject {
-  type: SyncEventType.Valid
-  shopName: string
+export enum SyncStates {
+  Initial = 'initial',
+  Setup = 'setup',
+  Ready = 'ready',
+  Fetching = 'fetching',
+  PreparingTransactions = 'preparingTransactions',
+  Syncing = 'syncing',
+  Complete = 'complete',
 }
 
-export interface SavedSecretsEvent extends EventObject {
-  type: SyncEventType.SavedSecrets
-  shopName: string
+export enum EventType {
+  ConfigValid = 'configValid',
+  ConfigEmpty = 'configEmpty',
+  ConfigError = 'configError',
+  Start = 'start',
+  FetchProgress = 'fetchProgress',
+  FetchComplete = 'fetchComplete',
+  Reset = 'reset',
+  TransactionsPrepared = 'transactionsPrepared',
+  SyncProgress = 'syncProgress',
+  SyncError = 'syncError',
+  SyncComplete = 'syncComplete',
 }
 
-export interface DocumentsFetchedEvent extends EventObject {
-  type: SyncEventType.DocumentsFetched
+interface ConfigErrorEvent extends EventObject {
+  type: EventType.ConfigError
+  error?: Error
+}
+
+interface FetchProgressEvent extends EventObject {
+  type: EventType.FetchProgress
   shopifyDocuments: Array<Product | Collection>
 }
 
-export interface DocumentsFetchedCompleteEvent extends EventObject {
-  type: SyncEventType.FetchComplete
-  shopifyDocuments?: Array<Product | Collection>
+interface TransactionsPreparedEvent extends EventObject {
+  type: EventType.TransactionsPrepared
+  transactions: PendingTransaction[]
 }
 
-export interface DocumentsSyncedEvent extends EventObject {
-  type: SyncEventType.DocumentsSynced
-  op: SyncOperation
+interface SyncProgressEvent extends EventObject {
+  type: EventType.SyncProgress
+  completedTransactions: CompleteTransaction[]
+  erroredTransactions: ErroredTransaction[]
 }
 
-export interface DocumentsLinkedEvent extends EventObject {
-  type: SyncEventType.DocumentsLinked
-  op: LinkOperation
+interface SyncCompleteEvent extends EventObject {
+  type: EventType.SyncComplete
 }
 
-export interface ErrorEvent extends EventObject {
-  errorMessage: string
-  error: Error
-}
+export type Events =
+  | { type: EventType.ConfigValid }
+  | { type: EventType.ConfigEmpty }
+  | ConfigErrorEvent
+  | { type: EventType.Start }
+  | { type: EventType.Reset }
+  | { type: EventType.FetchComplete }
+  | FetchProgressEvent
+  | TransactionsPreparedEvent
+  | SyncProgressEvent
+  | SyncCompleteEvent
 
-export interface SyncContext {
-  documentsFetched: Array<Product | Collection>
-  toSync: Array<Product | Collection>
-  syncOperations: SyncOperation[]
-  toLink: Array<Product | Collection>
-  linkOperations: LinkOperation[]
-  error: Error | void
-  errorMessage: string | void
-  valid: boolean
-  ready: boolean
-  shopName: string | void
-}
-
-export type SyncEvent =
-  | { type: SyncEventType.Sync }
-  | { type: SyncEventType.Invalid }
-  | { type: SyncEventType.Complete }
-  | { type: SyncEventType.ClearedSecrets }
-  | { type: SyncEventType.Reset }
-  | ReadyEvent
-  | SavedSecretsEvent
-  | DocumentsFetchedEvent
-  | DocumentsFetchedCompleteEvent
-  | DocumentsSyncedEvent
-  | DocumentsLinkedEvent
-  | ErrorEvent
-
-export interface SyncSchema extends StateSchema {
+export interface SyncSchema extends StateSchema<SyncContext> {
   context: SyncContext
+  initial: string
+  id: string
   states: {
-    init: {}
-    setup: {}
-    ready: {}
-    syncing: {}
-    complete: {}
-    syncError: {}
+    [SyncStates.Initial]: Record<string, any>
+    [SyncStates.Setup]: Record<string, any>
+    [SyncStates.Ready]: Record<string, any>
+    [SyncStates.Fetching]: Record<string, any>
+    [SyncStates.PreparingTransactions]: Record<string, any>
+    [SyncStates.Syncing]: Record<string, any>
+    [SyncStates.Complete]: Record<string, any>
+    on: Record<string, any>
   }
 }
 
 export type SyncMachineState = StateMachine<
   SyncContext,
   any,
-  SyncEvent,
+  Events,
   Typestate<SyncContext>
 >['initialState']
+
+export interface SyncStateMachineArgs {
+  onStateChange: (state: SyncMachineState) => void
+}
+
+export interface SyncStateMachine {
+  initialState: SyncMachineState
+  reset: () => void
+  startSync: () => void
+  onConfigValid: () => void
+  onConfigError: (error?: Error) => void
+  onDocumentsFetched: (shopifyDocuments: Array<Product | Collection>) => void
+  onFetchComplete: () => void
+  onTransactionsCreated: (transactions: PendingTransaction[]) => void
+  onTransactionProgress: (
+    completedTransactions: CompleteTransaction[],
+    erroredTransactions: ErroredTransaction[]
+  ) => void
+}

@@ -1,129 +1,106 @@
-import {
-  Machine,
-  EventObject,
-  StateMachine,
-  Typestate,
-  interpret,
-  StateSchema,
-  assign,
-} from 'xstate'
+import { Machine, interpret, assign } from 'xstate'
 import {
   Product,
   Collection,
   PendingTransaction,
   CompleteTransaction,
   ErroredTransaction,
+  SyncStates,
+  SyncContext,
+  EventType,
+  Events,
+  SyncSchema,
+  SyncStateMachine,
+  SyncStateMachineArgs,
 } from '@sane-shopify/types'
 
-interface SyncContext {
-  shopifyDocuments: Array<Product | Collection>
-  transactionsPending: PendingTransaction[]
-  transactionsComplete: CompleteTransaction[]
-  transactionsErrored: ErroredTransaction[]
-}
-
 const initialContext: SyncContext = {
+  ready: false,
+  complete: false,
+  error: undefined,
   shopifyDocuments: [],
   transactionsPending: [],
   transactionsComplete: [],
   transactionsErrored: [],
 }
 
-enum States {
-  Ready = 'ready',
-  Fetching = 'fetching',
-  PreparingTransactions = 'preparingTransactions',
-  Syncing = 'syncing',
-  Complete = 'complete',
-}
-
-enum EventType {
-  Start = 'start',
-  FetchComplete = 'fetchComplete',
-  Reset = 'reset',
-  TransactionsPrepared = 'transactionsPrepared',
-  SyncProgress = 'syncProgress',
-  SyncError = 'syncError',
-  SyncComplete = 'syncComplete',
-}
-
-interface FetchCompleteEvent extends EventObject {
-  type: EventType.FetchComplete
-  shopifyDocuments: Array<Product | Collection>
-}
-
-interface TransactionsPreparedEvent extends EventObject {
-  type: EventType.TransactionsPrepared
-  transactions: PendingTransaction[]
-}
-
-interface SyncProgressEvent extends EventObject {
-  type: EventType.SyncProgress
-  completedTransactions: CompleteTransaction[]
-  erroredTransactions: ErroredTransaction[]
-}
-
-interface SyncCompleteEvent extends EventObject {
-  type: EventType.SyncComplete
-}
-
-type Events =
-  | { type: EventType.Start }
-  | { type: EventType.Reset }
-  | FetchCompleteEvent
-  | TransactionsPreparedEvent
-  | SyncProgressEvent
-  | SyncCompleteEvent
-
-export interface SyncSchema extends StateSchema<SyncContext> {
-  context: SyncContext
-  initial: string
-  id: string
-  states: {
-    [States.Ready]: Record<string, any>
-    [States.Fetching]: Record<string, any>
-    [States.PreparingTransactions]: Record<string, any>
-    [States.Syncing]: Record<string, any>
-  }
-}
-
 const schema: SyncSchema = {
   id: 'syncMachine',
-  initial: States.Ready,
+  initial: SyncStates.Initial,
   context: initialContext,
   states: {
-    [States.Ready]: {
+    [SyncStates.Initial]: {
       on: {
-        [EventType.Start]: States.Fetching,
+        [EventType.ConfigValid]: SyncStates.Ready,
+        [EventType.ConfigError]: {
+          target: SyncStates.Setup,
+          actions: 'setError',
+        },
+        [EventType.ConfigEmpty]: SyncStates.Setup,
       },
     },
-    [States.Fetching]: {
+    [SyncStates.Setup]: {
+      on: {
+        [EventType.ConfigValid]: SyncStates.Ready,
+        [EventType.ConfigError]: {
+          internal: true,
+          actions: 'setError',
+        },
+      },
+    },
+    [SyncStates.Ready]: {
+      on: {
+        [EventType.Start]: SyncStates.Fetching,
+      },
+    },
+    [SyncStates.Fetching]: {
       on: {
         [EventType.FetchComplete]: {
-          target: States.PreparingTransactions,
+          target: SyncStates.PreparingTransactions,
           actions: 'saveDocuments',
         },
       },
     },
-    [States.PreparingTransactions]: {
+    [SyncStates.PreparingTransactions]: {
       on: {
         [EventType.TransactionsPrepared]: {
-          target: States.Syncing,
+          target: SyncStates.Syncing,
           actions: 'saveTransactions',
         },
       },
     },
-    [States.Syncing]: {
+    [SyncStates.Syncing]: {
       on: {
+        '': {
+          target: SyncStates.Complete,
+          cond: 'transactionComplete',
+        },
         [EventType.SyncProgress]: {
           internal: true,
           actions: 'saveSyncProgress',
         },
         [EventType.SyncComplete]: {
-          target: States.Syncing,
+          target: SyncStates.Complete,
           actions: 'saveTransactions',
         },
       },
+    },
+    [SyncStates.Complete]: {
+      entry: 'setComplete',
+    },
+    on: {
+      [EventType.Reset]: [
+        {
+          target: SyncStates.Ready,
+          actions: 'resetSyncState',
+          cond: 'configIsValid',
+        },
+        {
+          target: SyncStates.Initial,
+          actions: 'resetState',
+          cond: 'configIsInvalid',
+        },
+      ],
     },
   },
 }
@@ -131,12 +108,35 @@ const schema: SyncSchema = {
 const syncMachine = Machine<SyncContext, Events>(schema, {
   actions: {
     // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-    saveDocuments: assign<SyncContext, FetchCompleteEvent>({
+    setComplete: assign({ complete: true }),
+
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    resetState: assign(initialContext),
+
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    resetSyncState: assign(({ ready }) => ({
+      ...initialContext,
+      ready,
+    })),
+
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    setError: assign<SyncContext, ConfigErrorEvent>({
+      error: (ctx, action) => action.error,
+    }),
+
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    setReady: assign<SyncContext>({
+      ready: true,
+    }),
+
+    // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
+    saveDocuments: assign<SyncContext, FetchProgressEvent>({
       shopifyDocuments: (context, action) => [
         ...context.shopifyDocuments,
         ...action.shopifyDocuments,
       ],
     }),
+
     // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
     saveTransactions: assign<SyncContext, TransactionsPreparedEvent>({
       transactionsPending: (context, action) => [
@@ -144,6 +144,7 @@ const syncMachine = Machine<SyncContext, Events>(schema, {
         ...action.transactions,
       ],
     }),
+
     // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
     saveSyncProgress: assign<SyncContext, SyncProgressEvent>(
       (context, action) => {
@@ -166,30 +167,13 @@ const syncMachine = Machine<SyncContext, Events>(schema, {
       }
     ),
   },
+  guards: {
+    transactionsComplete: ({ transactionsPending }) =>
+      transactionsPending.length === 0,
+    configIsValid: ({ ready }) => Boolean(ready),
+    configIsInvalid: ({ ready }) => !Boolean(ready),
+  },
 })
-
-export type SyncMachineState = StateMachine<
-  SyncContext,
-  any,
-  Events,
-  Typestate<SyncContext>
->['initialState']
-
-interface SyncStateMachineArgs {
-  onStateChange: (state: SyncMachineState) => void
-}
-
-export interface SyncStateMachine {
-  initialState: SyncMachineState
-  reset: () => void
-  startSync: () => void
-  onDocumentsFetched: (shopifyDocuments: Array<Product | Collection>) => void
-  onTransactionsCreated: (transactions: PendingTransaction[]) => void
-  onTransactionProgress: (
-    completedTransactions: CompleteTransaction[],
-    erroredTransactions: ErroredTransaction[]
-  ) => void
-}
 
 export const syncStateMachine = ({
   onStateChange,
@@ -200,6 +184,14 @@ export const syncStateMachine = ({
   service.onTransition((newState) => {
     onStateChange(newState)
   })
+
+  const onConfigValid = () => {
+    service.send({ type: EventType.ConfigValid })
+  }
+
+  const onConfigError = (error?: Error) => {
+    service.send({ type: EventType.ConfigError, error })
+  }
 
   const reset = () => {
     service.send({ type: EventType.Reset })
@@ -212,7 +204,11 @@ export const syncStateMachine = ({
   const onDocumentsFetched = (
     shopifyDocuments: Array<Product | Collection>
   ) => {
-    service.send({ type: EventType.FetchComplete, shopifyDocuments })
+    service.send({ type: EventType.FetchProgress, shopifyDocuments })
+  }
+
+  const onFetchComplete = () => {
+    service.send({ type: EventType.FetchComplete })
   }
 
   const onTransactionsCreated = (transactions: PendingTransaction[]) => {
@@ -234,7 +230,10 @@ export const syncStateMachine = ({
     initialState,
     reset,
     startSync,
+    onConfigValid,
+    onConfigError,
     onDocumentsFetched,
+    onFetchComplete,
     onTransactionsCreated,
     onTransactionProgress,
   }

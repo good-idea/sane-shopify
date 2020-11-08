@@ -1,5 +1,11 @@
-import { Collection, Product } from '@sane-shopify/types'
-import { ShopifyUtils, ShopifyClient } from '@sane-shopify/types'
+import {
+  ProgressHandler,
+  ShopifyItemParams,
+  Collection,
+  Product,
+  ShopifyClient,
+  ShopifySecrets,
+} from '@sane-shopify/types'
 import { createFetchShopifyProduct } from './fetchShopifyProduct'
 import { createFetchShopifyCollection } from './fetchShopifyCollection'
 import { createFetchItemById } from './fetchItemById'
@@ -21,6 +27,36 @@ export interface ShopifyCache {
   getProductByHandle: (handle: string) => Product | null
   getCollectionById: (id: string) => Collection | null
   getCollectionByHandle: (handle: string) => Collection | null
+}
+
+interface ShopifyItemParams {
+  id?: string
+  handle?: string
+}
+
+export interface TestSecretsResponse {
+  message: string
+  isError: boolean
+}
+
+export interface ShopifyUtils {
+  client: ShopifyClient
+  fetchItemById: (
+    id: string,
+    withRelated: boolean,
+    onProgress: ProgressHandler<Product>
+  ) => Promise<Product | Collection | null>
+  fetchShopifyProduct: (args: ShopifyItemParams) => Promise<Product | null>
+  fetchShopifyCollection: (
+    args: ShopifyItemParams
+  ) => Promise<Collection | null>
+  fetchAllShopifyProducts: (
+    onProgress: ProgressHandler<Product>
+  ) => Promise<Product[]>
+  fetchAllShopifyCollections: (
+    onProgress: ProgressHandler<Collection>
+  ) => Promise<Collection[]>
+  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
 }
 
 const createCache = (): ShopifyCache => {

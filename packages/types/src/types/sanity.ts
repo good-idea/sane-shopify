@@ -1,12 +1,5 @@
-import { SanityClient as _SanityClient, Transaction } from '@sanity/client'
-import {
-  Product,
-  Collection,
-  ShopifyItem,
-  Variant,
-  ShopifySecrets,
-} from './shopify'
-import { LinkOperation, SyncOperation } from './main'
+import { SanityClient as _SanityClient } from '@sanity/client'
+import { Product, Collection, ShopifyItem, Variant } from './shopify'
 
 export type SanityClient = _SanityClient
 
@@ -116,48 +109,6 @@ export type SanityShopifyDocument =
 export interface SanityFetchParams {
   types?: string[]
 }
-
-export interface SanityUtils {
-  syncSanityDocument: (
-    item: Product | Collection,
-    transaction: Transaction
-  ) => Promise<SyncOperation>
-  syncRelationships: (
-    from: SanityShopifyDocument,
-    to: SanityShopifyDocument | SanityShopifyDocument[],
-    transaction: Transaction
-  ) => Promise<LinkOperation>
-  removeRelationships: (
-    from: SanityShopifyDocument,
-    toRemove: SanityShopifyDocument | SanityShopifyDocument[],
-    transaction: Transaction
-  ) => Promise<null>
-  fetchRelatedDocs: (related: ShopifyItem[]) => Promise<RelatedPairPartial[]>
-  fetchAllSanityDocuments: (
-    params?: SanityFetchParams
-  ) => Promise<SanityShopifyDocument[]>
-  documentByShopifyId: (shopifyId: string) => Promise<SanityShopifyDocument>
-  documentByHandle: (
-    handle: string,
-    type: string
-  ) => Promise<SanityShopifyDocument>
-  archiveSanityDocument: (
-    doc: SanityShopifyDocument,
-    transaction: Transaction
-  ) => Promise<SanityShopifyDocument>
-  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: () => Promise<void>
-  fetchSecrets: () => Promise<ShopifySecrets>
-}
-
-// TODO: This kept coming up as undefined in the test store..
-// export enum OperationType {
-//   Create = 'create',
-//   Update = 'update',
-//   Delete = 'delete',
-//   Skip = 'skip',
-//   Link = 'link'
-// }
 
 export interface RelatedPair {
   shopifyNode: ShopifyItem
