@@ -97,9 +97,9 @@ export class Provider extends React.Component<
           shopName,
           accessToken,
         },
-        syncState: this.syncingClient.initialState,
+        syncState: this?.syncingClient?.initialState,
       },
-      this.syncingClient.initialize
+      this?.syncingClient?.initialize
     )
   }
 
