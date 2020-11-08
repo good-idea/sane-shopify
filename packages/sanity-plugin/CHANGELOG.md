@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/good-idea/sane-shopify/compare/v0.17.6...v0.18.0) (2020-11-08)
+
+### Bug Fixes
+
+- **sanity-plugin:** fix for sanity 2 ([f42bba0](https://github.com/good-idea/sane-shopify/commit/f42bba0d395086d77d5f1c8c75b21b7538360eb4))
+- **sanity-plugin:** fix type error ([b2ef175](https://github.com/good-idea/sane-shopify/commit/b2ef17551f9ebc8534d760c796534ed135e3036f))
+
+### Features
+
+- **sanity-plugin:** add presentmentPrices to sanity documents ([e30fdfc](https://github.com/good-idea/sane-shopify/commit/e30fdfc028edfd15e4a0597d63e5e6e5f27e4058)), closes [#121](https://github.com/good-idea/sane-shopify/issues/121)
+
 ## [0.17.6](https://github.com/good-idea/sane-shopify/compare/v0.17.5...v0.17.6) (2020-09-06)
 
 ### Bug Fixes

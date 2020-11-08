@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/good-idea/sane-shopify/compare/v0.17.6...v0.18.0) (2020-11-08)
+
+### Bug Fixes
+
+- **sync-utils:** fix cursor type errors ([9d1bb2a](https://github.com/good-idea/sane-shopify/commit/9d1bb2a608de548acd195930b96a9e445936ae2f))
+
+### Features
+
+- **sync-utils:** add presentmentPrices to sync ([e8e2ca0](https://github.com/good-idea/sane-shopify/commit/e8e2ca0b04df8f2aabbb01f4b3b23c35be1dcd4f))
+
 ## [0.17.6](https://github.com/good-idea/sane-shopify/compare/v0.17.5...v0.17.6) (2020-09-06)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
