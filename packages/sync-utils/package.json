@@ -46,21 +46,21 @@
 	},
 	"dependencies": {
 		"@good-idea/leaky-bucket": "^3.1.2",
-		"@good-idea/unwind-edges": "^1.4.0",
+		"@good-idea/unwind-edges": "^1.5.2",
 		"@sane-shopify/types": "^0.17.6",
-		"@sanity/client": "^1.150.1",
-		"debug": "^4.1.1",
+		"@sanity/client": "^2.0.9",
+		"debug": "^4.2.0",
 		"deepmerge": "^4.2.2",
 		"es6-promise": "^4.2.8",
 		"graphql-tag": "^2.11.0",
-		"isomorphic-fetch": "^2.2.1",
-		"p-queue": "^6.6.1",
-		"xstate": "^4.13.0"
+		"isomorphic-fetch": "^3.0.0",
+		"p-queue": "^6.6.2",
+		"xstate": "^4.14.0"
 	},
 	"devDependencies": {
 		"@types/debug": "^4.1.5",
 		"@types/isomorphic-fetch": "^0.0.35",
-		"react-hot-loader": "^4.12.21"
+		"react-hot-loader": "^4.13.0"
 	},
 	"gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }

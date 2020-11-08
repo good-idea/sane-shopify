@@ -23,5 +23,5 @@
     "types": ["jest", "node"],
     "typeRoots": ["node_modules/@types"]
   },
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["test-frontend", "node_modules", "**/*.spec.ts"]
 }
