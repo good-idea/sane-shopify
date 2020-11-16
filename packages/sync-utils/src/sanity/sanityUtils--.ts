@@ -1,5 +1,5 @@
 import { unwindEdges } from '@good-idea/unwind-edges'
-import { SanityClient } from '@sanity/client'
+import type { SanityClient } from '@sanity/client'
 import { omit } from 'lodash'
 import {
   SanityShopifyDocument,
