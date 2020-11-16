@@ -242,9 +242,9 @@ export class SanityUtils {
   public async syncSanityDocuments(
     shopifyItems: Array<Collection | Product>
   ): Promise<SyncOperation[]> {
-    const operations = await Promise.all(
-      shopifyItems.map((item) => this.getSyncOperation(item))
-    )
-    return operations
+    // const operations = await Promise.all(
+    //   shopifyItems.map((item) => this.getSyncOperation(item))
+    // )
+    // return operations
   }
 }

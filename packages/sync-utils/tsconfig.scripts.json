@@ -1,0 +1,9 @@
+{
+  "references": [{ "path": "../types" }],
+  "compilerOptions": {
+    "strict": false,
+    "module": "commonjs",
+    "esModuleInterop": true
+  },
+  "include": ["src", "scripts"]
+}
