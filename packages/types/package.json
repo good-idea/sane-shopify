@@ -1,6 +1,6 @@
 {
   "name": "@sane-shopify/types",
-  "version": "0.17.6",
+  "version": "0.18.0",
   "description": "Common typescript typings for @sane-shopify projects",
   "author": "Joseph Thomas <joseph@good-idea.studio>",
   "homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -38,7 +38,7 @@
     "url": "git+https://github.com/good-idea/sane-shopify.git"
   },
   "devDependencies": {
-    "@good-idea/unwind-edges": "^1.4.0"
+    "@good-idea/unwind-edges": "^1.5.2"
   },
   "gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }

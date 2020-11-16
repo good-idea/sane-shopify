@@ -48,9 +48,6 @@ export const getLastCursor = <NodeType>(connection: Paginated<NodeType>) => {
   if (!lastEdge) return null
   return lastEdge.cursor
 }
-// connection.edges && connection.edges.length > 0
-//   ? connection.edges[connection.edges.length - 1].cursor ?? null
-//   : null
 
 export const mergePaginatedResults = <NodeType>(
   p1: Paginated<NodeType>,
@@ -60,6 +57,7 @@ export const mergePaginatedResults = <NodeType>(
 
   return {
     pageInfo: {
+      hasPrevPage: p1.pageInfo.hasPreviousPage,
       hasPreviousPage: p1.pageInfo.hasPreviousPage,
       hasNextPage: p2.pageInfo.hasNextPage,
     },

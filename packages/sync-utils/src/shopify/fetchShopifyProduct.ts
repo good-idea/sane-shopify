@@ -42,7 +42,7 @@ interface ByHandleResult {
 const getByHandle = async (
   query: ShopifyClient['query'],
   handle: string,
-  collectionsAfter?: string
+  collectionsAfter?: string | number
 ) => {
   const result = await query<ByHandleResult>(PRODUCT_BY_HANDLE, {
     handle,
