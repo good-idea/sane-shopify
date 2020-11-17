@@ -19,7 +19,7 @@ export class SanityCache {
 
   public getByHandle(
     handle: string,
-    type: DocumentType
+    type: SaneShopifyDocumentType
   ): SanityShopifyDocument | undefined {
     if (type === SaneShopifyDocumentType.Product) {
       return this.productHandleCache.get(handle)
@@ -34,10 +34,10 @@ export class SanityCache {
     if (!doc) return
     this.idCache.set(doc._id, doc)
     this.shopifyIdCache.set(doc.shopifyId, doc)
-    if (doc._type === SanityDocumentType.Product) {
+    if (doc._type === SaneShopifyDocumentType.Product) {
       this.productHandleCache.set(doc.handle, doc)
     }
-    if (doc._type === SanityDocumentType.Collection) {
+    if (doc._type === SaneShopifyDocumentType.Collection) {
       this.collectionHandleCache.set(doc.handle, doc)
     }
   }

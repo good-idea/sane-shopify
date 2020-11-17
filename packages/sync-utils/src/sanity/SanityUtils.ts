@@ -31,23 +31,27 @@ interface CacheResults {
 
 export class SanityUtils {
   private sanityClient: SanityClient
-  private cache: SanityCache
+  public cache: SanityCache
   private stateMachine: SyncStateMachine
 
-  constructor(sanityClient: SanityClient, stateMachine: SyncStateMachine) {
+  constructor(
+    sanityClient: SanityClient,
+    stateMachine: SyncStateMachine,
+    cache: SanityCache
+  ) {
     this.sanityClient = sanityClient
     this.stateMachine = stateMachine
-    this.cache = new SanityCache()
+    this.cache = cache
   }
 
-  // private getTransaction(): Transaction {
-  //   if (this.transaction) return this.transaction
-  //   const trx = this.sanityClient.transaction()
-  //   this.transaction = trx
-  //   return trx
-  // }
+  private getTransaction(): Transaction {
+    if (this.transaction) return this.transaction
+    const trx = this.sanityClient.transaction()
+    this.transaction = trx
+    return trx
+  }
 
-  private async getSanityDocByShopifyId(
+  async getSanityDocByShopifyId(
     shopifyId: string
   ): Promise<SanityShopifyDocument | void> {
     const cached = this.cache.getByShopifyId(shopifyId)
@@ -119,7 +123,7 @@ export class SanityUtils {
          ...,
         }
       `)
-    allDocs.forEach(this.cache.set)
+    allDocs.forEach((doc) => this.cache.set(doc))
     return allDocs
   }
 

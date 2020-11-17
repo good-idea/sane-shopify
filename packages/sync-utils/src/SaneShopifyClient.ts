@@ -1,5 +1,5 @@
+import type { ShopifyClient } from '@sanity/client'
 import {
-  ShopifyClient,
   SanityClient,
   ShopifySecrets,
   SyncMachineState,

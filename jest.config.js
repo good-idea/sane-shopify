@@ -1,16 +1,16 @@
 module.exports = {
   automock: false,
   moduleFileExtensions: ['js', 'ts', 'tsx', 'json'],
-  testMatch: ['**/**/*.test.ts'],
+  testMatch: ['**/**/*.test.ts', '**/**/*.test.tsx'],
   coveragePathIgnorePatterns: [
     'node_modules',
     'coverage',
     '/__.*__/',
     'jest.config.js',
-    './src/types'
+    './src/types',
   ],
   collectCoverage: false,
   transform: {
-    '^.+\\.tsx?$': 'ts-jest'
-  }
+    '^.+\\.tsx?$': 'ts-jest',
+  },
 }

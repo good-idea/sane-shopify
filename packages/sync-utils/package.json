@@ -48,7 +48,6 @@
 		"@good-idea/leaky-bucket": "^3.1.2",
 		"@good-idea/unwind-edges": "^1.5.2",
 		"@sane-shopify/types": "^0.18.0",
-		"@sanity/client": "^2.0.9",
 		"debug": "^4.2.0",
 		"deepmerge": "^4.2.2",
 		"es6-promise": "^4.2.8",
@@ -58,6 +57,7 @@
 		"xstate": "^4.14.0"
 	},
 	"devDependencies": {
+		"@sanity/client": "^2.0.9",
 		"@types/debug": "^4.1.5",
 		"@types/isomorphic-fetch": "^0.0.35",
 		"execa": "^4.1.0",

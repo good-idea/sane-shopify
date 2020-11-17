@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "references": [{ "path": "../types" }],
+  "compilerOptions": {
+    "resolveJsonModule": true
+  },
+  "types": ["jest"],
   "include": ["src"]
 }
