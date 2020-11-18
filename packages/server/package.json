@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/server",
-	"version": "0.18.1",
+	"version": "0.18.2",
 	"description": "A server and lambdas to serve & sync data between Shopify and Sanity",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -38,7 +38,7 @@
 		"url": "https://github.com/good-idea/sane-shopify/issues"
 	},
 	"dependencies": {
-		"@sane-shopify/sync-utils": "^0.18.1",
+		"@sane-shopify/sync-utils": "^0.18.2",
 		"apollo-link": "^1.2.14",
 		"apollo-link-http": "^1.5.17",
 		"apollo-server-lambda": "^2.19.0",

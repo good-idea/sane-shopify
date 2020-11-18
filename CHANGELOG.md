@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.2](https://github.com/good-idea/sane-shopify/compare/v0.18.1...v0.18.2) (2020-11-18)
+
+
+### Bug Fixes
+
+* **sync-utils:** update storefront API version to 2020-10 ([30eccb1](https://github.com/good-idea/sane-shopify/commit/30eccb1a0ac864b4dff1dbcc24f7c52ade2dc292))
+
+
+
+
+
 ## [0.18.1](https://github.com/good-idea/sane-shopify/compare/v0.18.0...v0.18.1) (2020-11-18)
 
 
