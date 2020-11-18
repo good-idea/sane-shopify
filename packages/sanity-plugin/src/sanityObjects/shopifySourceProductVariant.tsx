@@ -56,6 +56,11 @@ export const shopifySourceProductVariant = {
   },
   fields: [
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },
+    {
+      name: 'currentlyNotInStock',
+      title: 'Currently not in stock',
+      type: 'boolean',
+    },
     { name: 'id', title: 'ID', type: 'string' },
     // TODO: this will return as NULL from shopify if it does not exist.
     //       The sync plugin needs to figure out how to deal with this.
