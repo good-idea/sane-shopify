@@ -1,6 +1,6 @@
+import { SanityClient } from '@sanity/client'
 import PQueue from 'p-queue'
 import {
-  SanityClient,
   SanityUtils,
   LinkOperation,
   SanityReference,

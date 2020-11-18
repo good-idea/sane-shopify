@@ -1,4 +1,5 @@
-import { SanityUtils, ShopifySecrets, SanityClient } from '@sane-shopify/types'
+import { SanityClient } from '@sanity/client'
+import { SanityUtils, ShopifySecrets } from '@sane-shopify/types'
 import { KEYS_ID, KEYS_TYPE } from '../constants'
 
 /**

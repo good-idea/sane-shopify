@@ -1,4 +1,5 @@
-import { SanityClient, SanityShopifyDocument } from '@sane-shopify/types'
+import { SanityClient } from '@sanity/client'
+import { SanityShopifyDocument } from '@sane-shopify/types'
 import { isSanityProduct, isSanityCollection } from '../typeGuards'
 
 const getRelationshipsToRemove = (

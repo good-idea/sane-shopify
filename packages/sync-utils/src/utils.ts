@@ -1,9 +1,9 @@
+import { SanityClient } from '@sanity/client'
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import {
   SanityShopifyProductDocument,
   Collection,
   Product,
-  SanityClient,
 } from '@sane-shopify/types'
 import { isShopifyProduct, isShopifyCollection } from './typeGuards'
 

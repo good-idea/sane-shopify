@@ -1,7 +1,7 @@
+import { SanityClient } from '@sanity/client'
 import {
   Collection,
   Product,
-  SanityClient,
   SyncOperation,
   SanityShopifyDocument,
   SanityShopifyDocumentPartial,

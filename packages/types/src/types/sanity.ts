@@ -1,4 +1,3 @@
-import { SanityClient as _SanityClient } from '@sanity/client'
 import {
   Product,
   Collection,
@@ -7,8 +6,6 @@ import {
   ShopifySecrets,
 } from './shopify'
 import { LinkOperation, SyncOperation } from './main'
-
-export type SanityClient = _SanityClient
 
 export interface SanityPair {
   from: SanityShopifyDocument

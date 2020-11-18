@@ -1,5 +1,5 @@
+import { SanityClient } from '@sanity/client'
 import {
-  SanityClient,
   SanityShopifyDocument,
   ShopifyItem,
   RelatedPairPartial,
