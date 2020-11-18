@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.1](https://github.com/good-idea/sane-shopify/compare/v0.18.0...v0.18.1) (2020-11-18)
+
+
+### Bug Fixes
+
+* **types:** fix sanity/client type imports ([724e8b3](https://github.com/good-idea/sane-shopify/commit/724e8b3dc5733c703474436152c7fb921b96bb6a))
+
+
+
+
+
 # [0.18.0](https://github.com/good-idea/sane-shopify/compare/v0.17.6...v0.18.0) (2020-11-08)
 
 **Note:** Version bump only for package @sane-shopify/types

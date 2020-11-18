@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.1](https://github.com/good-idea/sane-shopify/compare/v0.18.0...v0.18.1) (2020-11-18)
+
+
+### Bug Fixes
+
+* **sanity-plugin:** add currentylNotInStock to variant schema ([4166778](https://github.com/good-idea/sane-shopify/commit/41667787a44a1b58621be5eadba1b46ab91526cd))
+* **sync-utils:** add currentlyNotInStock to variant query ([7a2adca](https://github.com/good-idea/sane-shopify/commit/7a2adca1236066464427059bf7278ca283dbbf8f))
+* **types:** fix sanity/client type imports ([724e8b3](https://github.com/good-idea/sane-shopify/commit/724e8b3dc5733c703474436152c7fb921b96bb6a))
+
+
+
+
+
 # [0.18.0](https://github.com/good-idea/sane-shopify/compare/v0.17.6...v0.18.0) (2020-11-08)
 
 ### Bug Fixes
