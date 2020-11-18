@@ -1,5 +1,6 @@
 import { ShopifyClient, ShopifySecrets, Variables } from '@sane-shopify/types'
 import LeakyBucket from '@good-idea/leaky-bucket'
+import { STOREFRONT_API_VERSION } from '../constants'
 import { DocumentNode } from 'graphql'
 
 const getErrorMessage = (r: Response): string => {
@@ -36,8 +37,7 @@ export const createShopifyClient = (
     }
   }
   const { shopName, accessToken } = secrets
-  // const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql`
-  const url = `https://${shopName}.myshopify.com/api/graphql`
+  const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql.json`
   const headers = {
     'Content-Type': 'application/json',
     'X-Shopify-Storefront-Access-Token': accessToken,
