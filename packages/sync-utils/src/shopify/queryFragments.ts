@@ -32,6 +32,7 @@ const imageFragment = /* GraphQL */ `
 export const productVariantFragment = gql`
   fragment ProductVariantFragment on ProductVariant {
     availableForSale
+    currentlyNotInStock
     id
     image {
       ...ImageFragment
