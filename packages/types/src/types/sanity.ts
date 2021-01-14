@@ -81,7 +81,7 @@ export interface SanityShopifyProductDocument {
   maxVariantPrice?: number
   sourceData: Product
   collections: SanityShopifyCollectionDocument[]
-  collectionKeys?: SanityReference[]
+  collectionRefs?: SanityReference[]
   options: SanityArray<SanityShopifyProductOption>
   variants: SanityArray<SanityShopifyProductVariant>
 }
@@ -98,7 +98,7 @@ export interface SanityShopifyCollectionDocument {
   archived?: boolean
   sourceData: Collection
   products: SanityShopifyProductDocument[]
-  productKeys?: SanityReference[]
+  productRefs?: SanityReference[]
 }
 
 export type SanityShopifyDocument =
