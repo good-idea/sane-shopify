@@ -8,6 +8,7 @@ import {
   SanityShopifyDocument,
 } from '@sane-shopify/types'
 import { isSanityProduct, isSanityCollection } from '../typeGuards'
+// import { log } from '../logger'
 
 const arrayify = <T>(i: T | T[]) => (Array.isArray(i) ? i : [i])
 
@@ -66,27 +67,26 @@ export const createSyncRelationships = (
     toDocs.length === existingRelationships.length &&
     toDocs.every((toDoc, index) =>
       Boolean(
-        // @ts-ignore
         existingRelationships[index] &&
           existingRelationships[index].shopifyId === toDoc.shopifyId
       )
     )
 
-  if (alreadyLinked) {
+  const bToAKey = from._type === 'shopifyProduct' ? 'products' : 'collections'
+  const relationsToLink = toDocs.filter(
+    (toDoc) =>
+      /* Find all toDocs that do not have a relation to the from doc */
+      !toDoc[bToAKey].some(
+        (related: SanityShopifyDocument) => related.shopifyId === from.shopifyId
+      )
+  )
+  if (alreadyLinked && relationsToLink.length === 0) {
     return {
       type: 'link',
       sourceDoc: from,
       pairs: toDocs.map((toDoc) => ({ from, to: toDoc })),
     }
   }
-
-  const newLinks = toDocs.filter(
-    (toDoc) =>
-      !Boolean(
-        // @ts-ignore
-        existingRelationships.find((er) => toDoc.shopifyId === er.shopifyId)
-      )
-  )
 
   const aToBRelationships = toDocs.map((toDoc) => ({
     _type: 'reference',
@@ -115,35 +115,29 @@ export const createSyncRelationships = (
     await removeRelationships(from, relationshipsToRemove)
   }
 
-  const bToAKey = from._type === 'shopifyProduct' ? 'products' : 'collections'
-
   // Set all reverse relationships
   const rQueue = new PQueue({ concurrency: 1 })
 
   const pairs: SanityPair[] = await rQueue.addAll(
-    newLinks
-      .reduce<SanityShopifyDocument[]>((acc, toDoc) => {
-        if (acc.find((t) => t === toDoc)) return acc
-        return [...acc, toDoc]
-      }, [])
-      .map((toDoc) => async () => {
-        const pair = {
-          from: from,
-          to: toDoc,
-        }
+    relationsToLink.map((toDoc) => async () => {
+      const pair = {
+        from: from,
+        to: toDoc,
+      }
 
-        client
-          .patch(toDoc._id)
-          .setIfMissing({ [bToAKey]: [] })
-          .append(bToAKey, [
-            {
-              _type: 'reference',
-              _ref: from._id,
-              key: `${from._id}-${from._rev}`,
-            },
-          ])
-        return pair
-      })
+      await client
+        .patch(toDoc._id)
+        .setIfMissing({ [bToAKey]: [] })
+        .append(bToAKey, [
+          {
+            _type: 'reference',
+            _ref: from._id,
+            _key: `${from._id}-${from._rev}`,
+          },
+        ])
+        .commit()
+      return pair
+    })
   )
 
   const linkOperation: LinkOperation = {
