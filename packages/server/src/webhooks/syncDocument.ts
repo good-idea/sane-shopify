@@ -44,7 +44,7 @@ export const syncDocument = ({
       if (retries >= 4) {
         throw new Error('Could not fetch up to date item after 4 retries')
       }
-      const item = await syncUtils.fetchItemById(storefrontId, false)
+      const item = await syncUtils.fetchItemById(storefrontId, true)
       if (!item) return null
 
       if (new Date(item.updatedAt) < new Date(updated_at)) {
