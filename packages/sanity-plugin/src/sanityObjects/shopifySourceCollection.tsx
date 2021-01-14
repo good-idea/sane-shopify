@@ -58,6 +58,13 @@ export const shopifyCollectionSource = {
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
     {
+      title: 'Updated At',
+      name: 'updatedAt',
+      type: 'date',
+      readOnly: true,
+      hidden: true,
+    },
+    {
       title: 'Handle',
       name: 'handle',
       type: 'string',

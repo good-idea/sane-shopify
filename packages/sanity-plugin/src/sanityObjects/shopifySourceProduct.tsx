@@ -163,6 +163,13 @@ export const shopifyProductSource = {
     { name: 'createdAt', type: 'date', readOnly: true },
     { name: 'publishedAt', type: 'date', readOnly: true },
     {
+      title: 'Updated At',
+      name: 'updatedAt',
+      type: 'date',
+      readOnly: true,
+      hidden: true,
+    },
+    {
       name: 'priceRange',
       title: 'Price Range',
       hidden: true,
