@@ -1,8 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { WebhooksConfig, Webhooks, WebhookHandler } from '@sane-shopify/types'
+import {
+  WebhooksConfig,
+  Webhooks,
+  WebhookData,
+  WebhookHandler,
+} from '@sane-shopify/types'
 import { createWebhooks } from '../webhooks'
 
-type NextHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<void>
+interface TypedNextApiRequest<Body = any> extends NextApiRequest {
+  body: Body
+}
+
+type NextHandler<Body = any> = (
+  req: TypedNextApiRequest<Body>,
+  res: NextApiResponse
+) => Promise<void>
 
 type NextWebhooks = { [P in keyof Webhooks]: NextHandler }
 
@@ -12,12 +24,10 @@ export const createNextWebhooks = ({
 }: WebhooksConfig): NextWebhooks => {
   const webhooks = createWebhooks({ config, onError })
 
-  const createNextWebhook = (webhook: WebhookHandler): NextHandler => async (
-    req,
-    res
-  ) => {
-    const id = req.body?.id
-    await webhook({ id }).catch((err) => {
+  const createNextWebhook = (
+    webhook: WebhookHandler
+  ): NextHandler<WebhookData> => async (req, res) => {
+    await webhook(req.body).catch((err) => {
       if (onError) onError(err)
       res.status(500)
       res.send('error')

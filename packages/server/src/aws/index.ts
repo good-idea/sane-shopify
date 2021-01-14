@@ -1,5 +1,10 @@
 import { Handler, APIGatewayEvent } from 'aws-lambda'
-import { WebhooksConfig, Webhooks, WebhookHandler } from '@sane-shopify/types'
+import {
+  WebhooksConfig,
+  Webhooks,
+  WebhookData,
+  WebhookHandler,
+} from '@sane-shopify/types'
 import { createWebhooks } from '../webhooks'
 
 type AWSWebhooks = { [P in keyof Webhooks]: Handler }
@@ -17,9 +22,8 @@ export const createAWSWebhooks = ({
       if (onError) onError(new Error('No body received from webhook event'))
       return
     }
-    const nodeInfo = JSON.parse(event.body)
-    const { id } = nodeInfo
-    await webhook({ id })
+    const nodeInfo: WebhookData = JSON.parse(event.body)
+    await webhook(nodeInfo)
   }
 
   const AWSWebhooks = {
