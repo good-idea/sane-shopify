@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.1](https://github.com/good-idea/sane-shopify/compare/v0.19.0...v0.19.1) (2021-01-14)
+
+
+### Bug Fixes
+
+* **server:** fetch relationships to sync ([84a65e9](https://github.com/good-idea/sane-shopify/commit/84a65e9298ff16296e547b95ec8d3b28e26d5124))
+
+
+
+
+
 # [0.19.0](https://github.com/good-idea/sane-shopify/compare/v0.18.2...v0.19.0) (2021-01-14)
 
 

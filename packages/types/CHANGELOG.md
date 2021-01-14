@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.1](https://github.com/good-idea/sane-shopify/compare/v0.19.0...v0.19.1) (2021-01-14)
+
+
+### Bug Fixes
+
+* **types:** rename collectionKeys to collectionRefs ([384ab54](https://github.com/good-idea/sane-shopify/commit/384ab5498d02a2f59dc83789c28a0fc6f229e2f4))
+
+
+
+
+
 # [0.19.0](https://github.com/good-idea/sane-shopify/compare/v0.18.2...v0.19.0) (2021-01-14)
 
 
