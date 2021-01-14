@@ -72,6 +72,7 @@ export const productFragment = gql`
   fragment ProductFragment on Product {
     __typename
     id
+    updatedAt
     handle
     title
     description
@@ -141,6 +142,7 @@ export const productFragment = gql`
 export const collectionFragment = gql`
   fragment CollectionFragment on Collection {
     id
+    updatedAt
     handle
     title
     description

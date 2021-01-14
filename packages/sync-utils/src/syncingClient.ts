@@ -264,15 +264,15 @@ export const syncUtils = (
     onClearedSecrets()
   }
 
-  /* Sync an item by ID */
-  const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
-    startSync()
+  const syncItem = async (
+    itemId: string,
+    shopifyItem: Product | Collection | null,
+    cbs: SubscriptionCallbacks = {}
+  ) => {
     const logger = createLogger(cbs)
-    const shopifyItem = await fetchItemById(id, true)
-
     if (!shopifyItem) {
       onFetchComplete()
-      const sanityDoc = await documentByShopifyId(id)
+      const sanityDoc = await documentByShopifyId(itemId)
       if (sanityDoc) {
         archiveSanityDocument(sanityDoc)
       }
@@ -306,6 +306,13 @@ export const syncUtils = (
     }
     // @ts-ignore
     throw new Error(`Item type ${shopifyItem.__typename} is not supported`)
+  }
+
+  /* Sync an item by ID */
+  const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
+    startSync()
+    const shopifyItem = await fetchItemById(id, true)
+    return syncItem(id, shopifyItem, cbs)
   }
 
   /* Syncs all products */
@@ -479,6 +486,8 @@ export const syncUtils = (
     syncProducts,
     syncCollections,
     syncAll,
+    syncItem,
+    fetchItemById,
     syncItemByID,
   }
 }
