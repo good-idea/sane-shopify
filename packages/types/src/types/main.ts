@@ -5,6 +5,7 @@ import {
   Collection,
   ShopifyItem,
   TestSecretsResponse,
+  ShopifyUtils,
 } from './shopify'
 import { SyncMachineState } from './syncState'
 
@@ -27,6 +28,15 @@ export interface SyncUtils {
   syncProducts: (cbs?: SubscriptionCallbacks) => Promise<void>
   /* Syncs all collections */
   syncCollections: (cbs?: SubscriptionCallbacks) => Promise<void>
+  /* fetches a collection or product by storefront id */
+  fetchItemById: ShopifyUtils['fetchItemById']
+  // fetchItemById: (id: string) => Promise<Product | Collection | null>
+  /* Syncs a collection or product */
+  syncItem: (
+    originalId: string,
+    item: Product | Collection | null,
+    cbs?: SubscriptionCallbacks
+  ) => Promise<void>
   /* Syncs a collection or product by storefront id */
   syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
   /* Manage Secrets */
