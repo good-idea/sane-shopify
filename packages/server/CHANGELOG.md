@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/good-idea/sane-shopify/compare/v0.18.2...v0.19.0) (2021-01-14)
+
+
+### Features
+
+* **server:** retry sync for out-of-date graphql responses ([f5f92f4](https://github.com/good-idea/sane-shopify/commit/f5f92f4d5fba1fb1224bfef0b03a212c2f05116b))
+
+
+
+
+
 ## [0.18.2](https://github.com/good-idea/sane-shopify/compare/v0.18.1...v0.18.2) (2020-11-18)
 
 **Note:** Version bump only for package @sane-shopify/server

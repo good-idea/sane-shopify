@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/good-idea/sane-shopify/compare/v0.18.2...v0.19.0) (2021-01-14)
+
+
+### Features
+
+* **sanity-plugin:** add updatedAt to sourceData schemas ([2fa069e](https://github.com/good-idea/sane-shopify/commit/2fa069e5c881d68c434896d4a49eb9ad55a8d9e9))
+
+
+
+
+
 ## [0.18.2](https://github.com/good-idea/sane-shopify/compare/v0.18.1...v0.18.2) (2020-11-18)
 
 **Note:** Version bump only for package @sane-shopify/sanity-plugin

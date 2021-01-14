@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/sync-utils",
-	"version": "0.18.2",
+	"version": "0.19.0",
 	"description": "Syncing utility for Node & the browser",
 	"author": "Joseph Thomas | Good Idea Studio",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -47,7 +47,7 @@
 	"dependencies": {
 		"@good-idea/leaky-bucket": "^3.1.2",
 		"@good-idea/unwind-edges": "^1.5.2",
-		"@sane-shopify/types": "^0.18.1",
+		"@sane-shopify/types": "^0.19.0",
 		"@sanity/client": "^2.0.9",
 		"debug": "^4.2.0",
 		"deepmerge": "^4.2.2",

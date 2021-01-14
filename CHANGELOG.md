@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/good-idea/sane-shopify/compare/v0.18.2...v0.19.0) (2021-01-14)
+
+
+### Features
+
+* **sanity-plugin:** add updatedAt to sourceData schemas ([2fa069e](https://github.com/good-idea/sane-shopify/commit/2fa069e5c881d68c434896d4a49eb9ad55a8d9e9))
+* **server:** retry sync for out-of-date graphql responses ([f5f92f4](https://github.com/good-idea/sane-shopify/commit/f5f92f4d5fba1fb1224bfef0b03a212c2f05116b))
+* **sync-utils:** add syncItem, fetchItemById to sync utils ([7b0e6ca](https://github.com/good-idea/sane-shopify/commit/7b0e6ca83b2dbb6ae3b0a0d26de32f6c72db0ffa))
+* **types:** improve types for webhook syncing ([1bd1261](https://github.com/good-idea/sane-shopify/commit/1bd1261794fdc946ff42cde39357787e576366c5))
+
+
+
+
+
 ## [0.18.2](https://github.com/good-idea/sane-shopify/compare/v0.18.1...v0.18.2) (2020-11-18)
 
 
