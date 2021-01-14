@@ -20,16 +20,18 @@ export const createFetchAll = (
     shopifyId != null &&
     (${typesFilter})
    ]{
-      collections[]->,
-      products[]->,
-      "collectionKeys": collections[]{
+      products[]->{
+        "collectionRefs": collections[],
         ...
       },
-      "productKeys": products[]{
+      collections[]->{
+        "productRefs": products[],
         ...
       },
-     ...,
-    }
+      "collectionRefs": collections[],
+      "productRefs": products[],
+      ...
+   }
   `)
   allDocs.forEach((doc) => cache.set(doc))
   return allDocs

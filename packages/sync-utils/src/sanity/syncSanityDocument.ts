@@ -122,14 +122,16 @@ export const createSyncSanityDocument = (
     const doc = await client.fetch<SanityShopifyDocument>(
       `
       *[shopifyId == $shopifyId]{
-        products[]->,
-        collections[]->,
-        "collectionKeys": collections[]{
+        products[]->{
+          "collectionRefs": collections[],
           ...
         },
-        "productKeys": products[]{
+        collections[]->{
+          "productRefs": products[],
           ...
         },
+        "collectionRefs": collections[],
+        "productRefs": products[],
         ...
       }[0]`,
       {
@@ -197,8 +199,8 @@ export const createSyncSanityDocument = (
     const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
       'products',
       'collections',
-      'productKeys',
-      'collectionKeys',
+      'productRefs',
+      'collectionRefs',
     ])
 
     const updatedDoc = await client

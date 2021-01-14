@@ -93,15 +93,17 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
 
     const doc = await client.fetch<SanityShopifyDocument>(
       `*[shopifyId == $shopifyId && defined(archived) && archived != true]{
-        products[]->,
-        collections[]->,
-        "collectionKeys": collections[]{
+        products[]->{
+          "collectionRefs": collections[],
           ...
         },
-        "productKeys": products[]{
+        collections[]->{
+          "productRefs": products[],
           ...
         },
-        ...
+        "collectionRefs": collections[],
+        "productRefs": products[],
+         ...
       }[0]`,
       {
         shopifyId,
@@ -117,16 +119,18 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
 
     const doc = await client.fetch<SanityShopifyDocument>(
       `*[handle == $handle && defined(archived) && archived != true]{
-        products[]->,
-        collections[]->,
-        "collectionKeys": collections[]{
+        products[]->{
+          "collectionRefs": collections[],
           ...
         },
-        "productKeys": products[]{
+        collections[]->{
+          "productRefs": products[],
           ...
         },
-        ...
-      }[0]`,
+        "collectionRefs": collections[],
+        "productRefs": products[],
+         ...
+     }[0]`,
       {
         handle,
       }

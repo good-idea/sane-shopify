@@ -17,19 +17,23 @@ const removeDraftId = (doc: SanityShopifyDocument): SanityShopifyDocument => ({
   _id: doc._id.replace(/^drafts\./, ''),
 })
 
+const getRelatedKeys = (doc: SanityShopifyDocument): SanityReference[] => {
+  if (isSanityProduct(doc)) {
+    return doc.collectionRefs || []
+  } else if (isSanityCollection(doc)) {
+    return doc.productRefs || []
+  }
+  return []
+}
+
 export const createRemoveRelationships = (
   client: SanityClient
 ): SanityUtils['removeRelationships'] => async (
   from: SanityShopifyDocument,
   toRemove: SanityShopifyDocument | SanityShopifyDocument[]
 ): Promise<null> => {
-  const related: SanityReference[] | undefined = isSanityProduct(from)
-    ? from.collectionKeys
-    : isSanityCollection(from)
-    ? from.productKeys
-    : []
+  const related = getRelatedKeys(from)
 
-  if (!related) throw new Error('No related docs were provided')
   const relationshipsToRemove = arrayify(toRemove)
     .map((itemToRemove) =>
       related.find((reference) => reference._ref === itemToRemove._id)
@@ -43,6 +47,7 @@ export const createRemoveRelationships = (
     )
     .filter(Boolean)
 
+  if (relationshipsToRemove.length === 0) return null
   await client.patch(from._id).unset(relationshipsToRemove).commit()
   return null
 }
@@ -102,17 +107,20 @@ export const createSyncRelationships = (
     .set({ [aToBPatchKey]: aToBRelationships })
     .commit()
 
-  const relationshipsToRemove = existingRelationships.reduce<
-    SanityShopifyDocument[]
-  >((acc, item) => {
-    if (item.archived === true || item.shopifyId === null) return [...acc, item]
-    if (acc.find((i) => i._id === item._id)) return [...acc, item]
-    return acc
+  const relationshipsToRemove = existingRelationships.filter((item) => {
+    if (item.archived || item.shopifyId === null) return false
+    if (!toDocs.some((doc) => doc._id === item._id)) return true
+    return false
   }, [])
 
   if (relationshipsToRemove.length) {
     const removeRelationships = createRemoveRelationships(client)
-    await removeRelationships(from, relationshipsToRemove)
+    const removeQueue = new PQueue({ concurrency: 1 })
+    await removeQueue.addAll(
+      relationshipsToRemove.map((relatedDoc) => async () => {
+        return removeRelationships(relatedDoc, from)
+      })
+    )
   }
 
   // Set all reverse relationships
