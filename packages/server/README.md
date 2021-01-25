@@ -181,7 +181,7 @@ import { webhooks } from './src/webhooks'
 
 app.post('/api/onProductCreate', async (req, res) => {
   const { body } = req;
-  await webhooks[webhook](body);
+  await webhooks.onProductCreate(body)
   res.status(200).send('success')
 })
 ```
