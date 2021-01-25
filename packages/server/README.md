@@ -180,8 +180,8 @@ An example express.js route might be:
 import { webhooks } from './src/webhooks'
 
 app.post('/api/onProductCreate', async (req, res) => {
-  const id = req.body.id
-  await webhooks.onProductCreate(id)
+  const { body } = req;
+  await webhooks[webhook](body);
   res.status(200).send('success')
 })
 ```
