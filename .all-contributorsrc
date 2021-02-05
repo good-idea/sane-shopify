@@ -33,7 +33,16 @@
       "contributions": [
         "code"
       ]
-    }   
+    },
+    {
+      "login": "nrgnrg",
+      "name": "Richard Cooke",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25795402?v=4",
+      "profile": "https://github.com/nrgnrg",
+      "contributions": [
+        "doc"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "projectName": "sane-shopify",
