@@ -7,7 +7,7 @@ import {
 } from '@sane-shopify/types'
 import { createWebhooks } from '../webhooks'
 
-interface TypedNextApiRequest<Body = any> extends NextApiRequest {
+export interface TypedNextApiRequest<Body = any> extends NextApiRequest {
   body: Body
 }
 
