@@ -21,10 +21,7 @@ jobs:
       - name: Install deps and build
         run: yarn install
 
-      - name: Lint
-        run: yarn lint
-
-      - name: Test
+     - name: Test
         run: yarn test 
 
   publish:
