@@ -17,6 +17,11 @@ This repo consists of several packages that connect [Sanity](https://www.sanity.
 
 If you want to be notified of updates, leave a comment in [this issue](https://github.com/good-idea/sane-shopify/issues/22).
 
+## Contributing
+
+All contributions are welcome! Please open issues for any ideas for what you'd like this package to do. If you want to contribute to the project, see the [Contributing](CONTRIBUTING.md) docs.
+
+
 ## What this project is
 
 **Sane Shopify** was built after working around the limitations of the Shopify product & collection editor. Shopify has great e-commerce administration capabilities, but as a CMS, it's far behind solutions such as Sanity in terms of customization. Adding content beyond Shopify's defaults requires working with metafields, through 3rd-party apps or plugins. For example:
