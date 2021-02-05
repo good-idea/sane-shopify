@@ -261,6 +261,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://www.good-idea.studio"><img src="https://avatars.githubusercontent.com/u/11514928?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joseph Thomas</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Documentation">📖</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Code">💻</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Tests">⚠️</a></td>
     <td align="center"><a href="http://branchlabs.com"><img src="https://avatars.githubusercontent.com/u/842883?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Graham Lipsman</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=GLips" title="Code">💻</a></td>
+    <td align="center"><a href="https://homerjam.es"><img src="https://avatars.githubusercontent.com/u/1055769?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Homer</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Documentation">📖</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Code">💻</a></td>
   </tr>
 </table>
 
