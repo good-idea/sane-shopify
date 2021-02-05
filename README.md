@@ -1,6 +1,6 @@
 # Sane Shopify
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 🚨 very alpha! in active development. 🚨
@@ -19,6 +19,11 @@ This repo consists of several packages that connect [Sanity](https://www.sanity.
 ## Curious? 🤔
 
 If you want to be notified of updates, leave a comment in [this issue](https://github.com/good-idea/sane-shopify/issues/22).
+
+## Contributing
+
+All contributions are welcome! Please open issues for any ideas for what you'd like this package to do. If you want to contribute to the project, see the [Contributing](CONTRIBUTING.md) docs.
+
 
 ## What this project is
 
@@ -254,6 +259,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
+    <td align="center"><a href="https://www.good-idea.studio"><img src="https://avatars.githubusercontent.com/u/11514928?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joseph Thomas</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Documentation">📖</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Code">💻</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://branchlabs.com"><img src="https://avatars.githubusercontent.com/u/842883?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Graham Lipsman</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=GLips" title="Code">💻</a></td>
     <td align="center"><a href="https://homerjam.es"><img src="https://avatars.githubusercontent.com/u/1055769?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Homer</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Documentation">📖</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Code">💻</a></td>
   </tr>
 </table>

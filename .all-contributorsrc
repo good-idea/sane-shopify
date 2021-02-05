@@ -6,15 +6,34 @@
   "commit": false,
   "contributors": [
     {
+      "login": "good-idea",
+      "name": "Joseph Thomas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11514928?v=4",
+      "profile": "https://www.good-idea.studio",
+      "contributions": [
+        "doc",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "GLips",
+      "name": "Graham Lipsman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/842883?v=4",
+      "profile": "http://branchlabs.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
       "login": "homerjam",
       "name": "James Homer",
       "avatar_url": "https://avatars.githubusercontent.com/u/1055769?v=4",
       "profile": "https://homerjam.es",
       "contributions": [
-        "doc",
         "code"
       ]
-    }
+    }   
   ],
   "contributorsPerLine": 7,
   "projectName": "sane-shopify",
