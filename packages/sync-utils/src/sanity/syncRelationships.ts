@@ -78,13 +78,15 @@ export const createSyncRelationships = (
     )
 
   const bToAKey = from._type === 'shopifyProduct' ? 'products' : 'collections'
-  const relationsToLink = toDocs.filter(
-    (toDoc) =>
-      /* Find all toDocs that do not have a relation to the from doc */
-      !toDoc[bToAKey].some(
-        (related: SanityShopifyDocument) => related.shopifyId === from.shopifyId
-      )
-  )
+  const relationsToLink = toDocs.filter((toDoc) => {
+    if (typeof toDoc[bToAKey] === 'undefined') {
+      toDoc[bToAKey] = []
+    }
+    /* Find all toDocs that do not have a relation to the from doc */
+    return !toDoc[bToAKey].some(
+      (related: SanityShopifyDocument) => related.shopifyId === from.shopifyId
+    )
+  })
   if (alreadyLinked && relationsToLink.length === 0) {
     return {
       type: 'link',
@@ -149,7 +151,7 @@ export const createSyncRelationships = (
   )
 
   const linkOperation: LinkOperation = {
-    type: 'link' as 'link',
+    type: 'link' as const,
     sourceDoc: from,
     pairs,
   }
