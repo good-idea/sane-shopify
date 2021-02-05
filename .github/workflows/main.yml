@@ -1,0 +1,49 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    name: Build, lint, and test on Node ${{ matrix.node }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['10.x', '12.x', '14.x']
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install deps 
+        run: yarn install
+
+      - name: Build
+        run: yarn build 
+
+      - name: Test
+        run: yarn test 
+
+  publish:
+    name: Publish to NPM
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install dependencies 
+        run: yarn install
+
+      - name: Build Packages
+        run: yarn build 
+
+      - name: Semantic Release
+        run: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
