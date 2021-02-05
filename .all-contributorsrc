@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "good-idea",
+      "name": "Joseph Thomas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11514928?v=4",
+      "profile": "https://www.good-idea.studio",
+      "contributions": [
+        "doc",
+        "code",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "sane-shopify",
+  "projectOwner": "good-idea",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

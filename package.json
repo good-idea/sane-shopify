@@ -12,6 +12,7 @@
 		"test:coverage:send": "echo 'No tests yet, write some tests!'",
 		"build": "lerna run build",
 		"watch": "lerna run --parallel watch",
+    "start": "yarn watch",
 		"release": "yarn test && yarn build && lerna publish --yes"
 	},
 	"workspaces": [
