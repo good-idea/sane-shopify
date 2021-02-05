@@ -18,10 +18,13 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install deps and build
+      - name: Install deps 
         run: yarn install
 
-     - name: Test
+      - name: Build
+        run: yarn build 
+
+      - name: Test
         run: yarn test 
 
   publish:
