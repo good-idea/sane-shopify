@@ -41,7 +41,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.SEMANTIC_RELEASE_GITHUB_TOKEN }}
+          token: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
 
       - name: Git Identity
         run: |
@@ -49,7 +49,7 @@ jobs:
           git config user.email github-actions@github.com
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY
         env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
 
       - uses: actions/cache@v2
         with:
@@ -65,5 +65,5 @@ jobs:
       - name: Semantic Release
         run: yarn release
         env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
