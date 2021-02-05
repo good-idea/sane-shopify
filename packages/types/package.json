@@ -1,6 +1,6 @@
 {
   "name": "@sane-shopify/types",
-  "version": "0.19.2",
+  "version": "0.19.3",
   "description": "Common typescript typings for @sane-shopify projects",
   "author": "Joseph Thomas <joseph@good-idea.studio>",
   "homepage": "https://github.com/good-idea/sane-shopify#readme",
