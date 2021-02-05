@@ -204,7 +204,7 @@ Enter your Shopify storefront name and your access token in the setup pane. Once
 
 ## Setting up Shopify webhooks
 
-#### TODO
+See the instructions in the [`@sane-shopify/server` Readme](packages/server/README.md)
 
 ---
 
