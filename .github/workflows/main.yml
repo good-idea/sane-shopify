@@ -40,6 +40,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.SEMANTIC_RELEASE_GITHUB_TOKEN }}
 
       - name: Git Identity
         run: |
