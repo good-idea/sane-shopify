@@ -1,11 +1,4 @@
 # `sync-utils`
 
-> TODO: description
+> TODO: document API
 
-## Usage
-
-```
-const hooksServer = require('sync-utils');
-
-// TODO: DEMONSTRATE API
-```
