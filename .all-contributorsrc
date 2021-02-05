@@ -15,6 +15,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "GLips",
+      "name": "Graham Lipsman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/842883?v=4",
+      "profile": "http://branchlabs.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
