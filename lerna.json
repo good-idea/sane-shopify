@@ -1,13 +1,11 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.19.1",
   "npmClient": "yarn",
   "command": {
     "publish": {
       "conventionalCommits": true,
-      "allowBranch": "master",
+      "allowBranch": "main",
       "message": "chore(release): %s"
     }
   }
