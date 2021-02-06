@@ -20,7 +20,7 @@ jobs:
 
       - uses: mstachniuk/ci-skip@v1
         with:
-          fail-fast: true
+          commit-filter: 'skip-ci'
 
       - name: Use Node ${{ matrix.node }}
         uses: actions/setup-node@v1
@@ -28,17 +28,21 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - uses: actions/cache@v2
+        if: ${{ env.CI_SKIP == 'false' }}
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install deps
+        if: ${{ env.CI_SKIP == 'false' }}
         run: yarn install
 
       - name: Build
+        if: ${{ env.CI_SKIP == 'false' }}
         run: yarn build
 
       - name: Test
+        if: ${{ env.CI_SKIP == 'false' }}
         run: yarn test
 
   publish:
@@ -52,7 +56,12 @@ jobs:
         with:
           token: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
 
+      - uses: mstachniuk/ci-skip@v1
+        with:
+          commit-filter: 'skip-ci'
+
       - name: Git Identity
+        if: ${{ env.CI_SKIP == 'false' }}
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -62,17 +71,21 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - uses: actions/cache@v2
+        if: ${{ env.CI_SKIP == 'false' }}
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install dependencies
+        if: ${{ env.CI_SKIP == 'false' }}
         run: yarn install
 
       - name: Build Packages
+        if: ${{ env.CI_SKIP == 'false' }}
         run: yarn build
 
       - name: Semantic Release
+        if: ${{ env.CI_SKIP == 'false' }}
         run: |
           npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}" 
           yarn release
