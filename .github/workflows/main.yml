@@ -3,6 +3,7 @@ on: [push]
 jobs:
   build:
     name: Build, lint, and test on Node ${{ matrix.node }}
+    if: github.ref == 'refs/heads/foo'
 
     runs-on: ubuntu-latest
     strategy:
@@ -21,7 +22,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ matrix.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install deps
         run: yarn install
