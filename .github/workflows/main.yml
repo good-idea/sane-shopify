@@ -43,7 +43,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    needs: build
+    needs: test 
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
