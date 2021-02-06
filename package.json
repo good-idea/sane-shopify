@@ -13,8 +13,8 @@
 		"build": "lerna run build",
 		"lint": "lerna run test:lint",
 		"watch": "lerna run --parallel watch",
-		"start": "yarn watch",
-		"release": "GH_TOKEN=ec556caaa95ba855dcf177b2529cf4d5a33c8312 lerna exec --concurrency 1 -- npx --no-install semantic-release -e semantic-release-monorepo"
+    "start": "yarn watch",
+		"release": "lerna publish --yes"
 	},
 	"workspaces": [
 		"packages/*"
@@ -22,12 +22,6 @@
 	"devDependencies": {
 		"@commitlint/cli": "^11.0.0",
 		"@commitlint/config-conventional": "^11.0.0",
-		"@semantic-release/changelog": "^5.0.1",
-		"@semantic-release/commit-analyzer": "^8.0.1",
-		"@semantic-release/git": "^9.0.0",
-		"@semantic-release/github": "^7.2.0",
-		"@semantic-release/npm": "^7.0.10",
-		"@semantic-release/release-notes-generator": "^9.0.1",
 		"@types/jest": "^26.0.15",
 		"@types/node": "^14.14.6",
 		"@typescript-eslint/eslint-plugin": "^4.6.1",
@@ -41,15 +35,12 @@
 		"jest-cli": "^26.6.3",
 		"lerna": "^3.22.1",
 		"markdown-toc": "^1.2.0",
-		"multi-semantic-release": "^2.6.0",
 		"nodemon": "^2.0.6",
 		"npm-check-updates": "^10.0.0",
 		"npm-run-all": "^4.1.5",
 		"prettier": "^2.1.2",
 		"pretty-quick": "^3.1.0",
 		"rimraf": "^3.0.2",
-		"semantic-release": "^17.3.7",
-		"semantic-release-monorepo": "^7.0.4",
 		"ts-jest": "^26.4.4",
 		"tsc-watch": "^4.2.9",
 		"tsdx": "^0.14.1",

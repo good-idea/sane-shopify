@@ -1,14 +1,12 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.19.3",
   "npmClient": "yarn",
   "command": {
     "publish": {
       "conventionalCommits": true,
       "allowBranch": "main",
-      "message": "chore(release): %s"
+      "message": "chore(release): %s [skip-ci]"
     }
   }
 }

@@ -21,7 +21,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ matrix.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install deps
         run: yarn install
@@ -63,7 +63,7 @@ jobs:
         run: yarn build
 
       - name: Semantic Release
-        run: yarn release
+        run: NPM_TOKEN=${NPM_TOKEN} yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
