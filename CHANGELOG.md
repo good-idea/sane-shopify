@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.19.4 (2021-02-06)
+
+
+### Bug Fixes
+
+* **sync-utils:** dummy fix for version bump (2) ([f5e8097](https://github.com/good-idea/sane-shopify/commit/f5e80976ea287e96d49f138628755891ca0362b7))
+
+
+
+
+
 ## 0.19.3 (2021-02-05)
 
 **Note:** Version bump only for package sane-shopify-monorepo-root
