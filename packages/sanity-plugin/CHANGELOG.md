@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.19.5 (2021-02-06)
+
+
+### Bug Fixes
+
+* **sync-utils:** dummy fix for version bump (4) ([9889d3c](https://github.com/good-idea/sane-shopify/commit/9889d3c59b2a45b22dd708c8ff97c63d3507f13e))
+
+
+
+
+
 ## 0.19.4 (2021-02-06)
 
 
