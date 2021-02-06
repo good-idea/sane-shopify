@@ -1,10 +1,14 @@
 name: CI
-on: [push]
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
-  build:
+  test:
     name: Build, lint, and test on Node ${{ matrix.node }}
-    if: github.ref == 'refs/heads/foo'
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,6 +17,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
+      - uses: mstachniuk/ci-skip@v1
+        with:
+          fail-fast: true
 
       - name: Use Node ${{ matrix.node }}
         uses: actions/setup-node@v1
@@ -35,6 +43,7 @@ jobs:
 
   publish:
     name: Publish to NPM
+    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -66,7 +75,6 @@ jobs:
       - name: Semantic Release
         run: |
           npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}" 
-          npm whoami
           yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
