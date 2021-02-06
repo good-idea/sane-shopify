@@ -11,9 +11,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **sync-utils:** dummy fix for version bump (6) ([3778ea9](https://github.com/good-idea/sane-shopify/commit/3778ea9cf4ffcabd7edf441e1b1a166a273b1558))
 
 
-
-
-
 ## 0.19.5 (2021-02-06)
 
 
