@@ -29,6 +29,8 @@ export const syncDocument = ({
   if (!docType) {
     throw new Error(`Cannot sync document of type ${type}`)
   }
+  /* Let the GraphQL Response catch up before we try to fetch the latest info */
+  await sleep(10000)
   const storefrontId = btoa(`gid://shopify/${docType}/${id}`)
   try {
     /**
