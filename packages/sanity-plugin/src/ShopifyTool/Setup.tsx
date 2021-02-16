@@ -38,12 +38,14 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     error: false,
   }
 
-  public handleInputChange = (field: 'shopName' | 'accessToken') => (e) => {
+  public handleInputChange = (field: 'shopName' | 'accessToken') => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     if (field === 'shopName') this.setState({ shopName: e.target.value })
     if (field === 'accessToken') this.setState({ accessToken: e.target.value })
   }
 
-  public clear = () => {
+  public clear = (): void => {
     this.setState({
       shopName: this.props?.secrets?.shopName || '',
       accessToken: this.props?.secrets?.accessToken || '',
@@ -51,7 +53,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     })
   }
 
-  public handleSubmit = async () => {
+  public handleSubmit = async (): Promise<void> => {
     this.setState({ loading: true })
     const { saveSecrets } = this.props
     const { shopName, accessToken } = this.state
@@ -59,13 +61,20 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     this.setState({ loading: false })
   }
 
-  public handleUnlink = async () => {
-    this.setState({ loading: true })
-    if (this.props.syncingClient) await this.props.syncingClient.clearSecrets()
-    this.setState({ loading: false })
+  public handleUnlink = async (): Promise<void> => {
+    if (
+      window.confirm(
+        'Are you sure you want to remove your Shopify credentials?'
+      )
+    ) {
+      this.setState({ loading: true })
+      if (this.props.syncingClient)
+        await this.props.syncingClient.clearSecrets()
+      this.setState({ loading: false })
+    }
   }
 
-  public render() {
+  public render(): React.ReactNode {
     const { shopName, accessToken, loading, success } = this.state
     const { syncState } = this.props
     const { ready, valid, errorMessage } = syncState.context
