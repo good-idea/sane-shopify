@@ -45,7 +45,6 @@ export const createCollectionDocument = ({
         name: 'title',
         readOnly: true,
         type: 'string',
-        // hidden: true,
         ...namedFields.title,
       },
       {

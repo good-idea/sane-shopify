@@ -1,6 +1,7 @@
 export const linkedCollections = {
   name: 'linkedCollections',
   description: 'Synced from Shopify',
+  title: 'Collections',
   type: 'array',
   options: {
     sortable: false,
@@ -20,7 +21,8 @@ export const linkedCollections = {
 
 export const linkedProducts = {
   name: 'linkedProducts',
-  title: 'Linked Products',
+  title: 'Products',
+  description: 'Synced from Shopify',
   type: 'array',
   options: {
     sortable: false,

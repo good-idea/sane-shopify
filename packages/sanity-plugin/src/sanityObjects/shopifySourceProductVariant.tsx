@@ -1,4 +1,5 @@
 export const selectedOptions = {
+  title: 'Selected Option',
   name: 'shopifySourceSelectedOption',
   type: 'object',
   fields: [
@@ -8,6 +9,7 @@ export const selectedOptions = {
 }
 
 export const shopifySourceProductVariantPricePair = {
+  title: 'Variant Price Pair',
   name: 'shopifySourceProductVariantPricePair',
   type: 'object',
   fields: [
@@ -23,6 +25,7 @@ export const shopifySourceProductVariantPricePair = {
 }
 
 export const shopifySourceProductPricePresentmentEdge = {
+  title: 'Price Edge',
   name: 'shopifySourceProductPricePresentmentEdge',
   type: 'object',
   fields: [
@@ -32,12 +35,14 @@ export const shopifySourceProductPricePresentmentEdge = {
 }
 
 export const shopifySoureProductVariantPricePresentmentEdges = {
+  title: 'Price Edges',
   name: 'shopifySoureProductVariantPricePresentmentEdges',
   type: 'array',
   of: [{ type: 'shopifySourceProductPricePresentmentEdge' }],
 }
 
 export const shopifySourceProductVariantPricePresenentmentConnection = {
+  title: 'Price Connection',
   name: 'shopifySourceProductVariantPricePresenentmentConnection',
   type: 'object',
   fields: [
@@ -55,6 +60,7 @@ export const shopifySourceProductVariant = {
     collapsed: true,
   },
   fields: [
+    { title: 'title', name: 'title', type: 'string' },
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },
     {
       name: 'currentlyNotInStock',
@@ -64,19 +70,27 @@ export const shopifySourceProductVariant = {
     { name: 'id', title: 'ID', type: 'string' },
     // TODO: this will return as NULL from shopify if it does not exist.
     //       The sync plugin needs to figure out how to deal with this.
-    { name: 'image', type: 'shopifySourceImage' },
-    { name: 'priceV2', type: 'shopifyMoneyV2' },
-    { name: 'compareAtPriceV2', type: 'shopifyMoneyV2' },
     {
+      title: 'Shopify Source Image',
+      name: 'image',
+      type: 'shopifySourceImage',
+    },
+    { title: 'Price', name: 'priceV2', type: 'shopifyMoneyV2' },
+    {
+      title: 'Compare At Price',
+      name: 'compareAtPriceV2',
+      type: 'shopifyMoneyV2',
+    },
+    {
+      title: 'Selected Options',
       name: 'selectedOptions',
       type: 'array',
       of: [{ type: 'shopifySourceSelectedOption' }],
     },
-    { name: 'requiresShipping', type: 'boolean' },
-    { name: 'sku', type: 'string' },
-    { name: 'title', type: 'string' },
-    { name: 'weight', type: 'number' },
-    { name: 'weightUnit', type: 'string' },
+    { title: 'Requires Shipping', name: 'requiresShipping', type: 'boolean' },
+    { title: 'SKU', name: 'sku', type: 'string' },
+    { title: 'Weight', name: 'weight', type: 'number' },
+    { title: 'Weight Unit', name: 'weightUnit', type: 'string' },
   ],
   preview: {
     select: { title: 'title' },

@@ -1,6 +1,7 @@
 import { ShopifySourceProductPreview } from '../components'
 
 export const shopifySourceProductOption = {
+  title: 'Product Option',
   name: 'shopifySourceProductOption',
   type: 'object',
   fields: [
@@ -17,6 +18,7 @@ export const shopifySourceProductOption = {
 }
 
 export const shopifyMoneyV2 = {
+  title: 'Shopify MoneyV2',
   name: 'shopifyMoneyV2',
   type: 'object',
   fields: [
@@ -32,6 +34,7 @@ export const shopifyMoneyV2 = {
 }
 
 export const shopifySourceProductPriceRangeEdge = {
+  title: 'Product Price Range Edge',
   name: 'shopifySourceProductPriceRangeEdge',
   type: 'object',
   fields: [
@@ -44,6 +47,7 @@ export const shopifySourceProductPriceRangeEdge = {
 }
 
 export const shopifySourceProductPresentmentPriceRangeConnection = {
+  title: 'Product Price Range Connection',
   name: 'shopifySourceProductPresentmentPriceRangeConnection',
   type: 'object',
   fields: [
@@ -56,6 +60,7 @@ export const shopifySourceProductPresentmentPriceRangeConnection = {
 }
 
 export const shopifySourceProductPriceRange = {
+  title: 'Product Price Range',
   name: 'shopifySourceProductPriceRange',
   type: 'object',
   fields: [
@@ -71,6 +76,7 @@ export const shopifySourceProductPriceRange = {
 }
 
 export const shopifySourceCollectionNode = {
+  title: 'Collection Node',
   name: 'shopifySourceCollectionNode',
   type: 'object',
   fields: [
@@ -86,6 +92,7 @@ export const shopifySourceCollectionNode = {
 }
 
 export const shopifySourceCollectionEdge = {
+  title: 'Collection Edge',
   name: 'shopifySourceCollectionEdge',
   type: 'object',
   fields: [
@@ -102,6 +109,7 @@ export const shopifySourceCollectionEdge = {
 }
 
 export const shopifySourceCollectionsConnection = {
+  title: 'Collections Connection',
   name: 'shopifySourceCollectionsConnection',
   type: 'object',
   fields: [
@@ -118,6 +126,7 @@ export const shopifySourceCollectionsConnection = {
 }
 
 export const shopifySourceProductVariantEdge = {
+  title: 'Product Variant Edge',
   name: 'shopifySourceProductVariantEdge',
   type: 'object',
   fields: [
@@ -127,12 +136,14 @@ export const shopifySourceProductVariantEdge = {
 }
 
 export const shopifySourceProductVariantEdges = {
+  title: 'Product Variant Edges',
   name: 'shopifySourceProductVariantEdges',
   type: 'array',
   of: [{ type: 'shopifySourceProductVariantEdge' }],
 }
 
 export const shopifySourceProductVariantsConnection = {
+  title: 'Product Variants Connection',
   name: 'shopifySourceProductVariantsConnection',
   type: 'object',
   fields: [
@@ -160,8 +171,13 @@ export const shopifyProductSource = {
   fields: [
     { title: 'Title', name: 'title', type: 'string' },
     { name: 'availableForSale', title: 'Available for Sale', type: 'boolean' },
-    { name: 'createdAt', type: 'date', readOnly: true },
-    { name: 'publishedAt', type: 'date', readOnly: true },
+    { title: 'Created At', name: 'createdAt', type: 'date', readOnly: true },
+    {
+      title: 'Published At',
+      name: 'publishedAt',
+      type: 'date',
+      readOnly: true,
+    },
     {
       title: 'Updated At',
       name: 'updatedAt',

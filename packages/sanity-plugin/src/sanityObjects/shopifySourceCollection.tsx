@@ -1,6 +1,7 @@
 import { ShopifySourceCollectionPreview } from '../components'
 
 export const shopifySourceProductNode = {
+  title: 'Shopify Source Product Node',
   name: 'shopifySourceProductNode',
   type: 'object',
   fields: [
@@ -10,6 +11,7 @@ export const shopifySourceProductNode = {
 }
 
 export const shopifySourceProductEdge = {
+  title: 'Shopify Source Product Edge',
   name: 'shopifySourceProductEdge',
   type: 'object',
   fields: [
@@ -26,6 +28,7 @@ export const shopifySourceProductEdge = {
 }
 
 export const shopifySourceProductsConnection = {
+  title: 'Shopify Source Products Connection',
   name: 'shopifySourceProductsConnection',
   type: 'object',
   fields: [
