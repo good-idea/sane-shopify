@@ -7,6 +7,7 @@ import {
   SanityPair,
   SanityShopifyDocument,
 } from '@sane-shopify/types'
+import { definitely } from '../utils'
 import { isSanityProduct, isSanityCollection } from '../typeGuards'
 // import { log } from '../logger'
 
@@ -58,7 +59,7 @@ export const createSyncRelationships = (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
 ): Promise<LinkOperation> => {
-  const toDocs = arrayify(to).map(removeDraftId)
+  const toDocs = definitely(arrayify(to).map(removeDraftId))
 
   const existingRelationships: SanityShopifyDocument[] = isSanityProduct(from)
     ? from.collections || []
@@ -79,7 +80,7 @@ export const createSyncRelationships = (
 
   const bToAKey = from._type === 'shopifyProduct' ? 'products' : 'collections'
   const relationsToLink = toDocs.filter((toDoc) => {
-    if (typeof toDoc[bToAKey] === 'undefined') {
+    if (!Array.isArray(toDoc[bToAKey])) {
       toDoc[bToAKey] = []
     }
     /* Find all toDocs that do not have a relation to the from doc */
