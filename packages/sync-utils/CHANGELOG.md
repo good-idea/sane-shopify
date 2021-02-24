@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.19.11 (2021-02-24)
+
+
+### Bug Fixes
+
+* **sync-utils:** fix duplicate type import ([9d552d4](https://github.com/good-idea/sane-shopify/commit/9d552d40684dff4d590b3989777d1f4308084bb6))
+
+
+
+
+
 ## 0.19.10 (2021-02-22)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
