@@ -1,4 +1,5 @@
 import { SanityClient } from '@sanity/client'
+import { SanityReference } from '@sane-shopify/types'
 import PQueue from 'p-queue'
 import {
   SanityUtils,
@@ -96,11 +97,17 @@ export const createSyncRelationships = (
     }
   }
 
-  const aToBRelationships = toDocs.map((toDoc) => ({
-    _type: 'reference',
-    _ref: toDoc._id,
-    _key: `${toDoc._rev}-${toDoc._id}`,
-  }))
+  const aToBRelationships = toDocs
+    .map((toDoc) => ({
+      _type: 'reference' as 'reference',
+      _ref: toDoc._id,
+      _key: `${toDoc._rev}-${toDoc._id}`,
+    }))
+    .reduce<SanityReference[]>(
+      (refs, current) =>
+        refs.some((r) => r._ref === current._ref) ? refs : [...refs, current],
+      []
+    )
 
   const aToBPatchKey =
     from._type === 'shopifyProduct' ? 'collections' : 'products'
@@ -136,17 +143,23 @@ export const createSyncRelationships = (
         to: toDoc,
       }
 
-      await client
-        .patch(toDoc._id)
-        .setIfMissing({ [bToAKey]: [] })
-        .append(bToAKey, [
-          {
-            _type: 'reference',
-            _ref: from._id,
-            _key: `${from._id}-${from._rev}`,
-          },
-        ])
-        .commit()
+      const relationshipExists: boolean = toDoc[bToAKey].some(
+        (r: SanityReference) => r._ref === from._id
+      )
+
+      if (!relationshipExists) {
+        await client
+          .patch(toDoc._id)
+          .setIfMissing({ [bToAKey]: [] })
+          .append(bToAKey, [
+            {
+              _type: 'reference',
+              _ref: from._id,
+              _key: `${from._id}-${from._rev}`,
+            },
+          ])
+          .commit()
+      }
       return pair
     })
   )
