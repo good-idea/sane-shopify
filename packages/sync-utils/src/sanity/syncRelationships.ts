@@ -1,5 +1,4 @@
 import { SanityClient } from '@sanity/client'
-import { SanityReference } from '@sane-shopify/types'
 import PQueue from 'p-queue'
 import {
   SanityUtils,
