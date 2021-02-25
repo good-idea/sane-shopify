@@ -43,8 +43,8 @@ export const syncDocument = ({
     const fetchUpToDateItem = async (
       retries = 0
     ): Promise<Collection | Product | null> => {
-      if (retries >= 4) {
-        throw new Error('Could not fetch up to date item after 4 retries')
+      if (retries >= 5) {
+        throw new Error('Could not fetch up to date item after 5 retries')
       }
       const item = await syncUtils.fetchItemById(storefrontId, true)
       if (!item) return null
@@ -53,7 +53,8 @@ export const syncDocument = ({
         log(
           `GraphQL response was out of date. Waiting to try again... Attempt #${retries}`
         )
-        await sleep(3000)
+        const additionalWait = retries * 1000
+        await sleep(3000 + additionalWait)
         return fetchUpToDateItem(retries + 1)
       }
       return item
