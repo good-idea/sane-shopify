@@ -78,7 +78,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     const { shopName, accessToken, loading, success } = this.state
     const { syncState } = this.props
     const { ready, valid, errorMessage } = syncState.context
-
+    console.log('i am modified plugin new!!')
     if (!ready) return null
     if (valid) {
       const { shopName } = syncState.context

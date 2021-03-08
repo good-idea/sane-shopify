@@ -98,6 +98,16 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
         ...option,
         _key: id,
       })),
+      media: {
+        ...item.media,
+        edges: definitely(item.media.edges).map(({ cursor, node }) => {
+          return {
+            cursor,
+            node,
+            _key: cursor,
+          }
+        }),
+      },
       images: {
         ...item.images,
         edges: definitely(item.images.edges).map(({ cursor, node }) => {
