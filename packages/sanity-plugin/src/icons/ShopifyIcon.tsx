@@ -6,10 +6,10 @@ export const ShopifyIcon = () => (
       id="Page-1"
       stroke="none"
       strokeWidth="1"
-      fill="white"
+      fill="currentColor"
       fillRule="evenodd"
     >
-      <g id="Artboard" fill="#fff" fillRule="nonzero">
+      <g id="Artboard" fill="currentColor" fillRule="nonzero">
         <g
           id="shopify_monotone_black"
           transform="translate(30.000000, 20.000000)"
