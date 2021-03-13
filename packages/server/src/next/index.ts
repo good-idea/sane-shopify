@@ -18,11 +18,9 @@ type NextHandler<Body = any> = (
 
 type NextWebhooks = { [P in keyof Webhooks]: NextHandler }
 
-export const createNextWebhooks = ({
-  config,
-  onError,
-}: WebhooksConfig): NextWebhooks => {
-  const webhooks = createWebhooks({ config, onError })
+export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
+  const { onError } = config
+  const webhooks = createWebhooks(config)
 
   const createNextWebhook = (
     webhook: WebhookHandler

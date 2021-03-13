@@ -26,13 +26,17 @@ export const syncDocument = ({
 }: WebhookData): Promise<void> => {
   const docType =
     type === COLLECTION ? 'Collection' : type === PRODUCT ? 'Product' : null
-  if (!docType) {
-    throw new Error(`Cannot sync document of type ${type}`)
-  }
-  /* Let the GraphQL Response catch up before we try to fetch the latest info */
-  await sleep(10000)
+
   const storefrontId = btoa(`gid://shopify/${docType}/${id}`)
   try {
+    if (!docType) {
+      throw new Error(`Cannot sync document of type ${type}`)
+    }
+    if (!id) {
+      throw new Error('You must supply an ID')
+    }
+    /* Let the GraphQL Response catch up before we try to fetch the latest info */
+    await sleep(4000)
     /**
      * Sometimes the graphql response is stale.
      * If the GraphQL item has an updatedAt that is less
@@ -61,15 +65,16 @@ export const syncDocument = ({
     }
 
     const shopifyItem = await fetchUpToDateItem()
+
     if (!shopifyItem) {
       await syncUtils.syncItemByID(storefrontId)
     } else {
       await syncUtils.syncItem(storefrontId, shopifyItem)
     }
 
-    log(`synced item ${storefrontId} (/${docType}/${id})`)
+    log(`Synced item ${storefrontId} (/${docType}/${id})`)
   } catch (err) {
-    log(`failed to sync item ${storefrontId} (/${docType}/${id})`)
+    log(`Failed to sync item ${storefrontId} (/${docType}/${id})`)
     log(err)
     onError(err)
   }
