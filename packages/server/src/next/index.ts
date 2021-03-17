@@ -18,33 +18,44 @@ type NextHandler<Body = any> = (
 
 type NextWebhooks = { [P in keyof Webhooks]: NextHandler }
 
-export const createNextWebhooks = ({
-  config,
-  onError,
-}: WebhooksConfig): NextWebhooks => {
-  const webhooks = createWebhooks({ config, onError })
+export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
+  const { onError } = config
 
-  const createNextWebhook = (
-    webhook: WebhookHandler
-  ): NextHandler<WebhookData> => async (req, res) => {
-    await webhook(req.body).catch((err) => {
-      if (onError) onError(err)
-      res.status(500)
-      res.send('error')
-      return
-    })
-    res.status(200)
-    res.send('success')
+  try {
+    const webhooks = createWebhooks(config)
+    const createNextWebhook = (
+      webhook: WebhookHandler
+    ): NextHandler<WebhookData> => async (req, res) => {
+      await webhook(req.body).catch((err) => {
+        if (onError) {
+          onError(err)
+        } else {
+          console.error(err)
+        }
+        res.status(500)
+        res.send('error')
+        throw new Error(err.message)
+      })
+      res.status(200)
+      res.send('success')
+    }
+
+    const nextWebhooks = {
+      onCollectionCreate: createNextWebhook(webhooks.onCollectionCreate),
+      onCollectionUpdate: createNextWebhook(webhooks.onCollectionUpdate),
+      onCollectionDelete: createNextWebhook(webhooks.onCollectionDelete),
+      onProductCreate: createNextWebhook(webhooks.onProductCreate),
+      onProductUpdate: createNextWebhook(webhooks.onProductUpdate),
+      onProductDelete: createNextWebhook(webhooks.onProductDelete),
+    }
+
+    return nextWebhooks
+  } catch (err) {
+    if (onError) {
+      onError(err)
+      throw err
+    } else {
+      throw err
+    }
   }
-
-  const nextWebhooks = {
-    onCollectionCreate: createNextWebhook(webhooks.onCollectionCreate),
-    onCollectionUpdate: createNextWebhook(webhooks.onCollectionUpdate),
-    onCollectionDelete: createNextWebhook(webhooks.onCollectionDelete),
-    onProductCreate: createNextWebhook(webhooks.onProductCreate),
-    onProductUpdate: createNextWebhook(webhooks.onProductUpdate),
-    onProductDelete: createNextWebhook(webhooks.onProductDelete),
-  }
-
-  return nextWebhooks
 }

@@ -5,6 +5,7 @@ import {
   Product,
   Collection,
   SyncContext,
+  SyncStates as States,
   SyncMachineState,
   SyncSchema,
   SyncEventType as E,
@@ -33,44 +34,44 @@ const initialContext = {
 const syncMachine = createMachine<SyncContext, SyncEvent>(
   {
     id: 'syncMachine',
-    initial: 'init' as const,
+    initial: States.INIT,
     context: initialContext,
     states: {
-      init: {
+      [States.INIT]: {
         on: {
           [E.Valid]: {
-            target: 'ready',
+            target: States.READY,
             actions: ['onReady'],
           },
           [E.Invalid]: {
-            target: 'setup',
+            target: States.SETUP,
             actions: ['onSetup'],
           },
         },
       },
-      setup: {
+      [States.SETUP]: {
         on: {
           [E.Valid]: {
-            target: 'ready',
+            target: States.READY,
             actions: ['onReady'],
           },
 
           [E.Invalid]: {
-            target: 'setup',
+            target: States.SETUP,
             actions: ['onError'],
           },
         },
       },
-      ready: {
+      [States.READY]: {
         on: {
-          [E.Sync]: 'syncing',
+          [E.Sync]: States.SYNCING,
           [E.ClearedSecrets]: {
-            target: 'setup',
+            target: States.SETUP,
             actions: 'reset',
           },
         },
       },
-      syncing: {
+      [States.SYNCING]: {
         on: {
           [E.DocumentsFetched]: {
             internal: true,
@@ -87,19 +88,19 @@ const syncMachine = createMachine<SyncContext, SyncEvent>(
             internal: true,
             actions: ['onDocumentLinked'],
           },
-          [E.Complete]: 'complete',
+          [E.Complete]: States.COMPLETE,
           [E.Errored]: {
-            target: 'syncError',
+            target: States.SYNC_ERROR,
             actions: ['onError'],
           },
         },
       },
-      complete: {
+      [States.COMPLETE]: {
         on: {
           [E.Reset]: 'ready',
         },
       },
-      syncError: {
+      [States.SYNC_ERROR]: {
         on: {
           [E.Reset]: 'ready',
         },

@@ -33,7 +33,6 @@ export interface Webhooks {
   onProductCreate: WebhookHandler
 }
 
-export interface WebhooksConfig {
-  config: SaneShopifyConfig
+export interface WebhooksConfig extends SaneShopifyConfig {
   onError?: (err: Error) => void
 }
