@@ -1,6 +1,6 @@
 # Sane Shopify
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 🚨 very alpha! in active development. 🚨
@@ -261,8 +261,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://www.good-idea.studio"><img src="https://avatars.githubusercontent.com/u/11514928?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joseph Thomas</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Documentation">📖</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Code">💻</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=good-idea" title="Tests">⚠️</a></td>
     <td align="center"><a href="http://branchlabs.com"><img src="https://avatars.githubusercontent.com/u/842883?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Graham Lipsman</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=GLips" title="Code">💻</a></td>
-    <td align="center"><a href="https://homerjam.es"><img src="https://avatars.githubusercontent.com/u/1055769?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Homer</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Documentation">📖</a> <a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Code">💻</a></td>
+    <td align="center"><a href="https://homerjam.es"><img src="https://avatars.githubusercontent.com/u/1055769?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Homer</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/nrgnrg"><img src="https://avatars.githubusercontent.com/u/25795402?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Richard Cooke</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=nrgnrg" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.loregirardi.it"><img src="https://avatars.githubusercontent.com/u/12168237?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lorenzo Girardi</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=liqueflies" title="Code">💻</a></td>
   </tr>
 </table>
 
