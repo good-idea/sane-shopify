@@ -45,6 +45,15 @@ if (!authToken) throw new Error('You must provide a sanity auth token')
 if (!shopName) throw new Error('You must provide a shopify shop name')
 if (!accessToken) throw new Error('You must provide a shopify access token')
 
+
+// optional, see below
+const handleError = (err: Error) => {
+  Sentry.captureException(err)
+}
+
+
+// 🚨 Alpha breaking change: This configuration changed in 0.20.0. If you are getting errors after updating, put your `onError` handler on the `config` object, and pass that object into `createWebhooks` as the sole argument.
+
 const config = {
   secrets: {
     sanity: {
@@ -57,16 +66,14 @@ const config = {
       accessToken,
     },
   },
+  onError: handleError
 }
 
-// optional, see below
-const onError = Sentry.captureException(error)
-
-export const webhooks = createNextWebhooks({ config, onError })
+export const webhooks = createNextWebhooks(config)
 // or
-// export const webhooks = createAWSWebhooks({ config, onError })
+// export const webhooks = createAWSWebhooks(config)
 // or
-// export const webhooks = createWebhooks({ config, onError })
+// export const webhooks = createWebhooks(config)
 ```
 
 ### Error Handling

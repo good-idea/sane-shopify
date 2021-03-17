@@ -214,6 +214,12 @@ This plugin does not manage orders or customer carts. You will need to use Shopi
 
 # Alpha Changelog
 
+### 0.20.0
+
+The config for `@sane-shopify/server` has changed. `onError` is now part of the main config object. Instead of `createWebhooks({ config, onError })`, do `createWebhooks(config)`. See the [`@sane-shopify/server` Readme](packages/server/README.md)
+
+Source data now includes shopify media. Thanks @liqueflies for adding this!
+
 ### 0.11.0
 
 `@sane-shopify/server` now exports functions that can be used to handle Shopify's webhooks.
