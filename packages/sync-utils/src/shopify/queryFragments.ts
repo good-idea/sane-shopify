@@ -11,6 +11,34 @@ const moneyFragment = /* GraphQL */ `
   }
 `
 
+const mediaImageFragment = /* GraphQL */ `
+  fragment MediaImageFragment on MediaImage {
+    image {
+      __typename
+      id
+      altText
+      originalSrc
+      w100: transformedSrc(maxWidth: 100, crop: CENTER)
+      w300: transformedSrc(maxWidth: 300, crop: CENTER)
+      w800: transformedSrc(maxWidth: 800, crop: CENTER)
+      w1200: transformedSrc(maxWidth: 1200, crop: CENTER)
+      w1600: transformedSrc(maxWidth: 1600, crop: CENTER)
+    }
+  }
+`
+
+const videoFragment = /* GraphQL */ `
+  fragment VideoFragment on Video {
+    id
+    alt
+    sources {
+      url
+      format
+      mimeType
+    }
+  }
+`
+
 const imageFragment = /* GraphQL */ `
   fragment ImageFragment on Image {
     __typename
@@ -121,6 +149,15 @@ export const productFragment = gql`
         ...MoneyV2Fragment
       }
     }
+    media(first: 50) {
+      edges {
+        cursor
+        node {
+          ...MediaImageFragment
+          ...VideoFragment
+        }
+      }
+    }
     images(first: 50) {
       edges {
         cursor
@@ -131,7 +168,9 @@ export const productFragment = gql`
     }
   }
   ${moneyFragment}
+  ${mediaImageFragment}
   ${imageFragment}
+  ${videoFragment}
   ${productVariantFragment}
 `
 

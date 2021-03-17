@@ -33,6 +33,22 @@ export interface ShopifyImage {
   __typename: 'Image'
 }
 
+export interface ShopifyMediaImage {
+  image: ShopifyImage
+}
+
+export interface ShopifyVideoSource {
+  url: string
+  format: string
+  mimeType: string
+}
+
+export interface ShopifyVideo {
+  id: string
+  alt?: string
+  sources: ShopifyVideoSource[]
+}
+
 export type Money = string
 
 export interface MoneyV2 {
@@ -89,6 +105,7 @@ export interface Product extends ShopifyItem {
   availableForSale?: boolean
   collections?: Paginated<Collection>
   options: ProductOption[]
+  media: Paginated<ShopifyMediaImage | ShopifyVideo>
   images: Paginated<ShopifyImage>
   variants: Paginated<Variant>
   __typename: 'Product'

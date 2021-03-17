@@ -78,6 +78,13 @@ const prepareSourceData = <T extends Product | Collection>(item: T): T => {
           'shopifySourceProductVariantEdges'
         ),
       },
+      media: {
+        ...item.media,
+        edges: addKeyByCursor(
+          definitely(item.media.edges),
+          'shopifySourceMediaEdge'
+        ),
+      },
       images: {
         ...item.images,
         edges: addKeyByCursor(
