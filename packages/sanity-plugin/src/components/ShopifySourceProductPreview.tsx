@@ -73,9 +73,7 @@ const ShopifySourceProductPreviewInner = ({
   )
 }
 
-export class ShopifySourceProductPreview extends React.Component<
-  ShopifySourceProductPreviewProps
-> {
+export class ShopifySourceProductPreview extends React.Component<ShopifySourceProductPreviewProps> {
   render() {
     return (
       <Provider>
