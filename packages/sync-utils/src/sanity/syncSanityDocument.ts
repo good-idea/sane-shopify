@@ -48,6 +48,10 @@ const mergeExistingFields = (
             definitely(docInfo?.sourceData?.collections?.edges)
           ),
         },
+        media: {
+          ...docInfo.sourceData.media,
+          edges: uniqueObjects(definitely(docInfo.sourceData.media.edges)),
+        },
         images: {
           ...docInfo.sourceData.images,
           edges: uniqueObjects(definitely(docInfo.sourceData.images.edges)),
@@ -154,9 +158,9 @@ export const createSyncSanityDocument = (
       isMatch(docInfo, existingDoc, {
         keys: [
           '_type',
-          'title',
           'handle',
           'shopifyId',
+          'title',
           'minVariantPrice',
           'maxVariantPrice',
           'sourceData',

@@ -56,9 +56,7 @@ const ShopifySourceCollectionPreviewInner = ({
   )
 }
 
-export class ShopifySourceCollectionPreview extends React.Component<
-  ShopifySourceCollectionPreviewProps
-> {
+export class ShopifySourceCollectionPreview extends React.Component<ShopifySourceCollectionPreviewProps> {
   render() {
     return (
       <Provider>

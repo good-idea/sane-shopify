@@ -3,7 +3,7 @@ module.exports = {
   extends: [
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
+    'prettier',
     'plugin:prettier/recommended',
   ],
   parserOptions: {
@@ -12,10 +12,11 @@ module.exports = {
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     'no-unused-vars': 'off',
-    'no-console': 'error',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     '@typescript-eslint/no-unused-vars': 2,
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/ban-ts-comment': 1,
     '@typescript-eslint/ban-types': 1,

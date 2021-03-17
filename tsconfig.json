@@ -3,6 +3,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
     "target": "es5",
     "declaration": true,
     "importHelpers": true,
