@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.20.0 (2021-03-17)
+
+
+### Features
+
+* **sanity-plugin:** added media field to source data ([#149](https://github.com/good-idea/sane-shopify/issues/149)) ([58ed53b](https://github.com/good-idea/sane-shopify/commit/58ed53b516b958755906c97a68923091916e8533))
+
+
+
+
+
 ## 0.19.12 (2021-02-25)
 
 **Note:** Version bump only for package @sane-shopify/types
