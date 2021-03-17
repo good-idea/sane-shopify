@@ -10,21 +10,19 @@
 - [Curious? 🤔](#curious-)
 - [Contributing](#contributing)
 - [What this project is](#what-this-project-is)
-- [Caveats](#caveats)
-- [Webhooks](#webhooks)
-- [Collection & Product Documents](#collection--product-documents)
-  - [`shopifyCollection`](#shopifycollection)
-  - [`shopifyProduct`](#shopifyproduct)
-- [Extending Document and Objects](#extending-document-and-objects)
-- [Connecting to Shopify](#connecting-to-shopify)
-- [Setting up Shopify webhooks](#setting-up-shopify-webhooks)
-- [Working with the Cart](#working-with-the-cart)
-  - [0.20.0](#0200)
-  - [0.11.0](#0110)
-  - [0.10.1](#0101)
-  - [0.9.0](#090)
-  - [0.8.0](#080)
-  - [0.7.0](#070)
+  - [Caveats](#caveats)
+- [Installation & Setup](#installation--setup)
+  - [Webhooks](#webhooks)
+- [Usage](#usage)
+  - [Collection & Product Documents](#collection--product-documents)
+    - [`shopifyCollection`](#shopifycollection)
+    - [`shopifyProduct`](#shopifyproduct)
+  - [Extending Document and Objects](#extending-document-and-objects)
+  - [Connecting to Shopify](#connecting-to-shopify)
+  - [Setting up Shopify webhooks](#setting-up-shopify-webhooks)
+  - [Working with the Cart](#working-with-the-cart)
+- [Debugging](#debugging)
+- [Alpha Changelog](#alpha-changelog)
 - [Contributors ✨](#contributors-)
 
 <!-- tocstop -->
@@ -69,7 +67,7 @@ This project does not:
 - Add any e-commerce management to Sanity, such as tracking inventory, sales reports, customer management, and so on.
 - Sync additional Shopify information such as Pages, Blogs, or menus.
 
-## Caveats
+### Caveats
 
 - You will need to implement your own frontend, from scratch. This will not work with Shopify's themes & liquid templates.
 - Many apps from the Shopify App store provide functionality to the frontend of websites by manipulating the liquid templates - these apps will not work. Other apps that enhance the admin dashboard will be unaffected.
@@ -77,7 +75,7 @@ This project does not:
 
 ---
 
-# Installation & Setup
+## Installation & Setup
 
 _New setup starting with v0.11.0_
 
@@ -107,7 +105,7 @@ export default createSchema({
 })
 ```
 
-## Webhooks
+### Webhooks
 
 Version 0.11.0 introduces webhooks to keep your Sanity data in sync.
 
@@ -115,15 +113,15 @@ For convenience, there are "pre-packaged" webhooks set up for Mirco JS (if you u
 
 See the [`@sane-shopfiy/server` README](/packages/server/README.md) for instructions on setting this up.
 
-# Usage
+## Usage
 
 Sane-shopify fetches your product and collection data from Shopify's [Storefront API](https://help.shopify.com/en/api/storefront-api), and stores up-to-date copies of this information within Sanity. This means you can query your Sanity endpoint directly for all of the data you need to display products and collections.
 
-## Collection & Product Documents
+### Collection & Product Documents
 
 This plugin will add two document types to your schema: `shopifyCollection` and `shopifyProduct`.
 
-### `shopifyCollection`
+#### `shopifyCollection`
 
 The Collection document has:
 
@@ -131,7 +129,7 @@ The Collection document has:
 - a **read-only** `products` field with an array of references to the `shopifyProduct` documents for the products in the collection.
 - a **read-only** `sourceData` field which contains the data used to sync this document. This includes fields like `image`, `description`, `tags`, and so on.
 
-### `shopifyProduct`
+#### `shopifyProduct`
 
 The Product document has:
 
@@ -141,7 +139,7 @@ The Product document has:
 - an `options` field, which allows for custom fields for both the option (i.e. "Color") as well as option values (i.e. "Blue", "Green"). This can be helpful for instances when you would like to add things like custom descriptions or images for a particular option.
 - a `variants` field, which allows for custom fields for variant. Note that Shopify creates a variant for each _combination_ of the available options.
 
-## Extending Document and Objects
+### Extending Document and Objects
 
 The `shopifyCollection` and `shopifyProduct` documents can be extended with custom fields or other standard Sanity configuration, such as custom previews or input components.
 
@@ -219,7 +217,7 @@ Example:
 }
 ```
 
-## Connecting to Shopify
+### Connecting to Shopify
 
 [Set up a new app in Shopify](https://help.shopify.com/en/api/storefront-api/getting-started#storefront-api-authentication) with permissions to access the Storefront API. You'll need the Storefront Access Token (note that this is different from the Admin API key).
 
@@ -227,17 +225,15 @@ After you have installed the plugin and added the schema documents, open up Sani
 
 Enter your Shopify storefront name and your access token in the setup pane. Once this is set up, you can click the Sync button to import your collections and products.
 
-## Setting up Shopify webhooks
+### Setting up Shopify webhooks
 
 See the instructions in the [`@sane-shopify/server` Readme](packages/server/README.md)
 
----
-
-## Working with the Cart
+### Working with the Cart
 
 This plugin does not manage orders or customer carts. You will need to use Shopify's storefront API (or another solution) to do this. But, the sanity documents will include all of the product & variant IDs you need.
 
-# Debugging
+## Debugging
 
 If you are experiencing issues or errors, you can get detailed logging by setting the `DEBUG` variable - either as an environment variable (for webhooks & server-side) or as a localStorage variable.
 
@@ -251,27 +247,27 @@ _Scopes_:
 - `sane-shopify:server` outputs logs for all server (webhook) logs
 - `sane-shopify:*` outputs all of the above
 
-# Alpha Changelog
+## Alpha Changelog
 
-### 0.20.0
+*0.20.0*
 
 The config for `@sane-shopify/server` has changed. `onError` is now part of the main config object. Instead of `createWebhooks({ config, onError })`, do `createWebhooks(config)`. See the [`@sane-shopify/server` Readme](packages/server/README.md)
 
 Source data now includes shopify media. Thanks @liqueflies for adding this!
 
-### 0.11.0
+*0.11.0*
 
 `@sane-shopify/server` now exports functions that can be used to handle Shopify's webhooks.
 
-### 0.10.1
+*0.10.1*
 
 The plugin now marks products that are no longer in the Shopify catalogue as archived on their corresponding sanity documents. Relationships that no longer exist in Shopify are also removed.
 
-### 0.9.0
+*0.9.0*
 
 Fixes setup flow
 
-### 0.8.0
+*0.8.0*
 
 _This release contains several breaking changes._
 
@@ -285,7 +281,7 @@ New features:
 - Use `saneShopify(yourConfig)` instead of `createProductDocument`, `createCollectionDocument`, etc. See the updated documentation above.
 - Many of the internal object type names have been modified. After you re-sync, your documents will likely have many fields that need to be unset. If you would like to completely remove all shopify collections and documents from your dataset, you can use [this gist](https://gist.github.com/good-idea/1abc5429c0c2a0be760d3a318468c750)
 
-### 0.7.0
+*0.7.0*
 
 New features:
 

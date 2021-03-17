@@ -1,3 +1,4 @@
+# `@sane-shopify/types`
 
 <!-- toc -->
 - [Reasoning](#reasoning)

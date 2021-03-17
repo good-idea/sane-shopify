@@ -1,15 +1,18 @@
 This package contains functions to use with Shopify's Webhooks.
 
 <!-- toc -->
-  - [Error Handling](#error-handling)
-- [Micro.js (Next.js)](#microjs-nextjs)
-- [Lambdas (AWS, Netlify, etc)](#lambdas-aws-netlify-etc)
-- [Roll your own](#roll-your-own)
-  - [Debugging](#debugging)
+- [Setup](#setup)
+- [Usage](#usage)
+    - [Error Handling](#error-handling)
+  - [Micro.js (Next.js)](#microjs-nextjs)
+  - [Lambdas (AWS, Netlify, etc)](#lambdas-aws-netlify-etc)
+  - [Roll your own](#roll-your-own)
+    - [Debugging](#debugging)
+- [Shopify Setup](#shopify-setup)
 
 <!-- tocstop -->
 
-# Setup
+## Setup
 
 Create a Sanity token:
 
@@ -18,7 +21,7 @@ Create a Sanity token:
 3. Go to Settings
 4. Create a new token with Read + Write privileges.
 
-# Usage
+## Usage
 
 Create the configuration settings. This uses `dotenv`, but you can create these values however you would like. Be sure not to publish your Sanity token!
 
@@ -85,11 +88,11 @@ export const webhooks = createNextWebhooks(config)
 // export const webhooks = createWebhooks(config)
 ```
 
-### Error Handling
+#### Error Handling
 
 You can provide your own `onError` handler. This is optional, but is a good way to make sure everything is working as expected. Shopify requires a 200 response within 5 seconds, and after multiple failed calls to your webhook, it will be removed from your Shopify settings. This package returns a 200 response even if there is an error updating the item.
 
-## Micro.js (Next.js)
+### Micro.js (Next.js)
 
 You'll need to create 4 API endpoints in your project. Within your `pages`, create an `api` directory with the following files:
 
@@ -141,7 +144,7 @@ Your site now has 4 new endpoints:
 
 Add these to your Shopify settings (see [Shopify Setup](#Shopify-Setup) below)
 
-## Lambdas (AWS, Netlify, etc)
+### Lambdas (AWS, Netlify, etc)
 
 Create 4 lamba files, i.e.:
 
@@ -186,7 +189,7 @@ exports.handler = webhooks.onProductDelete
 
 Deploy your webhooks and add their URLs to your Shopify settings (see [Shopify Setup](#Shopify-Setup) below).
 
-## Roll your own
+### Roll your own
 
 If you are using another service to create the endpoints, you can use `createWebhooks` to generate simple functions to handle the syncing: `onCollectionUpdate`, `onCollectionDelete`, `onProductUpdate` and `onProductDelete`. Each of these functions accepts a single object with an `id` parameter, which is provided in the body sent by Shopify.
 
@@ -202,10 +205,10 @@ app.post('/api/onProductCreate', async (req, res) => {
 })
 ```
 
-### Debugging
+#### Debugging
 
 To log messages to your console, set the environment variable `DEBUG=sane-shopify:server` (or `DEBUG=sane-shopify:*` if you want all messages to be logged)
 
-# Shopify Setup
+## Shopify Setup
 
 You'll need to create 4 webhooks pointing to the endpionts you just created. Within your Shopify settings, go to _Notifications_, and add new webhooks for the appropriate events. Note that you do not need to create a Collection Created or Product Created webhook - shopify will call the Update webhook for both of these when a collection or product is created.
