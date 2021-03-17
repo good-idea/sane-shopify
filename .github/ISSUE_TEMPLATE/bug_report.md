@@ -10,6 +10,25 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+
+<!--
+  Do you have relevant logs?
+  If so, paste them in below.
+  If not, delete the <details> block.
+
+  TIP: get detailed logging with DEBUG mode. See the Debugging section in the main Readme
+-->
+
+<details>
+  <summary>Log Output</summary>
+
+  A summary of the log output
+
+  ```
+  ...your logs
+  ```
+</details>
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
@@ -25,7 +44,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Environment:**
 - [ ] Server (webhooks)
-- [ ] Sanity (web client)
+- [ ] Web Client (sanity dashboard)
 
 **Package:**
 - [ ] `sync-utils` - general issues with syncing
