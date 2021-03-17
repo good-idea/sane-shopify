@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.20.1 (2021-03-17)
+
+
+### Bug Fixes
+
+* **types:** fix webhooks config types ([#154](https://github.com/good-idea/sane-shopify/issues/154)) ([c71a230](https://github.com/good-idea/sane-shopify/commit/c71a23051318b15382f3d98e1c1510b7708de30d))
+
+
+
+
+
 # 0.20.0 (2021-03-17)
 
 
