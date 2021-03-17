@@ -1,7 +1,33 @@
 # Sane Shopify
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+<!-- toc -->
+- [Curious? 🤔](#curious-)
+- [Contributing](#contributing)
+- [What this project is](#what-this-project-is)
+- [Caveats](#caveats)
+- [Webhooks](#webhooks)
+- [Collection & Product Documents](#collection--product-documents)
+  - [`shopifyCollection`](#shopifycollection)
+  - [`shopifyProduct`](#shopifyproduct)
+- [Extending Document and Objects](#extending-document-and-objects)
+- [Connecting to Shopify](#connecting-to-shopify)
+- [Setting up Shopify webhooks](#setting-up-shopify-webhooks)
+- [Working with the Cart](#working-with-the-cart)
+  - [0.20.0](#0200)
+  - [0.11.0](#0110)
+  - [0.10.1](#0101)
+  - [0.9.0](#090)
+  - [0.8.0](#080)
+  - [0.7.0](#070)
+- [Contributors ✨](#contributors-)
+
+<!-- tocstop -->
 
 🚨 very alpha! in active development. 🚨
 
@@ -23,7 +49,6 @@ If you want to be notified of updates, leave a comment in [this issue](https://g
 ## Contributing
 
 All contributions are welcome! Please open issues for any ideas for what you'd like this package to do. If you want to contribute to the project, see the [Contributing](CONTRIBUTING.md) docs.
-
 
 ## What this project is
 
@@ -211,6 +236,20 @@ See the instructions in the [`@sane-shopify/server` Readme](packages/server/READ
 ## Working with the Cart
 
 This plugin does not manage orders or customer carts. You will need to use Shopify's storefront API (or another solution) to do this. But, the sanity documents will include all of the product & variant IDs you need.
+
+# Debugging
+
+If you are experiencing issues or errors, you can get detailed logging by setting the `DEBUG` variable - either as an environment variable (for webhooks & server-side) or as a localStorage variable.
+
+_Browser_: In your console, enter `window.localStorage.debug = 'sane-shopify:*'`
+_Server_: Set an environment variable in your script (if working locally), i.e. `DEBUG=sane-shopify:* yarn start`, or add a `DEBUG` environment variable to your hosting environment.
+
+_Scopes_:
+
+- `sane-shopify:fetching` outputs logs for all operations fetching source data from Shopify
+- `sane-shopify:patch` outputs logs for all sanity-related document patching
+- `sane-shopify:server` outputs logs for all server (webhook) logs
+- `sane-shopify:*` outputs all of the above
 
 # Alpha Changelog
 

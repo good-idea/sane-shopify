@@ -1,5 +1,14 @@
 This package contains functions to use with Shopify's Webhooks.
 
+<!-- toc -->
+  - [Error Handling](#error-handling)
+- [Micro.js (Next.js)](#microjs-nextjs)
+- [Lambdas (AWS, Netlify, etc)](#lambdas-aws-netlify-etc)
+- [Roll your own](#roll-your-own)
+  - [Debugging](#debugging)
+
+<!-- tocstop -->
+
 # Setup
 
 Create a Sanity token:

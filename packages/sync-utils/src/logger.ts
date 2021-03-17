@@ -9,7 +9,7 @@ import {
 } from '@sane-shopify/types'
 import Debug from 'debug'
 
-export const log = Debug('sane-shopify:log')
+export const log = Debug('sane-shopify:patch')
 
 export interface Logger {
   logFetched: (
