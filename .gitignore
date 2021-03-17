@@ -9,6 +9,7 @@ lerna-debug.log
 npm-debug.log
 packages/*/lib
 .rpt2_cache
+.eslintcache
 
 # use yarn, not npm
 package-lock.json

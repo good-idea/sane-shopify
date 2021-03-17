@@ -1,3 +1,10 @@
+
+<!-- toc -->
+- [Setup](#setup)
+- [Development](#development)
+- [Pull Requests](#pull-requests)
+
+<!-- tocstop -->
 # Contributing
 
 Thanks for your interest in making a contribution!
