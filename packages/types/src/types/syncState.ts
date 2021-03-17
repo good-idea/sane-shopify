@@ -81,15 +81,24 @@ export type SyncEvent =
   | DocumentsLinkedEvent
   | ErrorEvent
 
+export enum SyncStates {
+  INIT = 'INIT',
+  READY = 'READY',
+  SETUP = 'SETUP',
+  SYNCING = 'SYNCING',
+  COMPLETE = 'COMPLETE',
+  SYNC_ERROR = 'SYNC_ERROR',
+}
+
 export interface SyncSchema extends StateSchema {
   context: SyncContext
   states: {
-    init: {}
-    setup: {}
-    ready: {}
-    syncing: {}
-    complete: {}
-    syncError: {}
+    [SyncStates.INIT]: Record<string, any>
+    [SyncStates.SETUP]: Record<string, any>
+    [SyncStates.READY]: Record<string, any>
+    [SyncStates.SYNCING]: Record<string, any>
+    [SyncStates.COMPLETE]: Record<string, any>
+    [SyncStates.SYNC_ERROR]: Record<string, any>
   }
 }
 
