@@ -9,7 +9,7 @@ import {
 import { createArchiveSanityDocument } from './archive'
 import { createFetchAll } from './fetchAll'
 import {
-  createFetchSecrets,
+  // createFetchSecrets,
   createSaveSecrets,
   createClearSecrets,
 } from './secrets'
@@ -85,7 +85,7 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
   const archiveSanityDocument = createArchiveSanityDocument(client)
   const clearSecrets = createClearSecrets(client)
   const saveSecrets = createSaveSecrets(client)
-  const fetchSecrets = createFetchSecrets(client)
+  // const fetchSecrets = createFetchSecrets(client)
 
   const documentByShopifyId = async (shopifyId: string) => {
     const cached = cache.getByShopifyId(shopifyId)
@@ -150,6 +150,6 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
     archiveSanityDocument,
     clearSecrets,
     saveSecrets,
-    fetchSecrets,
+    // fetchSecrets,
   }
 }

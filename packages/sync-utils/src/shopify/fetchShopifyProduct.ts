@@ -59,6 +59,9 @@ const PRODUCT_BY_ID = gql`
     $collectionsAfter: String
   ) {
     node(id: $id) {
+      # shop {
+      #   myshopifyDomain
+      # }
       ... on Product {
         ...ProductFragment
         collections(first: $collectionsFirst, after: $collectionsAfter) {

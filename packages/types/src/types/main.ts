@@ -20,7 +20,7 @@ export interface SaneShopifyConfig {
 }
 
 export interface SyncUtils {
-  initialize: () => void
+  initialize: (secrets: ShopifySecrets) => void
   initialState: SyncMachineState
   /* Syncs all items */
   syncAll: (cbs?: SubscriptionCallbacks) => Promise<void>

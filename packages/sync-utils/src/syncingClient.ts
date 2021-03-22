@@ -63,7 +63,7 @@ export const syncUtils = (
     syncRelationships,
     fetchRelatedDocs,
     documentByShopifyId,
-    fetchSecrets,
+    // fetchSecrets,
     archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,
     clearSecrets: clearSecretsFromSanity,
@@ -240,10 +240,8 @@ export const syncUtils = (
    */
 
   /* Initializes the syncState */
-  const initialize = async () => {
-    const secrets = await fetchSecrets()
+  const initialize = async (secrets: ShopifySecrets) => {
     const { isError } = await testSecrets(secrets)
-
     init(!isError, secrets.shopName)
   }
 
@@ -456,8 +454,8 @@ export const syncUtils = (
       })
     )
 
-    await archiveProducts(allProducts, logger)
-    await archiveCollections(allCollections, logger)
+    // await archiveProducts(allProducts, logger)
+    // await archiveCollections(allCollections, logger)
 
     onComplete()
   }

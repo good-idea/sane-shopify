@@ -76,7 +76,7 @@ const ShopifySourceProductPreviewInner = ({
 export class ShopifySourceProductPreview extends React.Component<ShopifySourceProductPreviewProps> {
   render() {
     return (
-      <Provider>
+      <Provider secretKey="">
         <ShopifySourceProductPreviewInner {...this.props} />
       </Provider>
     )

@@ -9,9 +9,7 @@ import * as React from 'react'
 import {
   createShopifyClient,
   syncUtils,
-  KEYS_ID,
 } from '@sane-shopify/sync-utils'
-// import { createShopifyClient } from '../shopifyClient'
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const defaultSanityClient = require('part:@sanity/base/client')
@@ -48,6 +46,7 @@ export interface ClientContextValue extends SecretUtils {
 }
 
 interface ClientContextProps {
+  secretKey: string,
   children: React.ReactNode | ((value: ClientContextValue) => React.ReactNode)
 }
 
@@ -57,6 +56,7 @@ interface ClientContextState {
 }
 
 const emptySecrets = {
+  _id: '',
   shopName: '',
   accessToken: '',
 }
@@ -81,6 +81,10 @@ export class Provider extends React.Component<
     this.createSyncingClient(shopifySecrets)
   }
 
+  private initializeSyncingClient() {
+    this?.syncingClient?.initialize(this.state.secrets || emptySecrets)
+  }
+
   private async createSyncingClient(secrets?: ShopifySecrets) {
     const shopifyClient = createShopifyClient(secrets)
     this.shopifyClient = shopifyClient
@@ -90,16 +94,17 @@ export class Provider extends React.Component<
       this.handleStateChange
     )
 
-    const { shopName, accessToken } = secrets || emptySecrets
+    const { _id, shopName, accessToken } = secrets || emptySecrets
     this.setState(
       {
         secrets: {
+          _id,
           shopName,
           accessToken,
         },
         syncState: this?.syncingClient?.initialState,
       },
-      this?.syncingClient?.initialize
+      this.initializeSyncingClient
     )
   }
 
@@ -110,9 +115,12 @@ export class Provider extends React.Component<
   }
 
   public fetchSecrets = async (): Promise<ShopifySecrets | undefined> => {
+    if (!this.props.secretKey) return undefined
+
     const results: ShopifySecrets[] = await this.sanityClient.fetch(
-      `*[_id == "${KEYS_ID}"]`
+      `*[_id == "${this.props.secretKey}"]`
     )
+
     if (results.length) return results[0]
     return undefined
   }
@@ -134,6 +142,7 @@ export class Provider extends React.Component<
   public render() {
     const { children } = this.props
     const { secrets, syncState } = this.state
+
     const {
       saveSecrets,
       clearSecrets,

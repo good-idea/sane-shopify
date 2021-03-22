@@ -7,6 +7,9 @@ import { fetchAllProductCollections } from './fetchShopifyProduct'
 
 export const NODE_QUERY = gql`
   query NodeQuery($id: ID!) {
+    # shop {
+    #   myshopifyDomain
+    # }
     node(id: $id) {
       ... on Product {
         ...ProductFragment

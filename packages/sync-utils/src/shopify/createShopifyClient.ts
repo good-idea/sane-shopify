@@ -72,5 +72,5 @@ export const createShopifyClient = (
       return json
     })
   }
-  return { query }
+  return { shopName, query }
 }

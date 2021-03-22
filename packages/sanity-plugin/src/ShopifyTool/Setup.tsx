@@ -9,6 +9,7 @@ const TextInput = require('part:@sanity/components/textinputs/default').default
 /* tslint:enable */
 
 interface State {
+  _id: string
   shopName: string
   accessToken: string
   loading: boolean
@@ -31,6 +32,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public keyInputId = uniqueId('storefrontKeyInput')
 
   public state = {
+    _id: this.props?.secrets?._id || '',
     shopName: this.props?.secrets?.shopName || '',
     accessToken: this.props?.secrets?.accessToken || '',
     loading: false,
@@ -47,6 +49,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 
   public clear = (): void => {
     this.setState({
+      _id: this.props?.secrets?._id || '',
       shopName: this.props?.secrets?.shopName || '',
       accessToken: this.props?.secrets?.accessToken || '',
       error: false,
@@ -56,8 +59,8 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public handleSubmit = async (): Promise<void> => {
     this.setState({ loading: true })
     const { saveSecrets } = this.props
-    const { shopName, accessToken } = this.state
-    await saveSecrets({ shopName, accessToken })
+    const { _id, shopName, accessToken } = this.state
+    await saveSecrets({ _id, shopName, accessToken })
     this.setState({ loading: false })
   }
 
