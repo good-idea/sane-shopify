@@ -3,6 +3,7 @@ import {
   Collection,
   Product,
   SyncOperation,
+  ShopifyClient,
   SanityShopifyDocument,
   SanityShopifyDocumentPartial,
   SanityShopifyCollectionDocumentPartial,
@@ -115,7 +116,8 @@ const mergeExistingFields = (
 
 export const createSyncSanityDocument = (
   client: SanityClient,
-  cache: SanityCache
+  cache: SanityCache,
+  shopifyClient: ShopifyClient,
 ) => async (item: Product | Collection): Promise<SyncOperation> => {
   const getSanityDocByShopifyId = async (
     shopifyId: string
@@ -149,7 +151,8 @@ export const createSyncSanityDocument = (
   const syncItem = async (
     item: Product | Collection
   ): Promise<SyncOperation> => {
-    const docInfo = prepareDocument(item)
+    const { shopName } = shopifyClient
+    const docInfo = prepareDocument({ ...item, shopName })
     const existingDoc = await getSanityDocByShopifyId(item.id)
 
     /* If the document exists and is up to date, skip */

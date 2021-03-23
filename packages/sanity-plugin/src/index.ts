@@ -1,5 +1,7 @@
 import { ShopifyIcon } from './icons/ShopifyIcon'
 import { ShopifyTool } from './ShopifyTool'
+export { ShopBadge } from './badges'
+
 import { SaneShopifyPluginConfig } from '@sane-shopify/types'
 import {
   createCollectionDocument,

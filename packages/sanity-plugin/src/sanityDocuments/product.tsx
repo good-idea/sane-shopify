@@ -255,7 +255,7 @@ export const createProductDocument = ({
         // @ts-ignore
         const src = images[0]?.w100
         const alt = `Image for ${title}`
-        const subtitle = archived ? '📁 Archived' : undefined
+        const subtitle = archived ? '📁 Archived' : sourceData.shopName
         return {
           title,
           subtitle,

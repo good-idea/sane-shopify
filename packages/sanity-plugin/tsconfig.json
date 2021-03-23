@@ -10,7 +10,9 @@
       "part:@sanity/form-builder/patch-event": [
         "../node_modules/@sanity/form-builder/lib/PatchEvent.js"
       ],
-      "part:@sanity/base/client": ["../node_modules/@sanity/base/lib/client"],
+      "part:@sanity/base/client": [
+        "../node_modules/@sanity/base/lib/client"
+      ],
       "part:@sanity/components/buttons/default": [
         "../node_modules/@sanity/components/lib/buttons/DefaultButton.js"
       ],
@@ -25,6 +27,9 @@
       ],
       "part:@sanity/components/dialogs/default": [
         "../node_modules/@sanity/components/lib/dialogs/DefaultDialog.js"
+      ],
+      "part:@sanity/base/document-badges": [
+        "../node_modules/@sanity/components/lib/badges/DefaultBadge.js"
       ]
     }
   },

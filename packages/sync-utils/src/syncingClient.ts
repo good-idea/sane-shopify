@@ -67,7 +67,7 @@ export const syncUtils = (
     archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,
     clearSecrets: clearSecretsFromSanity,
-  } = sanityUtils(sanityClient)
+  } = sanityUtils(sanityClient, shopifyClient)
 
   /**
    * State Management
@@ -182,6 +182,8 @@ export const syncUtils = (
     // Find all sanity products that do not have corresponding Shopify products
     const productsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
+        sanityDocument.sourceData.shopName && 
+        sanityDocument.sourceData.shopName === shopifyClient.shopName &&
         sanityDocument.archived !== true &&
         !Boolean(
           products.find(
@@ -211,6 +213,8 @@ export const syncUtils = (
 
     const collectionsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
+        sanityDocument.sourceData.shopName && 
+        sanityDocument.sourceData.shopName === shopifyClient.shopName &&
         sanityDocument.archived !== true &&
         !Boolean(
           collections.find(
@@ -454,8 +458,8 @@ export const syncUtils = (
       })
     )
 
-    // await archiveProducts(allProducts, logger)
-    // await archiveCollections(allCollections, logger)
+    await archiveProducts(allProducts, logger)
+    await archiveCollections(allCollections, logger)
 
     onComplete()
   }

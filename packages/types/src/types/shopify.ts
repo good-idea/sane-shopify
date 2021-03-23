@@ -6,7 +6,7 @@ export type Variables = { [key: string]: any }
 export interface ShopifyItem {
   id: string
   updatedAt: string
-  storefrontId: string
+  shopName: string
 }
 
 export interface ShopifyClient {
