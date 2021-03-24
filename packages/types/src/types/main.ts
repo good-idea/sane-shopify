@@ -41,7 +41,7 @@ export interface SyncUtils {
   syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
   /* Manage Secrets */
   saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: () => Promise<void>
+  clearSecrets: (secrets: ShopifySecrets) => Promise<void>
   testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
 }
 

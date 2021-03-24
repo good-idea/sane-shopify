@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Card, Text } from '@sanity/ui'
 import { Product, Collection } from '@sane-shopify/types'
 import { useSaneContext } from '../../Provider'
 
@@ -19,7 +20,9 @@ export const Progress = () => {
     linkOperations,
     syncOperations,
   } = context
-  if (value !== 'complete' && value !== 'syncing') return null
+
+  // @ts-ignore
+  if (value !== 'COMPLETE' && value !== 'SYNCING') return null
 
   const productsFetched = documentsFetched.filter(isProduct)
   const productsToSync = toSync.filter(isProduct)
@@ -52,7 +55,7 @@ export const Progress = () => {
   return (
     <>
       {documentsFetched.length === 0 ? (
-        <p>Fetching product data...</p>
+        <Text size={1}>Fetching product data...</Text>
       ) : (
         <div
           style={{
@@ -92,14 +95,19 @@ export const Progress = () => {
           ) : null}
         </div>
       )}
-      {value === 'complete' ? (
-        <p>Syncing complete! 🎉</p>
-      ) : (
-        <p>
-          This may take a few minutes. Do not navigate away from this tab until
-          syncing is complete.
-        </p>
-      )}
+      <Card
+        marginTop={[2, 3, 4]}>
+        {value === 'COMPLETE' ? (
+          <Text size={1}>
+            Syncing complete! 🎉
+          </Text>
+        ) : (
+          <Text size={1}>
+            This may take a few minutes. Do not navigate away from this tab until
+            syncing is complete.
+          </Text>
+        )}
+      </Card>
     </>
   )
 }

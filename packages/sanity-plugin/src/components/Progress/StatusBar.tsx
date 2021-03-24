@@ -11,7 +11,7 @@ const progressOuterStyles = {
   width: 150,
   height: 10,
   backgroundColor: '#ccc',
-  borderRadius: '10px',
+  // borderRadius: '10px',
   position: 'relative' as 'relative',
   overflow: 'hidden' as 'hidden',
 }

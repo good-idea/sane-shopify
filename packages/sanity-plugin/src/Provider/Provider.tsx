@@ -46,7 +46,7 @@ export interface ClientContextValue extends SecretUtils {
 }
 
 interface ClientContextProps {
-  secretKey: string,
+  secretKey: string | null,
   children: React.ReactNode | ((value: ClientContextValue) => React.ReactNode)
 }
 
@@ -136,7 +136,7 @@ export class Provider extends React.Component<
   }
 
   public clearSecrets = async (): Promise<void> => {
-    if (this.syncingClient) this.syncingClient.clearSecrets()
+    if (this.syncingClient && this.state.secrets) this.syncingClient.clearSecrets(this.state.secrets)
   }
 
   public render() {

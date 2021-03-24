@@ -130,7 +130,7 @@ const syncMachine = createMachine<SyncContext, SyncEvent>(
       }),
 
       // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      fetchedDocuments: assign<SyncContext, DocumentsFetchedEvent>({
+      onDocumentsFetched: assign<SyncContext, DocumentsFetchedEvent>({
         documentsFetched: (context, action) => [
           ...context.documentsFetched,
           ...action.shopifyDocuments,
@@ -224,6 +224,7 @@ export const syncStateMachine = ({
   const onDocumentsFetched = (
     shopifyDocuments: Array<Product | Collection>
   ) => {
+    console.log('onFetched', E.DocumentsFetched)
     service.send({
       type: E.DocumentsFetched,
       shopifyDocuments,

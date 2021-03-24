@@ -1,16 +1,10 @@
 import { SanityClient } from '@sanity/client'
 import { SanityUtils, ShopifySecrets } from '@sane-shopify/types'
-import { KEYS_ID, KEYS_TYPE } from '../constants'
+import { KEYS_TYPE } from '../constants'
 
 /**
  * Constants & Defaults
  */
-
-const emptySecrets = {
-  _id: '',
-  shopName: '',
-  accessToken: '',
-}
 
 export const createSaveSecrets = (
   client: SanityClient
@@ -25,17 +19,13 @@ export const createSaveSecrets = (
   await client.createIfNotExists(doc)
   await client
     .patch(doc._id)
-    .set({ ...secrets })
+    .set({ ...doc })
     .commit()
 }
 
 export const createClearSecrets = (
   client: SanityClient
-): SanityUtils['clearSecrets'] => async () => {
+): SanityUtils['clearSecrets'] => async (secrets: ShopifySecrets) => {
   await client
-    .patch(KEYS_ID)
-    .set({
-      ...emptySecrets,
-    })
-    .commit()
+    .delete(secrets._id)
 }

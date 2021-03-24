@@ -261,8 +261,8 @@ export const syncUtils = (
     onSavedSecrets(secrets.shopName)
   }
 
-  const clearSecrets = async () => {
-    await clearSecretsFromSanity()
+  const clearSecrets = async (secrets: ShopifySecrets) => {
+    await clearSecretsFromSanity(secrets)
     onClearedSecrets()
   }
 
@@ -409,6 +409,7 @@ export const syncUtils = (
     await fetchAllSanityDocuments()
 
     const onProgress = (items: Collection[] | Product[]) => {
+      console.log('onProgress...', items, onDocumentsFetched)
       onDocumentsFetched(items)
     }
 
