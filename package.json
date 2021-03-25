@@ -51,12 +51,13 @@
 	"husky": {
 		"hooks": {
 			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-			"pre-commit": "lint-staged"
+			"pre-commit": "pretty-quick --staged && lint-staged"
 		}
 	},
 	"lint-staged": {
 		"**/*.md": "markdown-toc-gen insert",
-		"*.js": "eslint --cache --fix"
+		"*.ts": "eslint --cache",
+		"*.tsx": "eslint --cache"
 	},
 	"dependencies": {}
 }
