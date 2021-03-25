@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash'
 import * as React from 'react'
-import { Stack, Button, Text, TextInput, Card } from '@sanity/ui'
+import { Stack, Button, Box, Text, TextInput } from '@sanity/ui'
 import { ClientContextValue, SaneConsumer } from '../Provider'
 
 /* tslint:disable */
@@ -74,17 +74,16 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     if (!ready) return null
     if (valid) {
       return (
-        <Card>
-          <Card
-            marginBottom={[1, 2, 4]}>
+        <Box marginBottom={[1, 2, 6]}>
+          <Box marginBottom={[1, 2, 4]}>
             <Text
               size={1}
               weight="bold"
             >
               Unlink
             </Text>
-          </Card>
-          <Card marginBottom={[1, 2, 4]}>
+          </Box>
+          <Box marginBottom={[1, 2, 4]}>
             <Button
               style={{width: '100%'}}
               radius={0}
@@ -95,18 +94,18 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
               text="Unlink Storefront"
               onClick={this.handleUnlink}
             />
-          </Card>
+          </Box>
           <Text weight="bold" size={1}>
             Unlinking your Shopify account will not remove any data in Sanity.
             But, it may cause syncing issues if you add new credentials later.
             Be sure to back up your content before unlinking.
           </Text>
-        </Card>
+        </Box>
       )
     }
 
     return (
-      <Card>
+      <Box>
         {errorMessage ? (
           <Text size={1} style={errorMessage ? { color: 'red' } : {}}>{errorMessage}</Text>
         ) : null}
@@ -142,7 +141,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
                 type="text"
               />
             </FormField>
-            <Card>
+            <Box>
               <Button
                 radius={0}
                 fontSize={2}
@@ -152,10 +151,10 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
                 text="Save Credentials"
                 onClick={this.handleSubmit}
               />
-            </Card>
+            </Box>
           </Stack>
         )}
-      </Card>
+      </Box>
     )
   }
 }

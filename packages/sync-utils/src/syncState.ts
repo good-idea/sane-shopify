@@ -224,7 +224,6 @@ export const syncStateMachine = ({
   const onDocumentsFetched = (
     shopifyDocuments: Array<Product | Collection>
   ) => {
-    console.log('onFetched', E.DocumentsFetched)
     service.send({
       type: E.DocumentsFetched,
       shopifyDocuments,

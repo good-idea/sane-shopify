@@ -7,6 +7,7 @@ import {
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
+  KEYS_TYPE,
   createShopifyClient,
   syncUtils,
 } from '@sane-shopify/sync-utils'
@@ -46,7 +47,7 @@ export interface ClientContextValue extends SecretUtils {
 }
 
 interface ClientContextProps {
-  secretKey: string | null,
+  shopName: string | null,
   children: React.ReactNode | ((value: ClientContextValue) => React.ReactNode)
 }
 
@@ -86,6 +87,7 @@ export class Provider extends React.Component<
   }
 
   private async createSyncingClient(secrets?: ShopifySecrets) {
+    // @ts-ignore
     const shopifyClient = createShopifyClient(secrets)
     this.shopifyClient = shopifyClient
     this.syncingClient = syncUtils(
@@ -95,6 +97,7 @@ export class Provider extends React.Component<
     )
 
     const { _id, shopName, accessToken } = secrets || emptySecrets
+
     this.setState(
       {
         secrets: {
@@ -115,10 +118,10 @@ export class Provider extends React.Component<
   }
 
   public fetchSecrets = async (): Promise<ShopifySecrets | undefined> => {
-    if (!this.props.secretKey) return undefined
+    if (!this.props.shopName) return undefined
 
     const results: ShopifySecrets[] = await this.sanityClient.fetch(
-      `*[_id == "${this.props.secretKey}"]`
+      `*[_type == "${KEYS_TYPE}" && shopName == "${this.props.shopName}"]`
     )
 
     if (results.length) return results[0]

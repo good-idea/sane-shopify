@@ -1,14 +1,5 @@
 import * as React from 'react'
-import { 
-  Flex, 
-  Card,
-  Stack,
-  TabPanel,
-  Text,
-  Heading,
-  studioTheme,
-  ThemeProvider
-} from '@sanity/ui'
+import { Flex, Box, Card, Stack, TabPanel, Text, studioTheme, ThemeProvider } from '@sanity/ui'
 import { Tracker } from '@sanity/base/lib/change-indicators'
 import { Setup } from './Setup'
 import { SyncPane } from './Sync'
@@ -90,7 +81,6 @@ export class ShopifyTool extends React.Component<null, State> {
   }
 
   private updateSecrets(shopifySecrets: ShopifySecrets[]) {
-    console.log('update secrets...', shopifySecrets)
     const [defaultSecrets] = shopifySecrets
 
     this.setState({
@@ -109,18 +99,16 @@ export class ShopifyTool extends React.Component<null, State> {
     return (
       <ThemeProvider theme={studioTheme}>
         <Flex>
-          <Card
+          <Box
             flex={[1, 2]}
             // @ts-ignore
             style={sidebarStyles}
-            tone="transparent"
           >
-            <Card
+            <Box
               padding={[2, 3, 4]}
-              tone="transparent"
             >
-              <Heading as="h3" size={1}> Sane Shopify </Heading>
-            </Card>
+              <Text size={3}> Sane Shopify </Text>
+            </Box>
             <Stack>
               { this.state.secrets.map(secret => (
                 <button
@@ -156,10 +144,11 @@ export class ShopifyTool extends React.Component<null, State> {
                 </Text>
               </button>
             </Stack>
-          </Card>
+          </Box>
           <Card 
             flex={[1, 2, 3]} 
-            padding={[2, 3, 6]}
+            paddingY={[2, 3, 4]}
+            paddingX={[2, 3, 8]}
             style={{ height: '100vh' }}
           >
             { this.state.secrets.map(secret => (
@@ -168,15 +157,14 @@ export class ShopifyTool extends React.Component<null, State> {
                 id={`${secret.shopName}-panel`}
                 aria-labelledby={`${secret.shopName}-tab`}
                 hidden={this.state.id !== secret._id}>
-                <Provider
-                  secretKey={secret._id}>
+                <Provider shopName={secret.shopName}>
                   <Tracker>
                     <Inner>
-                      <Card paddingBottom={[1, 2, 5]}>
-                        <Heading as="h1" size={1} weight="regular"> 
+                      <Box marginBottom={[1, 2, 6]}>
+                        <Text size={3}> 
                           {secret.shopName}.myshopify.com
-                        </Heading>
-                      </Card>
+                        </Text>
+                      </Box>
                     </Inner>
                   </Tracker>
                 </Provider>
@@ -187,18 +175,18 @@ export class ShopifyTool extends React.Component<null, State> {
               id={`add-panel`}
               aria-labelledby={`add-tab`}
               hidden={this.state.id !== null}>
-              <Provider secretKey={null}>
+              <Provider shopName={null}>
                 <Tracker>
                   <Inner>
-                    <Card paddingBottom={[1, 2, 5]}>
-                      <Heading as="h1" size={1} weight="regular"> 
+                    <Box marginBottom={[1, 2, 6]}>
+                      <Text size={3}> 
                         Storefront Setup
-                      </Heading>
-                    </Card>
+                      </Text>
+                    </Box>
                   </Inner>
                 </Tracker>
               </Provider>
-              </TabPanel>
+            </TabPanel>
           </Card>
         </Flex>
       </ThemeProvider>

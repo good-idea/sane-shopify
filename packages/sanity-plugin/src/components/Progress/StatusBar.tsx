@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { textStyles } from '../shared'
 
 interface StatusBarProps {
   text: string
@@ -7,11 +6,16 @@ interface StatusBarProps {
   total?: number
 }
 
+export const textStyles = {
+  fontWeight: 400,
+  display: 'inline-block',
+  margin: 0,
+}
+
 const progressOuterStyles = {
   width: 150,
   height: 10,
   backgroundColor: '#ccc',
-  // borderRadius: '10px',
   position: 'relative' as 'relative',
   overflow: 'hidden' as 'hidden',
 }

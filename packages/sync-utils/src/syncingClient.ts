@@ -409,7 +409,6 @@ export const syncUtils = (
     await fetchAllSanityDocuments()
 
     const onProgress = (items: Collection[] | Product[]) => {
-      console.log('onProgress...', items, onDocumentsFetched)
       onDocumentsFetched(items)
     }
 

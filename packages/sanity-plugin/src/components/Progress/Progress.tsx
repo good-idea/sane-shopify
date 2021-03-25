@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Card, Text } from '@sanity/ui'
+import { Box, Text } from '@sanity/ui'
 import { Product, Collection } from '@sane-shopify/types'
 import { useSaneContext } from '../../Provider'
 
@@ -53,15 +53,16 @@ export const Progress = () => {
   } collection${collectionsFetched.length === 1 ? '' : 's'}`
 
   return (
-    <>
+    <Box marginTop={[2, 3, 4]}>
       {documentsFetched.length === 0 ? (
         <Text size={1}>Fetching product data...</Text>
       ) : (
-        <div
+        <Box
           style={{
             display: 'grid',
-            gridTemplateColumns: '200px 200px',
+            gridTemplateColumns: '200px 200px'
           }}
+          marginTop={[2, 3, 4]}
         >
           {productsFetched && productsFetched.length ? (
             <div>
@@ -93,10 +94,9 @@ export const Progress = () => {
               />
             </div>
           ) : null}
-        </div>
+        </Box>
       )}
-      <Card
-        marginTop={[2, 3, 4]}>
+      <Box marginTop={[2, 3, 4]}>
         {value === 'COMPLETE' ? (
           <Text size={1}>
             Syncing complete! 🎉
@@ -107,7 +107,7 @@ export const Progress = () => {
             syncing is complete.
           </Text>
         )}
-      </Card>
-    </>
+      </Box>
+    </Box>
   )
 }
