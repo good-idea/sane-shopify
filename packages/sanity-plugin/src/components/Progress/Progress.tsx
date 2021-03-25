@@ -60,7 +60,7 @@ export const Progress = () => {
         <Box
           style={{
             display: 'grid',
-            gridTemplateColumns: '200px 200px'
+            gridTemplateColumns: '200px 200px',
           }}
           marginTop={[2, 3, 4]}
         >
@@ -98,13 +98,11 @@ export const Progress = () => {
       )}
       <Box marginTop={[2, 3, 4]}>
         {value === 'COMPLETE' ? (
-          <Text size={1}>
-            Syncing complete! 🎉
-          </Text>
+          <Text size={1}>Syncing complete! 🎉</Text>
         ) : (
           <Text size={1}>
-            This may take a few minutes. Do not navigate away from this tab until
-            syncing is complete.
+            This may take a few minutes. Do not navigate away from this tab
+            until syncing is complete.
           </Text>
         )}
       </Box>

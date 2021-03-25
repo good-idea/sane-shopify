@@ -1,5 +1,9 @@
 import { SanityClient } from '@sanity/client'
-import { SanityUtils, ShopifyClient, SanityShopifyDocument } from '@sane-shopify/types'
+import {
+  SanityUtils,
+  ShopifyClient,
+  SanityShopifyDocument,
+} from '@sane-shopify/types'
 import { createSyncSanityDocument } from './syncSanityDocument'
 import { createFetchRelatedDocs } from './fetchRelatedDocs'
 import {
@@ -75,13 +79,17 @@ const createCache = (): SanityCache => {
 }
 
 export const sanityUtils = (
-  client: SanityClient, 
+  client: SanityClient,
   shopifyClient: ShopifyClient
 ): SanityUtils => {
   const cache = createCache()
-  
+
   const fetchAllSanityDocuments = createFetchAll(client, cache)
-  const syncSanityDocument = createSyncSanityDocument(client, cache, shopifyClient)
+  const syncSanityDocument = createSyncSanityDocument(
+    client,
+    cache,
+    shopifyClient
+  )
   const fetchRelatedDocs = createFetchRelatedDocs(client, cache)
   const syncRelationships = createSyncRelationships(client)
   const removeRelationships = createRemoveRelationships(client)

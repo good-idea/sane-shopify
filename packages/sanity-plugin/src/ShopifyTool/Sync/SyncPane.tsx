@@ -5,7 +5,7 @@ import { Progress } from '../../components/Progress'
 
 const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
   const handleSyncButton = () => syncAll()
-  return (  
+  return (
     <Box marginBottom={[1, 2, 6]}>
       <Box marginBottom={[1, 2, 4]}>
         <Text size={1} weight="bold">
@@ -13,7 +13,7 @@ const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
         </Text>
       </Box>
       <Button
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         radius={0}
         fontSize={2}
         padding={[2, 2, 4]}
@@ -21,7 +21,11 @@ const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
         onClick={handleSyncButton}
         disabled={syncState === 'complete'}
         mode={syncState === 'syncing' ? 'bleed' : 'default'}
-        text={syncState === 'syncing' ? 'Wait until complete...' : 'Sync data from Shopify'}
+        text={
+          syncState === 'syncing'
+            ? 'Wait until complete...'
+            : 'Sync data from Shopify'
+        }
       />
       <Progress />
     </Box>

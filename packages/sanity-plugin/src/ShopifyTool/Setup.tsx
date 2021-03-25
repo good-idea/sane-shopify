@@ -76,20 +76,17 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
       return (
         <Box marginBottom={[1, 2, 6]}>
           <Box marginBottom={[1, 2, 4]}>
-            <Text
-              size={1}
-              weight="bold"
-            >
+            <Text size={1} weight="bold">
               Unlink
             </Text>
           </Box>
           <Box marginBottom={[1, 2, 4]}>
             <Button
-              style={{width: '100%'}}
+              style={{ width: '100%' }}
               radius={0}
               fontSize={2}
               padding={[3, 3, 4]}
-              tone="critical" 
+              tone="critical"
               disabled={loading}
               text="Unlink Storefront"
               onClick={this.handleUnlink}
@@ -107,7 +104,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     return (
       <Box>
         {errorMessage ? (
-          <Text size={1} style={errorMessage ? { color: 'red' } : {}}>{errorMessage}</Text>
+          <Text size={1} style={errorMessage ? { color: 'red' } : {}}>
+            {errorMessage}
+          </Text>
         ) : null}
         {!success && (
           <Stack space={[3, 3, 4, 5]}>
@@ -146,7 +145,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
                 radius={0}
                 fontSize={2}
                 padding={[3, 3, 4]}
-                tone="primary" 
+                tone="primary"
                 disabled={success}
                 text="Save Credentials"
                 onClick={this.handleSubmit}

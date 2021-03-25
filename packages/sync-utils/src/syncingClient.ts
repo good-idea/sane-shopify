@@ -182,7 +182,7 @@ export const syncUtils = (
     // Find all sanity products that do not have corresponding Shopify products
     const productsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
-        sanityDocument.sourceData.shopName && 
+        sanityDocument.sourceData.shopName &&
         sanityDocument.sourceData.shopName === shopifyClient.shopName &&
         sanityDocument.archived !== true &&
         !Boolean(
@@ -213,7 +213,7 @@ export const syncUtils = (
 
     const collectionsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
-        sanityDocument.sourceData.shopName && 
+        sanityDocument.sourceData.shopName &&
         sanityDocument.sourceData.shopName === shopifyClient.shopName &&
         sanityDocument.archived !== true &&
         !Boolean(

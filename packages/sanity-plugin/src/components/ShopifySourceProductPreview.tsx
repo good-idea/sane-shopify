@@ -1,6 +1,14 @@
 import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
-import { Button, Card, Label, Stack, Text, ThemeProvider, studioTheme } from '@sanity/ui'
+import {
+  Button,
+  Card,
+  Label,
+  Stack,
+  Text,
+  ThemeProvider,
+  studioTheme,
+} from '@sanity/ui'
 import { Product } from '@sane-shopify/types'
 import { Progress } from './Progress'
 import { Provider, useSaneContext } from '../Provider'
@@ -10,7 +18,7 @@ interface ShopifySourceProductPreviewProps {
 }
 
 const spacing = {
-  marginBottom: '1.5rem'
+  marginBottom: '1.5rem',
 }
 
 const ShopifySourceProductPreviewInner = ({
@@ -81,28 +89,24 @@ const ShopifySourceProductPreviewInner = ({
         <Label size={1}>Variants</Label>
         <Text size={1}>{variantsValue}</Text>
       </Stack>
-      {
-        tags.length ? 
-          <Stack space={[1, 2]} style={spacing}>
-            <Label size={1}>Tags</Label>
-            <Text size={1}>{tags.join(', ')}</Text>
-          </Stack>
-        : null
-      }
-      {
-        productType ?
-          <Stack space={[1, 2]} style={spacing}>
-            <Label size={1}>Description</Label>
-            <Text size={1}>{description}</Text>
-          </Stack>
-        : null
-      }
-      <Button 
-        tone="primary" 
+      {tags.length ? (
+        <Stack space={[1, 2]} style={spacing}>
+          <Label size={1}>Tags</Label>
+          <Text size={1}>{tags.join(', ')}</Text>
+        </Stack>
+      ) : null}
+      {productType ? (
+        <Stack space={[1, 2]} style={spacing}>
+          <Label size={1}>Description</Label>
+          <Text size={1}>{description}</Text>
+        </Stack>
+      ) : null}
+      <Button
+        tone="primary"
         radius={0}
         padding={[2, 3]}
         fontSize={1}
-        disabled={buttonDisabled} 
+        disabled={buttonDisabled}
         onClick={reSync}
         text="Sync from Shopify"
       />
@@ -118,7 +122,9 @@ export class ShopifySourceProductPreview extends React.Component<ShopifySourcePr
     return (
       <Provider shopName={shopName}>
         <ThemeProvider theme={studioTheme}>
-          { shopName ? <ShopifySourceProductPreviewInner {...this.props} /> : null }
+          {shopName ? (
+            <ShopifySourceProductPreviewInner {...this.props} />
+          ) : null}
         </ThemeProvider>
       </Provider>
     )

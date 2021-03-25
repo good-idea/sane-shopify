@@ -1,4 +1,4 @@
-import { SanityDocument } from '@sanity/client';
+import { SanityDocument } from '@sanity/client'
 import { ShopifyClient, SaneShopifyConfig } from '@sane-shopify/types'
 
 /**

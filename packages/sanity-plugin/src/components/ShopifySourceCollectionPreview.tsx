@@ -1,5 +1,13 @@
 import * as React from 'react'
-import { Button, Card, Label, Stack, Text, ThemeProvider, studioTheme } from '@sanity/ui'
+import {
+  Button,
+  Card,
+  Label,
+  Stack,
+  Text,
+  ThemeProvider,
+  studioTheme,
+} from '@sanity/ui'
 import { Collection } from '@sane-shopify/types'
 import { Progress } from './Progress'
 import { Provider, useSaneContext } from '../Provider'
@@ -9,7 +17,7 @@ interface ShopifySourceCollectionPreviewProps {
 }
 
 const spacing = {
-  marginBottom: '1.5rem'
+  marginBottom: '1.5rem',
 }
 
 const ShopifySourceCollectionPreviewInner = ({
@@ -41,12 +49,7 @@ const ShopifySourceCollectionPreviewInner = ({
     syncStateValue === 'complete' || syncStateValue === 'sync'
 
   return (
-    <Card
-      padding={[3, 3, 4]}
-      radius={2}
-      shadow={1}
-      tone="caution"
-    >
+    <Card padding={[3, 3, 4]} radius={2} shadow={1} tone="caution">
       <Stack space={[2, 3]} style={spacing}>
         <Label size={1}> Shopify Source Data </Label>
         <Text size={1}> Read-only. Synced from product data in Shopify </Text>
@@ -59,12 +62,12 @@ const ShopifySourceCollectionPreviewInner = ({
         <Label size={1}>Description</Label>
         <Text size={1}>{description}</Text>
       </Stack>
-      <Button 
-        tone="primary" 
+      <Button
+        tone="primary"
         radius={0}
         padding={[2, 3]}
         fontSize={1}
-        disabled={buttonDisabled} 
+        disabled={buttonDisabled}
         onClick={reSync}
         text="Sync from Shopify"
       />

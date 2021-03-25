@@ -34,7 +34,7 @@ export const createShopifyClient = (
           'You must provide a shopify storefront name and access token'
         )
       },
-      shopName: ''
+      shopName: '',
     }
   }
 

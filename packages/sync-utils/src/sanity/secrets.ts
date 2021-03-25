@@ -26,6 +26,5 @@ export const createSaveSecrets = (
 export const createClearSecrets = (
   client: SanityClient
 ): SanityUtils['clearSecrets'] => async (secrets: ShopifySecrets) => {
-  await client
-    .delete(secrets._id)
+  await client.delete(secrets._id)
 }

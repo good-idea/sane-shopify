@@ -136,7 +136,7 @@ export const createProductVariant = ({
 const imageStyles = {
   width: '100%',
   height: '100%',
-  objectFit: 'cover' as 'cover',
+  objectFit: 'cover' as const,
 }
 
 const imageWrapperStyles = {
