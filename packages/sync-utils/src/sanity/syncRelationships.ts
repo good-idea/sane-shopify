@@ -98,7 +98,7 @@ export const createSyncRelationships = (
 
   const aToBRelationships = toDocs
     .map((toDoc) => ({
-      _type: 'reference' as 'reference',
+      _type: 'reference' as const,
       _ref: toDoc._id,
       _key: `${toDoc._rev}-${toDoc._id}`,
     }))
@@ -148,12 +148,12 @@ export const createSyncRelationships = (
 
       if (!relationshipExists) {
         await client
-          .patch(toDoc._id)
+          .patch(toDoc._id.replace(/^draft\./, ''))
           .setIfMissing({ [bToAKey]: [] })
           .append(bToAKey, [
             {
               _type: 'reference',
-              _ref: from._id,
+              _ref: from._id.replace(/^draft\./, ''),
               _key: `${from._id}-${from._rev}`,
             },
           ])

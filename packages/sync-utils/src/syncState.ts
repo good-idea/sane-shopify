@@ -97,12 +97,12 @@ const syncMachine = createMachine<SyncContext, SyncEvent>(
       },
       [States.COMPLETE]: {
         on: {
-          [E.Reset]: 'ready',
+          [E.Reset]: States.READY,
         },
       },
       [States.SYNC_ERROR]: {
         on: {
-          [E.Reset]: 'ready',
+          [E.Reset]: States.READY,
         },
       },
     },
