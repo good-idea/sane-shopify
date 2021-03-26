@@ -144,3 +144,6 @@ export interface ShopifyUtils {
   ) => Promise<Collection[]>
   testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
 }
+export interface SaneShopifyContext {
+  shopName: string
+}
