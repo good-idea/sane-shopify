@@ -1,66 +1,69 @@
 {
-	"name": "@sane-shopify/sync-utils",
-	"version": "0.20.3",
-	"description": "Syncing utility for Node & the browser",
-	"author": "Joseph Thomas | Good Idea Studio",
-	"homepage": "https://github.com/good-idea/sane-shopify#readme",
-	"license": "MIT",
-	"files": [
-		"dist"
-	],
-	"main": "dist/index.js",
-	"module": "dist/index.esm.js",
-	"typings": "dist/index.d.ts",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"fix": "run-s fix:*",
-		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
-		"fix:lint": "eslint --fix ./src/**/*.ts",
-		"linky": "yalc publish",
-		"linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
-		"test": "run-s test:tsc test:lint test:unit",
-		"test:tsc": "tsc --noEmit",
-		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
-		"test:unit": "jest",
-		"test:coverage": "jest --collectCoverage",
-		"test:watch": "jest --watch",
-		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
-		"test:coverage:send": "codecov",
-		"build": "rimraf lib && tsdx build",
-		"start": "tsdx watch",
-		"prepublishOnly": "yarn build"
-	},
-	"keywords": [
-		"shopify",
-		"sanity"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/good-idea/sane-shopify.git"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"bugs": {
-		"url": "https://github.com/good-idea/sane-shopify/issues"
-	},
-	"dependencies": {
-		"@good-idea/leaky-bucket": "^3.1.2",
-		"@good-idea/unwind-edges": "^1.5.2",
-		"@sane-shopify/types": "^0.20.3",
-		"@sanity/client": "^2.0.9",
-		"debug": "^4.2.0",
-		"deepmerge": "^4.2.2",
-		"es6-promise": "^4.2.8",
-		"graphql-tag": "^2.11.0",
-		"isomorphic-fetch": "^3.0.0",
-		"p-queue": "^6.6.2",
-		"xstate": "^4.14.0"
-	},
-	"devDependencies": {
-		"@types/debug": "^4.1.5",
-		"@types/isomorphic-fetch": "^0.0.35",
-		"react-hot-loader": "^4.13.0"
-	},
-	"gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
+  "name": "@sane-shopify/sync-utils",
+  "version": "0.20.3",
+  "description": "Syncing utility for Node & the browser",
+  "author": "Joseph Thomas | Good Idea Studio",
+  "homepage": "https://github.com/good-idea/sane-shopify#readme",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "fix": "run-s fix:*",
+    "fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
+    "fix:lint": "eslint --fix ./src/**/*.ts",
+    "linky": "yalc publish",
+    "linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
+    "test": "run-s test:tsc test:lint test:unit",
+    "test:tsc": "tsc --noEmit",
+    "test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
+    "test:unit": "jest",
+    "test:coverage": "jest --collectCoverage",
+    "test:watch": "jest --watch",
+    "test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
+    "test:coverage:send": "codecov",
+    "build": "rimraf lib && tsdx build",
+    "start": "tsdx watch",
+    "prepublishOnly": "yarn build"
+  },
+  "keywords": [
+    "shopify",
+    "sanity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/good-idea/sane-shopify.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/good-idea/sane-shopify/issues"
+  },
+  "dependencies": {
+    "@good-idea/leaky-bucket": "^3.1.2",
+    "@good-idea/unwind-edges": "^1.5.2",
+    "@sane-shopify/types": "^0.20.3",
+    "@sanity/client": "^2.7.0",
+    "debug": "^4.2.0",
+    "deepmerge": "^4.2.2",
+    "es6-promise": "^4.2.8",
+    "graphql-tag": "^2.11.0",
+    "isomorphic-fetch": "^3.0.0",
+    "p-queue": "^6.6.2",
+    "xstate": "^4.14.0"
+  },
+  "peerDependencies": {
+    "@sanity/client": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/isomorphic-fetch": "^0.0.35",
+    "react-hot-loader": "^4.13.0"
+  },
+  "gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }
