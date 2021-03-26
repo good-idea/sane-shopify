@@ -504,6 +504,7 @@ export const createSyncingClient = ({
 }: SaneShopifyConfig): SyncUtils => {
   const { sanity, shopify } = secrets
   const sanityClient = createSanityClient({
+    apiVersion: sanity?.apiVersion || '2021-03-20',
     projectId: sanity.projectId,
     dataset: sanity.dataset,
     token: sanity.authToken,

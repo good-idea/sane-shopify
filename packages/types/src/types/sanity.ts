@@ -18,6 +18,7 @@ export interface SanityPair {
  * Types for the Sanity Desk Tool should go in the sanity-plugin directory.
  */
 export interface SanityClientConfig {
+  apiVersion?: string
   projectId: string
   dataset: string
   authToken?: string
