@@ -1,5 +1,5 @@
 name: CI
-on: 
+on:
   push:
     branches:
       - main
@@ -45,9 +45,12 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         run: yarn test
 
+      - name: Test Publish
+        run: yarn test:release
+
   publish:
     name: Publish to NPM
-    needs: test 
+    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
