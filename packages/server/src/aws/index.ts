@@ -7,7 +7,7 @@ import {
 } from '@sane-shopify/types'
 import { createWebhooks } from '../webhooks'
 
-type AWSWebhooks = { [P in keyof Webhooks]: Handler }
+export type AWSWebhooks = { [P in keyof Webhooks]: Handler }
 
 export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
   const webhooks = createWebhooks(config)

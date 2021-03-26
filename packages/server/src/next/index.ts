@@ -16,7 +16,7 @@ type NextHandler<Body = any> = (
   res: NextApiResponse
 ) => Promise<void>
 
-type NextWebhooks = { [P in keyof Webhooks]: NextHandler }
+export type NextWebhooks = { [P in keyof Webhooks]: NextHandler }
 
 export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
   const { onError } = config

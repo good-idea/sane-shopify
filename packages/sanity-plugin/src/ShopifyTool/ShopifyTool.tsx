@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Tracker } from '@sanity/base/lib/change-indicators'
 import { Setup } from './Setup'
 import { SyncPane } from './Sync'
 import { Provider, useSaneContext } from '../Provider'
@@ -19,8 +18,6 @@ const Inner = () => {
 
 export const ShopifyTool = () => (
   <Provider>
-    <Tracker>
-      <Inner />
-    </Tracker>
+    <Inner />
   </Provider>
 )
