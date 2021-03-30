@@ -4,7 +4,7 @@ import {
   Webhooks,
   WebhookData,
   WebhookHandler,
-} from '@six-socks-studio/sane-shopify-types'
+} from '@sane-shopify/types'
 import { createWebhooks } from '../webhooks'
 
 export type AWSWebhooks = { [P in keyof Webhooks]: Handler }
