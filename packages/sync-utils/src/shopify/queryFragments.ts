@@ -111,19 +111,6 @@ export const productFragment = gql`
     vendor
     createdAt
     publishedAt
-    presentmentPriceRanges(first: 100) {
-      edges {
-        cursor
-        node {
-          minVariantPrice {
-            ...MoneyV2Fragment
-          }
-          maxVariantPrice {
-            ...MoneyV2Fragment
-          }
-        }
-      }
-    }
     options {
       id
       name
@@ -138,6 +125,28 @@ export const productFragment = gql`
         cursor
         node {
           ...ProductVariantFragment
+        }
+      }
+    }
+
+    compareAtPriceRange {
+      minVariantPrice {
+        ...MoneyV2Fragment
+      }
+      maxVariantPrice {
+        ...MoneyV2Fragment
+      }
+    }
+    presentmentPriceRanges(first: 100) {
+      edges {
+        cursor
+        node {
+          minVariantPrice {
+            ...MoneyV2Fragment
+          }
+          maxVariantPrice {
+            ...MoneyV2Fragment
+          }
         }
       }
     }
