@@ -10,7 +10,6 @@
 		"typesync": "lerna exec -- typesync && lerna bootstrap",
 		"test": "lerna run test",
 		"test:coverage:send": "echo 'No tests yet, write some tests!'",
-		"test:release": "lerna publish --yes --dry-run",
 		"build": "lerna run build",
 		"lint": "lerna run test:lint",
 		"start": "lerna run --parallel start",

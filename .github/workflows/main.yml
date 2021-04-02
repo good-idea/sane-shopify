@@ -45,9 +45,6 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         run: yarn test
 
-      - name: Test Publish
-        run: yarn test:release
-
   publish:
     name: Publish to NPM
     needs: test
