@@ -186,6 +186,12 @@ export const shopifyProductSource = {
       hidden: true,
     },
     {
+      name: 'compareAtPriceRange',
+      title: 'Compare At price range',
+      hidden: true,
+      type: 'shopifySourceProductPriceRange',
+    },
+    {
       name: 'priceRange',
       title: 'Price Range',
       hidden: true,
