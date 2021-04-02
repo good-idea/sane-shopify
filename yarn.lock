@@ -2988,11 +2988,6 @@
     p-queue "^6.6.2"
     xstate "^4.14.0"
 
-"@sane-shopify/types@^0.20.4":
-  version "0.20.4"
-  resolved "https://registry.yarnpkg.com/@sane-shopify/types/-/types-0.20.4.tgz#d5620e1efa5eb3f11833bb352181bb4e6e409972"
-  integrity sha512-zToXickaHAGJGVs7X7BmqHNfqvT8k8t80M7VBvdoF5kheOlMCY8JLJJMU6jhXXHc6F6sxZu6wgu821zppohnWw==
-
 "@sanity/base@2.7.1", "@sanity/base@^2.0.9":
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/@sanity/base/-/base-2.7.1.tgz#c7678b9542e1f8d23441bc704f4aa5d39c9e2860"
@@ -6000,6 +5995,13 @@ cross-fetch@3.1.2, cross-fetch@^3.0.4:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.2.tgz#ee0c2f18844c4fde36150c2a4ddc068d20c1bc41"
   integrity sha512-+JhD65rDNqLbGmB3Gzs3HrEKC0aQnD+XA3SY6RjgkF88jV2q5cTc5+CwxlS3sdmLk98gpPt5CF9XRnPdlxZe6w==
+  dependencies:
+    node-fetch "2.6.1"
+
+cross-fetch@^3.1.3-alpha.6:
+  version "3.1.3-alpha.6"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.3-alpha.6.tgz#55c565bf00b2d3b0457754a7c76bab34c1466b7a"
+  integrity sha512-0ite+zahD3S235L7PnAeBQ4/gR0g8XmMMzRIk5js4EhCKB2uJPgSen3xrxdQh9Qu1lWMyWBFmF1LKinBUSc4+w==
   dependencies:
     node-fetch "2.6.1"
 
