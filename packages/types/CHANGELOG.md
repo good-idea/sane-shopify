@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.20.5 (2021-04-02)
+
+
+### Bug Fixes
+
+* **server:** aws lambda fix ([#161](https://github.com/good-idea/sane-shopify/issues/161)) ([04e2fc8](https://github.com/good-idea/sane-shopify/commit/04e2fc80f75b6cf195d6fcb0ab0153cb1fc79348))
+
+
+
+
+
 ## 0.20.4 (2021-03-25)
 
 **Note:** Version bump only for package @sane-shopify/types
