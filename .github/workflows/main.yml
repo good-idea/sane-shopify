@@ -1,5 +1,5 @@
 name: CI
-on: 
+on:
   push:
     branches:
       - main
@@ -30,8 +30,10 @@ jobs:
       - uses: actions/cache@v2
         if: ${{ env.CI_SKIP == 'false' }}
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            node_modules
+            packages/**/node_modules
+          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('./yarn.lock') }}
 
       - name: Install deps
         if: ${{ env.CI_SKIP == 'false' }}
@@ -47,7 +49,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    needs: test 
+    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -73,8 +75,10 @@ jobs:
       - uses: actions/cache@v2
         if: ${{ env.CI_SKIP == 'false' }}
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            node_modules
+            packages/**/node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('./yarn.lock') }}
 
       - name: Install dependencies
         if: ${{ env.CI_SKIP == 'false' }}

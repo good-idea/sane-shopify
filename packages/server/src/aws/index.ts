@@ -17,16 +17,27 @@ export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
     const createAWSWebhook = (webhook: WebhookHandler) => async (
       event: APIGatewayEvent
     ) => {
-      if (!event.body) {
-        if (onError) {
-          onError(new Error('No body received from webhook event'))
-          return
-        } else {
+      try {
+        if (!event.body) {
           throw new Error('No body received from webhook event')
         }
+
+        const nodeInfo: WebhookData = JSON.parse(event.body)
+        await webhook(nodeInfo)
+
+        return {
+          statusCode: 200,
+          body: '',
+        }
+      } catch (error) {
+        if (onError) {
+          onError(error)
+        }
+        return {
+          statusCode: 500,
+          body: error.message,
+        }
       }
-      const nodeInfo: WebhookData = JSON.parse(event.body)
-      await webhook(nodeInfo)
     }
 
     const AWSWebhooks = {

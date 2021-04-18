@@ -104,6 +104,7 @@ export interface Product extends ShopifyItem {
   descriptionHtml: string
   tags: string[]
   productType?: string
+  compareAtPriceRange?: ProductPriceRange
   priceRange?: ProductPriceRange
   availableForSale?: boolean
   collections?: Paginated<Collection>

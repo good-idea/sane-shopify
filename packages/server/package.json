@@ -1,6 +1,6 @@
 {
 	"name": "@sane-shopify/server",
-	"version": "0.20.4",
+	"version": "0.20.5",
 	"description": "A server and lambdas to serve & sync data between Shopify and Sanity",
 	"author": "Joseph Thomas <joseph@good-idea.studio>",
 	"homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -48,7 +48,7 @@
 		"source-map-support": "^0.5.19"
 	},
 	"devDependencies": {
-		"@sane-shopify/types": "^0.20.4",
+		"@sane-shopify/types": "^0.20.5",
 		"@types/aws-lambda": "^8.10.73",
 		"@types/node-fetch": "^2.5.8",
 		"@types/source-map-support": "^0.5.3",

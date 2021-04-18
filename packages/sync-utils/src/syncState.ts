@@ -1,4 +1,4 @@
-import { interpret, createMachine, assign } from 'xstate'
+import { interpret, Machine, assign } from 'xstate'
 import {
   LinkOperation,
   SyncOperation,
@@ -31,7 +31,7 @@ const initialContext = {
   shopName: undefined,
 }
 
-const syncMachine = createMachine<SyncContext, SyncEvent>(
+const syncMachine = Machine<SyncContext, SyncEvent>(
   {
     id: 'syncMachine',
     initial: States.INIT,
@@ -185,10 +185,12 @@ export const syncStateMachine = ({
   onStateChange,
 }: SyncStateMachineArgs): SyncStateMachineValues => {
   const { initialState } = syncMachine
+  // @ts-ignore
   const service = interpret<SyncContext, SyncSchema, SyncEvent>(syncMachine)
   service.start()
 
   service.onTransition((newState) => {
+    // @ts-ignore
     onStateChange(newState)
   })
 
