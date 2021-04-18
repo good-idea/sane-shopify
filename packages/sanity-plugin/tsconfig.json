@@ -8,30 +8,30 @@
     "baseUrl": "./src",
     "paths": {
       "part:@sanity/form-builder/patch-event": [
-        "../node_modules/@sanity/form-builder/lib/PatchEvent.js"
+        "../../../node_modules/@sanity/form-builder/lib/PatchEvent.js"
       ],
       "part:@sanity/base/client": [
-        "../node_modules/@sanity/base/lib/client"
+        "../../../node_modules/@sanity/base/lib/client"
       ],
       "part:@sanity/components/buttons/default": [
-        "../node_modules/@sanity/components/lib/buttons/DefaultButton.js"
+        "../../../node_modules/@sanity/components/lib/buttons/DefaultButton.js"
       ],
       "part:@sanity/components/fieldsets/default": [
-        "../node_modules/@sanity/components/lib/fieldsets/DefaultFieldset.js"
+        "../../../node_modules/@sanity/components/lib/fieldsets/DefaultFieldset.js"
       ],
       "part:@sanity/components/formfields/default": [
-        "../node_modules/@sanity/components/lib/formfields/DefaultFormField.js"
+        "../../../node_modules/@sanity/components/lib/formfields/DefaultFormField.js"
       ],
       "part:@sanity/components/textinputs/default": [
-        "../node_modules/@sanity/components/lib/textinputs/DefaultTextInput.js"
+        "../../../node_modules/@sanity/components/lib/textinputs/DefaultTextInput.js"
       ],
       "part:@sanity/components/dialogs/default": [
-        "../node_modules/@sanity/components/lib/dialogs/DefaultDialog.js"
+        "../../../node_modules/@sanity/components/lib/dialogs/DefaultDialog.js"
       ],
       "part:@sanity/base/document-badges": [
-        "../node_modules/@sanity/components/lib/badges/DefaultBadge.js"
+        "../../../node_modules/@sanity/components/lib/badges/DefaultBadge.js"
       ]
     }
   },
-  "include": ["src"]
+  "include": ["../../node_modules/@sanity/base/types/**/*.ts", "src"]
 }

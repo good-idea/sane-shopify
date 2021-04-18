@@ -38,7 +38,7 @@
     "url": "git+https://github.com/good-idea/sane-shopify.git"
   },
   "devDependencies": {
-    "@good-idea/unwind-edges": "^1.5.2"
+    "@good-idea/unwind-edges": "^1.5.3"
   },
   "gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }
