@@ -56,3 +56,5 @@ If your updates change the API of the package in a way where users will need to 
 
 Make a pull request from your updated fork and ask for a review! We will add you to the list of contributors, or you can add yourself by commenting in the PR with: `@all-contributors please add @<your-username> for <contributions>`. See a list of contribution types [here](https://allcontributors.org/docs/en/emoji-key).
 
+When merging your PR, select *Squash and Merge*.
+

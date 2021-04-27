@@ -15,8 +15,7 @@ import { SyncPane } from './Sync'
 import { Provider, useSaneContext } from '../Provider'
 import { ShopifySecrets } from '@sane-shopify/types'
 import { KEYS_TYPE } from '@sane-shopify/sync-utils'
-
-const defaultSanityClient = require('part:@sanity/base/client')
+import { defaultSanityClient } from '../services/sanity'
 
 const Inner = (props: { children: React.ReactNode }) => {
   const { syncState } = useSaneContext()

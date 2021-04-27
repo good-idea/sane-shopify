@@ -1,5 +1,4 @@
 import { SanityClient } from '@sanity/client'
-import createSanityClient from 'part:@sanity/base/client'
 import {
   ShopifyClient,
   ShopifySecrets,
@@ -12,10 +11,7 @@ import {
   createShopifyClient,
   syncUtils,
 } from '@sane-shopify/sync-utils'
-
-const defaultSanityClient = createSanityClient.withConfig({
-  apiVersion: '2021-04-01',
-})
+import { defaultSanityClient } from '../services/sanity'
 
 /**
  * Context Setup
