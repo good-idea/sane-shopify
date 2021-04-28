@@ -12,6 +12,7 @@
 		"dist"
 	],
 	"scripts": {
+    "setup": "yalc publish",
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.ts",
@@ -20,7 +21,7 @@
 		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
 		"test:unit": "jest",
 		"build": "tsdx build",
-		"start": "tsdx watch",
+		"start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
 		"prepublishOnly": "yarn build"
 	},
 	"keywords": [

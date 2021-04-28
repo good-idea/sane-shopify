@@ -28,8 +28,7 @@
 		"fix": "run-s fix:*",
 		"fix:prettier": "prettier \"src/**/*.{ts,tsx}\" --write --loglevel warn",
 		"fix:lint": "eslint --fix ./src/**/*.{ts,tsx}",
-		"linky": "yalc publish",
-		"linky:watch": "nodemon -w src -w node_modules --delay 250ms -e ts,tsx -x yalc publish --push",
+		"setup": "yarn yalc publish",
 		"test": "run-s test:tsc test:lint test:unit",
 		"test:tsc": "tsc --noEmit",
 		"test:lint": "eslint ./src/**/*.{ts,tsx} && prettier \"src/**/*.{ts,tsx}\" --list-different",
@@ -38,7 +37,7 @@
 		"test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
 		"test:coverage:send": "codecov",
 		"build": "rimraf dist && tsdx build",
-		"start": "tsdx watch",
+		"start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
 		"prepublishOnly": "npm run build"
 	},
 	"bugs": {
