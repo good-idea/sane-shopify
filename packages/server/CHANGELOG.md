@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.21.1 (2021-04-28)
+
+
+### Bug Fixes
+
+* **types:** add document config type ([#163](https://github.com/good-idea/sane-shopify/issues/163)) ([2e3b21c](https://github.com/good-idea/sane-shopify/commit/2e3b21c6cb1db2df6ad7d319829625d680245f30))
+
+
+
+
+
 # 0.21.0 (2021-04-28)
 
 
