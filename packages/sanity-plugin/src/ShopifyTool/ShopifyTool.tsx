@@ -13,7 +13,7 @@ import { Tracker } from '@sanity/base/lib/change-indicators'
 import { Setup } from './Setup'
 import { SyncPane } from './Sync'
 import { Provider, useSaneContext } from '../Provider'
-import { ShopifySecrets } from '@sane-shopify/types'
+import { SaneShopifyConfigDocument } from '@sane-shopify/types'
 import { CONFIG_DOC_TYPE } from '@sane-shopify/sync-utils'
 import { defaultSanityClient } from '../services/sanity'
 
@@ -33,8 +33,8 @@ const Inner = (props: { children: React.ReactNode }) => {
 }
 
 interface State {
-  secrets: ShopifySecrets[]
-  id: string | null
+  config: Map<string, SaneShopifyConfigDocument>
+  currentConfig: SaneShopifyConfigDocument | undefined
 }
 
 const buttonStyles = {
@@ -57,15 +57,15 @@ const sleep = (ms: number): Promise<void> =>
 
 export class ShopifyTool extends React.Component<null, State> {
   public state: State = {
-    secrets: [],
-    id: null,
+    config: new Map(),
+    currentConfig: undefined,
   }
 
   public subscription
 
   public sanityClient = defaultSanityClient
 
-  public fetchSecrets = async () => {
+  public fetchConfig = async () => {
     const query = '*[_type == $documentType]'
 
     const params = { documentType: CONFIG_DOC_TYPE }
@@ -74,36 +74,44 @@ export class ShopifyTool extends React.Component<null, State> {
       .listen(query, params)
       .subscribe(async (update) => {
         await sleep(2000)
-        const updatedSecrets = await this.sanityClient.fetch('[_id == $id]', {
+        const updatedConfig = await this.sanityClient.fetch('[_id == $id]', {
           id: update.documentId,
         })
-        this.updateSecrets([updatedSecrets])
+        this.updateConfig([updatedConfig])
       })
 
-    const shopifySecrets = await this.sanityClient.fetch(query, params)
-    this.updateSecrets(shopifySecrets)
+    const shopifyConfig = await this.sanityClient.fetch(query, params)
+    this.updateConfig(shopifyConfig)
   }
 
   public componentDidMount() {
-    this.fetchSecrets()
+    this.fetchConfig()
   }
 
   public componentWillUnmount() {
     this.subscription.unsubscribe()
   }
 
-  private updateSecrets(shopifySecrets: ShopifySecrets[]) {
-    const [defaultSecrets] = shopifySecrets
+  private isCurrentConfig(config: SaneShopifyConfigDocument): boolean {
+    return this.state.currentConfig === config
+  }
+
+  private updateConfig(config: SaneShopifyConfigDocument[]) {
+    const updatedConfig = config.reduce<Map<string, SaneShopifyConfigDocument>>(
+      (prevMap, configDoc) =>
+        new Map(prevMap).set(configDoc.shopName, configDoc),
+      this.state.config
+    )
 
     this.setState({
-      secrets: shopifySecrets,
-      id: defaultSecrets?._id || null,
+      config: updatedConfig,
     })
   }
 
-  private setCurrent(shopifySecrets: ShopifySecrets | undefined) {
+  private setCurrent = (shopName: string | undefined) => () => {
+    const currentConfig = shopName ? this.state.config.get(shopName) : undefined
     this.setState({
-      id: shopifySecrets?._id || null,
+      currentConfig: currentConfig,
     })
   }
 
@@ -120,44 +128,51 @@ export class ShopifyTool extends React.Component<null, State> {
               <Text size={3}> Sane Shopify </Text>
             </Box>
             <Stack>
-              {this.state.secrets.map((secret) => (
+              {Array.from(this.state.config).map(([shopName, configDoc]) => (
                 <button
-                  id={`${secret.shopName}-tab`}
-                  aria-controls={`${secret.shopName}-panel`}
-                  key={secret._id}
-                  onClick={() => this.setCurrent(secret)}
+                  id={`${shopName}-tab`}
+                  aria-controls={`${shopName}-panel`}
+                  key={configDoc._id}
+                  onClick={this.setCurrent(shopName)}
                   style={{
                     ...buttonStyles,
-                    backgroundColor:
-                      secret._id !== this.state.id ? 'transparent' : 'black',
+                    backgroundColor: !this.isCurrentConfig(configDoc)
+                      ? 'transparent'
+                      : 'black',
                   }}
                 >
                   <Text
                     style={{
                       textAlign: 'left',
-                      color:
-                        secret._id !== this.state.id ? 'currentColor' : 'white',
+                      color: !this.isCurrentConfig(configDoc)
+                        ? 'currentColor'
+                        : 'white',
                     }}
                     size={1}
                   >
-                    {`${secret.shopName}.myshopify.com`}
+                    {`${configDoc.shopName}.myshopify.com`}
                   </Text>
                 </button>
               ))}
               <button
                 id={`add-tab`}
                 aria-controls={`add-panel`}
-                onClick={() => this.setCurrent(undefined)}
+                onClick={this.setCurrent(undefined)}
                 style={{
                   ...buttonStyles,
                   backgroundColor:
-                    this.state.id !== null ? 'transparent' : 'black',
+                    this.state.currentConfig !== undefined
+                      ? 'transparent'
+                      : 'black',
                 }}
               >
                 <Text
                   style={{
                     textAlign: 'left',
-                    color: this.state.id !== null ? 'currentColor' : 'white',
+                    color:
+                      this.state.currentConfig !== undefined
+                        ? 'currentColor'
+                        : 'white',
                   }}
                   size={1}
                 >
@@ -172,18 +187,18 @@ export class ShopifyTool extends React.Component<null, State> {
             paddingX={[2, 3, 8]}
             style={{ height: '100vh' }}
           >
-            {this.state.secrets.map((secret) => (
+            {Array.from(this.state.config).map(([shopName, configDoc]) => (
               <TabPanel
-                key={secret._id}
-                id={`${secret.shopName}-panel`}
-                aria-labelledby={`${secret.shopName}-tab`}
-                hidden={this.state.id !== secret._id}
+                key={shopName}
+                id={`${shopName}-panel`}
+                aria-labelledby={`${shopName}-tab`}
+                hidden={!this.isCurrentConfig(configDoc)}
               >
-                <Provider shopName={secret.shopName}>
+                <Provider shopName={shopName}>
                   <Tracker>
                     <Inner>
                       <Box marginBottom={[1, 2, 6]}>
-                        <Text size={3}>{secret.shopName}.myshopify.com</Text>
+                        <Text size={3}>{shopName}.myshopify.com</Text>
                       </Box>
                     </Inner>
                   </Tracker>
@@ -191,10 +206,10 @@ export class ShopifyTool extends React.Component<null, State> {
               </TabPanel>
             ))}
             <TabPanel
-              key={this.state?.id || 'add'}
+              key={this.state.currentConfig?.shopName || 'add'}
               id={`add-panel`}
               aria-labelledby={`add-tab`}
-              hidden={this.state.id !== null}
+              hidden={this.state.currentConfig !== undefined}
             >
               <Provider shopName={null}>
                 <Tracker>
