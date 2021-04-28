@@ -1,6 +1,6 @@
 import { SanityClient } from '@sanity/client'
 import { SanityUtils, ShopifySecrets } from '@sane-shopify/types'
-import { KEYS_TYPE } from '../constants'
+import { CONFIG_DOC_TYPE } from '../constants'
 
 /**
  * Constants & Defaults
@@ -11,7 +11,7 @@ export const createSaveSecrets = (
 ): SanityUtils['saveSecrets'] => async (secrets: ShopifySecrets) => {
   const doc = {
     _id: secrets._id || `secrets.sane-shopify-${secrets.shopName}`,
-    _type: KEYS_TYPE,
+    _type: CONFIG_DOC_TYPE,
     shopName: secrets.shopName,
     accessToken: secrets.accessToken,
   }
