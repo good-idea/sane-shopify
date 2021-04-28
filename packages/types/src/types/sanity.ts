@@ -1,11 +1,5 @@
-import {
-  Product,
-  Collection,
-  ShopifyItem,
-  Variant,
-  ShopifySecrets,
-} from './shopify'
-import { LinkOperation, SyncOperation } from './main'
+import { Product, Collection, ShopifyItem, Variant } from './shopify'
+import { LinkOperation, SyncOperation, UpdateConfigDocumentArgs } from './main'
 
 export interface SanityPair {
   from: SanityShopifyDocument
@@ -132,8 +126,11 @@ export interface SanityUtils {
   archiveSanityDocument: (
     doc: SanityShopifyDocument
   ) => Promise<SanityShopifyDocument>
-  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: (secrets: ShopifySecrets) => Promise<void>
+  saveConfig: (
+    storefront: string,
+    config: UpdateConfigDocumentArgs
+  ) => Promise<void>
+  clearConfig: (storefront: string) => Promise<void>
 }
 
 // TODO: This kept coming up as undefined in the test store..

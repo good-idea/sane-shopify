@@ -18,7 +18,6 @@ export interface ShopifyClient {
 }
 
 export interface ShopifySecrets {
-  _id: string
   shopName: string
   accessToken: string
 }

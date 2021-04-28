@@ -1,5 +1,5 @@
 import { SanityClient } from '@sanity/client'
-import { SanityUtils, ShopifySecrets } from '@sane-shopify/types'
+import { SanityUtils, SaneShopifyConfigDocument } from '@sane-shopify/types'
 import { CONFIG_DOC_TYPE } from '../constants'
 
 /**
@@ -8,7 +8,7 @@ import { CONFIG_DOC_TYPE } from '../constants'
 
 export const createSaveSecrets = (
   client: SanityClient
-): SanityUtils['saveSecrets'] => async (secrets: ShopifySecrets) => {
+): SanityUtils['saveSecrets'] => async (secrets: SaneShopifyConfigDocument) => {
   const doc = {
     _id: secrets._id || `secrets.sane-shopify-${secrets.shopName}`,
     _type: CONFIG_DOC_TYPE,
@@ -25,6 +25,8 @@ export const createSaveSecrets = (
 
 export const createClearSecrets = (
   client: SanityClient
-): SanityUtils['clearSecrets'] => async (secrets: ShopifySecrets) => {
+): SanityUtils['clearSecrets'] => async (
+  secrets: SaneShopifyConfigDocument
+) => {
   await client.delete(secrets._id)
 }
