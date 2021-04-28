@@ -14,6 +14,7 @@ import {
   RelatedPairPartial,
   SyncUtils,
   SyncMachineState,
+  UpdateConfigDocumentArgs,
 } from '@sane-shopify/types'
 import { syncStateMachine } from './syncState'
 import { createLogger, Logger } from './logger'
@@ -66,8 +67,8 @@ export const syncUtils = (
     documentByShopifyId,
     // fetchSecrets,
     archiveSanityDocument,
-    saveSecrets: saveSecretsToSanity,
-    clearSecrets: clearSecretsFromSanity,
+    saveConfig: saveConfigToSanity,
+    clearConfig: clearConfigFromSanity,
   } = sanityUtils(sanityClient, shopifyClient)
 
   /**
@@ -253,18 +254,25 @@ export const syncUtils = (
 
   /* Saves the Storefront name and API key to Sanity */
 
-  const saveSecrets = async (secrets: ShopifySecrets) => {
+  const saveConfig = async (
+    storefront: string,
+    secrets: UpdateConfigDocumentArgs
+  ) => {
     const { isError, message } = await testSecrets(secrets)
     if (isError) {
       onSavedSecretsError(new Error(message))
       return
     }
-    await saveSecretsToSanity(secrets)
+    await saveConfigToSanity(storefront, secrets)
     onSavedSecrets(secrets.shopName)
   }
 
-  const clearSecrets = async (secrets: ShopifySecrets) => {
-    await clearSecretsFromSanity(secrets)
+  const testConfig = async (secrets: ShopifySecrets) => {
+    return testSecrets(secrets)
+  }
+
+  const clearConfig = async (storefront: string) => {
+    await clearConfigFromSanity(storefront)
     onClearedSecrets()
   }
 
@@ -485,9 +493,9 @@ export const syncUtils = (
   return {
     initialize,
     initialState,
-    saveSecrets,
-    clearSecrets,
-    testSecrets,
+    saveConfig,
+    testConfig,
+    clearConfig,
     syncProducts,
     syncCollections,
     syncAll,

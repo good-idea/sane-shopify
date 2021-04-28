@@ -1,6 +1,6 @@
 import type { SanityClient, Transaction } from '@sanity/client'
 import { SaneShopifyConfigDocument } from '@sane-shopify/types'
-import { CONFIG_DOC_TYPE } from '../constants'
+import { CONFIG_DOC_ID_PREFIX, CONFIG_DOC_TYPE } from '../constants'
 import Debug from 'debug'
 
 const log = Debug('sane-shopify:migrations')
@@ -34,7 +34,7 @@ const updateDocumentType = async (client: SanityClient): Promise<void> => {
       // Updating an document _type field isn't allowed, we have to create a new and delete the old
       const newDocument = {
         ...configDoc,
-        _id: configDoc._id.concat(new Date().getTime().toString()),
+        _id: CONFIG_DOC_ID_PREFIX.concat(configDoc.shopName),
         _type: CONFIG_DOC_TYPE,
       }
       prevTrx.create(newDocument).delete(configDoc._id)
