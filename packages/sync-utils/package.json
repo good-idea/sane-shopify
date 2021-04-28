@@ -1,6 +1,6 @@
 {
   "name": "@sane-shopify/sync-utils",
-  "version": "0.20.5",
+  "version": "0.21.0",
   "description": "Syncing utility for Node & the browser",
   "author": "Joseph Thomas | Good Idea Studio",
   "homepage": "https://github.com/good-idea/sane-shopify#readme",
@@ -26,7 +26,7 @@
     "test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
     "test:coverage:send": "codecov",
     "build": "rimraf lib && tsdx build",
-		"start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
+    "start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
     "prepublishOnly": "yarn build"
   },
   "keywords": [
@@ -46,7 +46,7 @@
   "dependencies": {
     "@good-idea/leaky-bucket": "^3.1.2",
     "@good-idea/unwind-edges": "^1.5.3",
-    "@sane-shopify/types": "^0.20.5",
+    "@sane-shopify/types": "^0.21.0",
     "cross-fetch": "^3.1.4",
     "debug": "^4.3.1",
     "deepmerge": "^4.2.2",

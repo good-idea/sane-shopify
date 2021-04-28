@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.21.0 (2021-04-28)
+
+
+### Features
+
+* **repo:** moved to multi-store setup ([#162](https://github.com/good-idea/sane-shopify/issues/162)) ([dc86c2d](https://github.com/good-idea/sane-shopify/commit/dc86c2dd80ab7dc3a77772080e8a280cc9bece66))
+
+
+
+
+
 ## 0.20.5 (2021-04-02)
 
 ### Bug Fixes
