@@ -14,7 +14,7 @@ import { Setup } from './Setup'
 import { SyncPane } from './Sync'
 import { Provider, useSaneContext } from '../Provider'
 import { ShopifySecrets } from '@sane-shopify/types'
-import { KEYS_TYPE } from '@sane-shopify/sync-utils'
+import { CONFIG_DOC_TYPE } from '@sane-shopify/sync-utils'
 import { defaultSanityClient } from '../services/sanity'
 
 const Inner = (props: { children: React.ReactNode }) => {
@@ -65,24 +65,27 @@ export class ShopifyTool extends React.Component<null, State> {
 
   public sanityClient = defaultSanityClient
 
-  public fetchSecrets = async (query: string, params: object) => {
+  public fetchSecrets = async () => {
+    const query = '*[_type == $documentType]'
+
+    const params = { documentType: CONFIG_DOC_TYPE }
+
+    this.subscription = this.sanityClient
+      .listen(query, params)
+      .subscribe(async (update) => {
+        await sleep(2000)
+        const updatedSecrets = await this.sanityClient.fetch('[_id == $id]', {
+          id: update.documentId,
+        })
+        this.updateSecrets([updatedSecrets])
+      })
+
     const shopifySecrets = await this.sanityClient.fetch(query, params)
     this.updateSecrets(shopifySecrets)
   }
 
   public componentDidMount() {
-    const query = '*[_type == $documentType]'
-    const params = { documentType: KEYS_TYPE }
-
-    this.subscription = this.sanityClient
-      .listen(query, params)
-      .subscribe(async () => {
-        await sleep(2000)
-        this.fetchSecrets(query, params)
-      })
-
-    // first time call
-    this.fetchSecrets(query, params)
+    this.fetchSecrets()
   }
 
   public componentWillUnmount() {

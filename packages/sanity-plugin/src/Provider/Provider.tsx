@@ -7,7 +7,7 @@ import {
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
-  KEYS_TYPE,
+  CONFIG_DOC_TYPE,
   createShopifyClient,
   syncUtils,
 } from '@sane-shopify/sync-utils'
@@ -119,7 +119,8 @@ export class Provider extends React.Component<
     if (!this.props.shopName) return undefined
 
     const results: ShopifySecrets[] = await this.sanityClient.fetch(
-      `*[_type == "${KEYS_TYPE}" && shopName == "${this.props.shopName}"]`
+      `*[_type == $type && shopName == $shopName]`,
+      { type: CONFIG_DOC_TYPE, shopName: this.props.shopName }
     )
 
     if (results.length) return results[0]
