@@ -7,14 +7,11 @@ import {
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
+  CONFIG_DOC_TYPE,
   createShopifyClient,
   syncUtils,
-  KEYS_ID,
 } from '@sane-shopify/sync-utils'
-// import { createShopifyClient } from '../shopifyClient'
-
-/* eslint-disable @typescript-eslint/no-var-requires */
-const defaultSanityClient = require('part:@sanity/base/client')
+import { defaultSanityClient } from '../services/sanity'
 
 /**
  * Context Setup
@@ -48,6 +45,7 @@ export interface ClientContextValue extends SecretUtils {
 }
 
 interface ClientContextProps {
+  shopName: string | null
   children: React.ReactNode | ((value: ClientContextValue) => React.ReactNode)
 }
 
@@ -57,6 +55,7 @@ interface ClientContextState {
 }
 
 const emptySecrets = {
+  _id: '',
   shopName: '',
   accessToken: '',
 }
@@ -81,7 +80,12 @@ export class Provider extends React.Component<
     this.createSyncingClient(shopifySecrets)
   }
 
+  private initializeSyncingClient() {
+    this?.syncingClient?.initialize(this.state.secrets || emptySecrets)
+  }
+
   private async createSyncingClient(secrets?: ShopifySecrets) {
+    // @ts-ignore
     const shopifyClient = createShopifyClient(secrets)
     this.shopifyClient = shopifyClient
     this.syncingClient = syncUtils(
@@ -90,16 +94,18 @@ export class Provider extends React.Component<
       this.handleStateChange
     )
 
-    const { shopName, accessToken } = secrets || emptySecrets
+    const { _id, shopName, accessToken } = secrets || emptySecrets
+
     this.setState(
       {
         secrets: {
+          _id,
           shopName,
           accessToken,
         },
         syncState: this?.syncingClient?.initialState,
       },
-      this?.syncingClient?.initialize
+      this.initializeSyncingClient
     )
   }
 
@@ -110,9 +116,13 @@ export class Provider extends React.Component<
   }
 
   public fetchSecrets = async (): Promise<ShopifySecrets | undefined> => {
+    if (!this.props.shopName) return undefined
+
     const results: ShopifySecrets[] = await this.sanityClient.fetch(
-      `*[_id == "${KEYS_ID}"]`
+      `*[_type == $type && shopName == $shopName]`,
+      { type: CONFIG_DOC_TYPE, shopName: this.props.shopName }
     )
+
     if (results.length) return results[0]
     return undefined
   }
@@ -128,12 +138,14 @@ export class Provider extends React.Component<
   }
 
   public clearSecrets = async (): Promise<void> => {
-    if (this.syncingClient) this.syncingClient.clearSecrets()
+    if (this.syncingClient && this.state.secrets)
+      this.syncingClient.clearSecrets(this.state.secrets)
   }
 
   public render() {
     const { children } = this.props
     const { secrets, syncState } = this.state
+
     const {
       saveSecrets,
       clearSecrets,

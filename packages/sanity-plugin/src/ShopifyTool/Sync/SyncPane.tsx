@@ -1,24 +1,34 @@
 import * as React from 'react'
+import { Button, Text, Box } from '@sanity/ui'
 import { Sync, SyncRenderProps } from './Sync'
 import { Progress } from '../../components/Progress'
-
-const Button = require('part:@sanity/components/buttons/default').default
-const Fieldset = require('part:@sanity/components/fieldsets/default').default
 
 const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
   const handleSyncButton = () => syncAll()
   return (
-    <Fieldset legend="Sync" level={1}>
+    <Box marginBottom={[1, 2, 6]}>
+      <Box marginBottom={[1, 2, 4]}>
+        <Text size={1} weight="bold">
+          Sync
+        </Text>
+      </Box>
       <Button
-        loading={syncState === 'syncing'}
-        disabled={syncState === 'complete'}
-        color="primary"
+        style={{ width: '100%' }}
+        radius={0}
+        fontSize={2}
+        padding={[2, 2, 4]}
+        tone="primary"
         onClick={handleSyncButton}
-      >
-        Sync from Shopify
-      </Button>
+        disabled={syncState === 'complete'}
+        mode={syncState === 'syncing' ? 'bleed' : 'default'}
+        text={
+          syncState === 'syncing'
+            ? 'Wait until complete...'
+            : 'Sync data from Shopify'
+        }
+      />
       <Progress />
-    </Fieldset>
+    </Box>
   )
 }
 

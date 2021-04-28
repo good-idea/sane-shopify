@@ -1,14 +1,14 @@
 import { uniqueId } from 'lodash'
 import * as React from 'react'
+import { Stack, Button, Box, Text, TextInput } from '@sanity/ui'
 import { ClientContextValue, SaneConsumer } from '../Provider'
+
 /* tslint:disable */
-const Button = require('part:@sanity/components/buttons/default').default
-const Fieldset = require('part:@sanity/components/fieldsets/default').default
 const FormField = require('part:@sanity/components/formfields/default').default
-const TextInput = require('part:@sanity/components/textinputs/default').default
 /* tslint:enable */
 
 interface State {
+  _id: string
   shopName: string
   accessToken: string
   loading: boolean
@@ -16,21 +16,12 @@ interface State {
   success: boolean
 }
 
-const buttonWrapperStyles = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginTop: '10px',
-}
-
-const buttonStyles = {
-  margin: '0 15px',
-}
-
 export class SetupBase extends React.Component<ClientContextValue, State> {
   public urlInputId = uniqueId('storefrontUrlInput')
   public keyInputId = uniqueId('storefrontKeyInput')
 
   public state = {
+    _id: this.props?.secrets?._id || '',
     shopName: this.props?.secrets?.shopName || '',
     accessToken: this.props?.secrets?.accessToken || '',
     loading: false,
@@ -47,6 +38,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 
   public clear = (): void => {
     this.setState({
+      _id: this.props?.secrets?._id || '',
       shopName: this.props?.secrets?.shopName || '',
       accessToken: this.props?.secrets?.accessToken || '',
       error: false,
@@ -56,8 +48,8 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public handleSubmit = async (): Promise<void> => {
     this.setState({ loading: true })
     const { saveSecrets } = this.props
-    const { shopName, accessToken } = this.state
-    await saveSecrets({ shopName, accessToken })
+    const { _id, shopName, accessToken } = this.state
+    await saveSecrets({ _id, shopName, accessToken })
     this.setState({ loading: false })
   }
 
@@ -69,7 +61,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     ) {
       this.setState({ loading: true })
       if (this.props.syncingClient)
-        await this.props.syncingClient.clearSecrets()
+        await this.props.syncingClient.clearSecrets(this.props.secrets)
       this.setState({ loading: false })
     }
   }
@@ -81,34 +73,43 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 
     if (!ready) return null
     if (valid) {
-      const { shopName } = syncState.context
       return (
-        <Fieldset legend="Account Setup" level={1} description="">
-          <p>
-            Connected to shopify storefront <strong>{shopName || null}</strong>
-          </p>
-
-          <Button color="danger" disabled={loading} onClick={this.handleUnlink}>
-            Unlink
-          </Button>
-          <h5>
-            <em>
-              Unlinking your Shopify account will not remove any data in Sanity.
-              But, it may cause syncing issues if you add new credentials later.
-              Be sure to back up your content before unlinking.
-            </em>
-          </h5>
-        </Fieldset>
+        <Box marginBottom={[1, 2, 6]}>
+          <Box marginBottom={[1, 2, 4]}>
+            <Text size={1} weight="bold">
+              Unlink
+            </Text>
+          </Box>
+          <Box marginBottom={[1, 2, 4]}>
+            <Button
+              style={{ width: '100%' }}
+              radius={0}
+              fontSize={2}
+              padding={[3, 3, 4]}
+              tone="critical"
+              disabled={loading}
+              text="Unlink Storefront"
+              onClick={this.handleUnlink}
+            />
+          </Box>
+          <Text weight="bold" size={1}>
+            Unlinking your Shopify account will not remove any data in Sanity.
+            But, it may cause syncing issues if you add new credentials later.
+            Be sure to back up your content before unlinking.
+          </Text>
+        </Box>
       )
     }
 
     return (
-      <Fieldset legend="Account Setup" level={1}>
+      <Box>
         {errorMessage ? (
-          <p style={errorMessage ? { color: 'red' } : {}}>{errorMessage}</p>
+          <Text size={1} style={errorMessage ? { color: 'red' } : {}}>
+            {errorMessage}
+          </Text>
         ) : null}
         {!success && (
-          <React.Fragment>
+          <Stack space={[3, 3, 4, 5]}>
             <FormField
               label="Storefront Name"
               description="This is the first part of your shopify url,
@@ -139,21 +140,20 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
                 type="text"
               />
             </FormField>
-          </React.Fragment>
+            <Box>
+              <Button
+                radius={0}
+                fontSize={2}
+                padding={[3, 3, 4]}
+                tone="primary"
+                disabled={success}
+                text="Save Credentials"
+                onClick={this.handleSubmit}
+              />
+            </Box>
+          </Stack>
         )}
-        <div style={buttonWrapperStyles}>
-          <Button
-            loading={success || loading}
-            disabled={success}
-            color="primary"
-            kind="default"
-            onClick={this.handleSubmit}
-            style={buttonStyles}
-          >
-            Save Credentials
-          </Button>
-        </div>
-      </Fieldset>
+      </Box>
     )
   }
 }

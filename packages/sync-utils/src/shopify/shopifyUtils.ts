@@ -65,6 +65,7 @@ const createCache = (): ShopifyCache => {
 }
 
 export const shopifyUtils = (client: ShopifyClient): ShopifyUtils => {
+  // QUI QUI QUI
   const { query } = client
   const cache = createCache()
   return {

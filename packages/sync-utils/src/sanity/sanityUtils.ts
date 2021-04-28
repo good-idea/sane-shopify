@@ -1,5 +1,9 @@
 import { SanityClient } from '@sanity/client'
-import { SanityUtils, SanityShopifyDocument } from '@sane-shopify/types'
+import {
+  SanityUtils,
+  ShopifyClient,
+  SanityShopifyDocument,
+} from '@sane-shopify/types'
 import { createSyncSanityDocument } from './syncSanityDocument'
 import { createFetchRelatedDocs } from './fetchRelatedDocs'
 import {
@@ -9,7 +13,7 @@ import {
 import { createArchiveSanityDocument } from './archive'
 import { createFetchAll } from './fetchAll'
 import {
-  createFetchSecrets,
+  // createFetchSecrets,
   createSaveSecrets,
   createClearSecrets,
 } from './secrets'
@@ -74,18 +78,25 @@ const createCache = (): SanityCache => {
   }
 }
 
-export const sanityUtils = (client: SanityClient): SanityUtils => {
+export const sanityUtils = (
+  client: SanityClient,
+  shopifyClient: ShopifyClient
+): SanityUtils => {
   const cache = createCache()
 
   const fetchAllSanityDocuments = createFetchAll(client, cache)
-  const syncSanityDocument = createSyncSanityDocument(client, cache)
+  const syncSanityDocument = createSyncSanityDocument(
+    client,
+    cache,
+    shopifyClient
+  )
   const fetchRelatedDocs = createFetchRelatedDocs(client, cache)
   const syncRelationships = createSyncRelationships(client)
   const removeRelationships = createRemoveRelationships(client)
   const archiveSanityDocument = createArchiveSanityDocument(client)
   const clearSecrets = createClearSecrets(client)
   const saveSecrets = createSaveSecrets(client)
-  const fetchSecrets = createFetchSecrets(client)
+  // const fetchSecrets = createFetchSecrets(client)
 
   const documentByShopifyId = async (shopifyId: string) => {
     const cached = cache.getByShopifyId(shopifyId)
@@ -150,6 +161,6 @@ export const sanityUtils = (client: SanityClient): SanityUtils => {
     archiveSanityDocument,
     clearSecrets,
     saveSecrets,
-    fetchSecrets,
+    // fetchSecrets,
   }
 }

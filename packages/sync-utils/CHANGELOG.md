@@ -5,212 +5,115 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 0.20.5 (2021-04-02)
 
-
 ### Bug Fixes
 
-* **server:** aws lambda fix ([#161](https://github.com/good-idea/sane-shopify/issues/161)) ([04e2fc8](https://github.com/good-idea/sane-shopify/commit/04e2fc80f75b6cf195d6fcb0ab0153cb1fc79348))
-
-
-
-
+- **server:** aws lambda fix ([#161](https://github.com/good-idea/sane-shopify/issues/161)) ([04e2fc8](https://github.com/good-idea/sane-shopify/commit/04e2fc80f75b6cf195d6fcb0ab0153cb1fc79348))
 
 ## 0.20.4 (2021-03-25)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## 0.20.3 (2021-03-17)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## 0.20.2 (2021-03-17)
-
 
 ### Bug Fixes
 
-* **types:** fix webhooks config types ([#156](https://github.com/good-idea/sane-shopify/issues/156)) ([c48e3e5](https://github.com/good-idea/sane-shopify/commit/c48e3e54ddf5bfecb3537850b7d236c0e6d94de2))
-
-
-
-
+- **types:** fix webhooks config types ([#156](https://github.com/good-idea/sane-shopify/issues/156)) ([c48e3e5](https://github.com/good-idea/sane-shopify/commit/c48e3e54ddf5bfecb3537850b7d236c0e6d94de2))
 
 ## 0.20.1 (2021-03-17)
 
-
 ### Bug Fixes
 
-* **types:** fix webhooks config types ([#154](https://github.com/good-idea/sane-shopify/issues/154)) ([c71a230](https://github.com/good-idea/sane-shopify/commit/c71a23051318b15382f3d98e1c1510b7708de30d))
-
-
-
-
+- **types:** fix webhooks config types ([#154](https://github.com/good-idea/sane-shopify/issues/154)) ([c71a230](https://github.com/good-idea/sane-shopify/commit/c71a23051318b15382f3d98e1c1510b7708de30d))
 
 # 0.20.0 (2021-03-17)
 
-
 ### Features
 
-* **sanity-plugin:** added media field to source data ([#149](https://github.com/good-idea/sane-shopify/issues/149)) ([58ed53b](https://github.com/good-idea/sane-shopify/commit/58ed53b516b958755906c97a68923091916e8533))
-
-
-
-
+- **sanity-plugin:** added media field to source data ([#149](https://github.com/good-idea/sane-shopify/issues/149)) ([58ed53b](https://github.com/good-idea/sane-shopify/commit/58ed53b516b958755906c97a68923091916e8533))
 
 ## 0.19.12 (2021-02-25)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## 0.19.11 (2021-02-24)
-
 
 ### Bug Fixes
 
-* **sync-utils:** fix duplicate type import ([9d552d4](https://github.com/good-idea/sane-shopify/commit/9d552d40684dff4d590b3989777d1f4308084bb6))
-
-
-
-
+- **sync-utils:** fix duplicate type import ([9d552d4](https://github.com/good-idea/sane-shopify/commit/9d552d40684dff4d590b3989777d1f4308084bb6))
 
 ## 0.19.10 (2021-02-22)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## 0.19.9 (2021-02-16)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
-
-
-
-
 
 ## 0.19.8 (2021-02-10)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## 0.19.7 (2021-02-06)
-
 
 ### Bug Fixes
 
-* **sync-utils:** dummy fix for version bump (7) ([541ae82](https://github.com/good-idea/sane-shopify/commit/541ae82f651ab49c7698c1b1c6bc7457f0b4e323))
-
-
-
-
+- **sync-utils:** dummy fix for version bump (7) ([541ae82](https://github.com/good-idea/sane-shopify/commit/541ae82f651ab49c7698c1b1c6bc7457f0b4e323))
 
 ## 0.19.6 (2021-02-06)
 
-
 ### Bug Fixes
 
-* **sync-utils:** dummy fix for version bump (6) ([3778ea9](https://github.com/good-idea/sane-shopify/commit/3778ea9cf4ffcabd7edf441e1b1a166a273b1558))
-
-
-
-
+- **sync-utils:** dummy fix for version bump (6) ([3778ea9](https://github.com/good-idea/sane-shopify/commit/3778ea9cf4ffcabd7edf441e1b1a166a273b1558))
 
 ## 0.19.5 (2021-02-06)
 
-
 ### Bug Fixes
 
-* **sync-utils:** dummy fix for version bump (4) ([9889d3c](https://github.com/good-idea/sane-shopify/commit/9889d3c59b2a45b22dd708c8ff97c63d3507f13e))
-
-
-
-
+- **sync-utils:** dummy fix for version bump (4) ([9889d3c](https://github.com/good-idea/sane-shopify/commit/9889d3c59b2a45b22dd708c8ff97c63d3507f13e))
 
 ## 0.19.4 (2021-02-06)
 
-
 ### Bug Fixes
 
-* **sync-utils:** dummy fix for version bump (2) ([f5e8097](https://github.com/good-idea/sane-shopify/commit/f5e80976ea287e96d49f138628755891ca0362b7))
-
-
-
-
+- **sync-utils:** dummy fix for version bump (2) ([f5e8097](https://github.com/good-idea/sane-shopify/commit/f5e80976ea287e96d49f138628755891ca0362b7))
 
 ## 0.19.3 (2021-02-05)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## 0.19.2 (2021-02-05)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
 
-
-
-
-
 ## [0.19.1](https://github.com/good-idea/sane-shopify/compare/v0.19.0...v0.19.1) (2021-01-14)
-
 
 ### Bug Fixes
 
-* **sync-utils:** fix relation syncing ([59a9d8b](https://github.com/good-idea/sane-shopify/commit/59a9d8b50bc9299fa14c9be35c0b23a689a82903))
-* **sync-utils:** fix relationship removing ([e784922](https://github.com/good-idea/sane-shopify/commit/e78492200ac75befc4a31338b08cd8648ae4692d))
-
-
-
-
+- **sync-utils:** fix relation syncing ([59a9d8b](https://github.com/good-idea/sane-shopify/commit/59a9d8b50bc9299fa14c9be35c0b23a689a82903))
+- **sync-utils:** fix relationship removing ([e784922](https://github.com/good-idea/sane-shopify/commit/e78492200ac75befc4a31338b08cd8648ae4692d))
 
 # [0.19.0](https://github.com/good-idea/sane-shopify/compare/v0.18.2...v0.19.0) (2021-01-14)
 
-
 ### Features
 
-* **sync-utils:** add syncItem, fetchItemById to sync utils ([7b0e6ca](https://github.com/good-idea/sane-shopify/commit/7b0e6ca83b2dbb6ae3b0a0d26de32f6c72db0ffa))
-
-
-
-
+- **sync-utils:** add syncItem, fetchItemById to sync utils ([7b0e6ca](https://github.com/good-idea/sane-shopify/commit/7b0e6ca83b2dbb6ae3b0a0d26de32f6c72db0ffa))
 
 ## [0.18.2](https://github.com/good-idea/sane-shopify/compare/v0.18.1...v0.18.2) (2020-11-18)
 
-
 ### Bug Fixes
 
-* **sync-utils:** update storefront API version to 2020-10 ([30eccb1](https://github.com/good-idea/sane-shopify/commit/30eccb1a0ac864b4dff1dbcc24f7c52ade2dc292))
-
-
-
-
+- **sync-utils:** update storefront API version to 2020-10 ([30eccb1](https://github.com/good-idea/sane-shopify/commit/30eccb1a0ac864b4dff1dbcc24f7c52ade2dc292))
 
 ## [0.18.1](https://github.com/good-idea/sane-shopify/compare/v0.18.0...v0.18.1) (2020-11-18)
 
-
 ### Bug Fixes
 
-* **sync-utils:** add currentlyNotInStock to variant query ([7a2adca](https://github.com/good-idea/sane-shopify/commit/7a2adca1236066464427059bf7278ca283dbbf8f))
-* **types:** fix sanity/client type imports ([724e8b3](https://github.com/good-idea/sane-shopify/commit/724e8b3dc5733c703474436152c7fb921b96bb6a))
-
-
-
-
+- **sync-utils:** add currentlyNotInStock to variant query ([7a2adca](https://github.com/good-idea/sane-shopify/commit/7a2adca1236066464427059bf7278ca283dbbf8f))
+- **types:** fix sanity/client type imports ([724e8b3](https://github.com/good-idea/sane-shopify/commit/724e8b3dc5733c703474436152c7fb921b96bb6a))
 
 # [0.18.0](https://github.com/good-idea/sane-shopify/compare/v0.17.6...v0.18.0) (2020-11-08)
 

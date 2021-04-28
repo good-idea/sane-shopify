@@ -1,15 +1,24 @@
 import * as React from 'react'
 import { unwindEdges } from '@good-idea/unwind-edges'
+import {
+  Button,
+  Card,
+  Label,
+  Stack,
+  Text,
+  ThemeProvider,
+  studioTheme,
+} from '@sanity/ui'
 import { Product } from '@sane-shopify/types'
 import { Progress } from './Progress'
-import { Value } from './shared'
 import { Provider, useSaneContext } from '../Provider'
-
-const Button = require('part:@sanity/components/buttons/default').default
-const Fieldset = require('part:@sanity/components/fieldsets/default').default
 
 interface ShopifySourceProductPreviewProps {
   value: Product
+}
+
+const spacing = {
+  marginBottom: '1.5rem',
 }
 
 const ShopifySourceProductPreviewInner = ({
@@ -53,31 +62,70 @@ const ShopifySourceProductPreviewInner = ({
     syncStateValue === 'complete' || syncStateValue === 'sync'
 
   return (
-    <Fieldset
-      legend="Shopify Source Data"
-      description="Read-only. Synced from product data in Shopify"
+    <Card
+      key={id || null}
+      padding={[3, 3, 4]}
+      radius={2}
+      shadow={1}
+      tone="caution"
     >
-      <Value label="Title" value={title} />
-      {tags.length ? <Value label="Tags" value={tags.join(', ')} /> : null}
-      {productType ? <Value label="Product Type" value={productType} /> : null}
-      <Value label="Available" value={availableForSale ? 'Yes ✅' : 'No 🚫'} />
-      <Value label="Variants" value={variantsValue} />
-      <hr />
-      <Value label="Description" value={description} />
-      <hr />
-      <Button color="primary" disabled={buttonDisabled} onClick={reSync}>
-        Sync from Shopify
-      </Button>
+      <Stack space={[2, 3]} style={spacing}>
+        <Label size={1}> Shopify Source Data </Label>
+        <Text size={1}> Read-only. Synced from product data in Shopify </Text>
+      </Stack>
+      <Stack space={[1, 2]} style={spacing}>
+        <Label size={1}>Title</Label>
+        <Text size={1}>{title}</Text>
+      </Stack>
+      <Stack space={[1, 2]} style={spacing}>
+        <Label size={1}>Description</Label>
+        <Text size={1}>{description}</Text>
+      </Stack>
+      <Stack space={[1, 2]} style={spacing}>
+        <Label size={1}>Available</Label>
+        <Text size={1}>{availableForSale ? 'Yes ✅' : 'No 🚫'}</Text>
+      </Stack>
+      <Stack space={[1, 2]} style={spacing}>
+        <Label size={1}>Variants</Label>
+        <Text size={1}>{variantsValue}</Text>
+      </Stack>
+      {tags.length ? (
+        <Stack space={[1, 2]} style={spacing}>
+          <Label size={1}>Tags</Label>
+          <Text size={1}>{tags.join(', ')}</Text>
+        </Stack>
+      ) : null}
+      {productType ? (
+        <Stack space={[1, 2]} style={spacing}>
+          <Label size={1}>Description</Label>
+          <Text size={1}>{description}</Text>
+        </Stack>
+      ) : null}
+      <Button
+        tone="primary"
+        radius={0}
+        padding={[2, 3]}
+        fontSize={1}
+        disabled={buttonDisabled}
+        onClick={reSync}
+        text="Sync from Shopify"
+      />
       <Progress />
-    </Fieldset>
+    </Card>
   )
 }
 
 export class ShopifySourceProductPreview extends React.Component<ShopifySourceProductPreviewProps> {
   render() {
+    const { shopName } = this.props.value
+
     return (
-      <Provider>
-        <ShopifySourceProductPreviewInner {...this.props} />
+      <Provider shopName={shopName}>
+        <ThemeProvider theme={studioTheme}>
+          {shopName ? (
+            <ShopifySourceProductPreviewInner {...this.props} />
+          ) : null}
+        </ThemeProvider>
       </Provider>
     )
   }

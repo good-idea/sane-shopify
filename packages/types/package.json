@@ -15,12 +15,11 @@
     "access": "public"
   },
   "scripts": {
-    "linky": "yalc publish",
-    "linky:watch": "nodemon -w src --delay 250ms -e ts,tsx -x yalc publish --push",
+    "setup": "yalc publish",
     "build": "yarn build:clean && yarn build:compile",
     "build:clean": "rimraf dist",
     "build:compile": "tsdx build",
-    "start": "nodemon --watch src -e ts -x yarn build:compile",
+    "start": "nodemon --watch src -e ts -x 'yarn build:compile && yalc publish --push --no-scripts'",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write --loglevel warn",
     "fix:lint": "eslint --fix ./src",
@@ -38,7 +37,7 @@
     "url": "git+https://github.com/good-idea/sane-shopify.git"
   },
   "devDependencies": {
-    "@good-idea/unwind-edges": "^1.5.2"
+    "@good-idea/unwind-edges": "^1.5.3"
   },
   "gitHead": "dadf14ee1bc10e67ba5019dc8d391d7756b3e656"
 }

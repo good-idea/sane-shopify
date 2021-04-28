@@ -94,7 +94,7 @@ export const createCollectionDocument = ({
         const itemTitle = sourceData ? title || sourceData.title : title
         const alt = `Image for ${itemTitle}`
         const src = sourceData?.image?.w100
-        const subtitle = archived ? '📁 Archived' : undefined
+        const subtitle = archived ? '📁 Archived' : sourceData?.shopName || ''
         const media =
           sourceData && sourceData.image ? (
             <>

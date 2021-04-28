@@ -35,8 +35,10 @@ export const createShopifyClient = (
           'You must provide a shopify storefront name and access token'
         )
       },
+      shopName: '',
     }
   }
+
   const { shopName, accessToken } = secrets
   const url = `https://${shopName}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql.json`
   const headers = {
@@ -73,5 +75,5 @@ export const createShopifyClient = (
       return json
     })
   }
-  return { query }
+  return { shopName, query }
 }

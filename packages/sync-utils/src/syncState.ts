@@ -130,7 +130,7 @@ const syncMachine = Machine<SyncContext, SyncEvent>(
       }),
 
       // @ts-ignore https://github.com/davidkpiano/xstate/issues/866
-      fetchedDocuments: assign<SyncContext, DocumentsFetchedEvent>({
+      onDocumentsFetched: assign<SyncContext, DocumentsFetchedEvent>({
         documentsFetched: (context, action) => [
           ...context.documentsFetched,
           ...action.shopifyDocuments,

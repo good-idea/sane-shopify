@@ -1,6 +1,6 @@
 import { unwindEdges } from '@good-idea/unwind-edges'
-import PQueue from 'p-queue'
 import createSanityClient, { SanityClient } from '@sanity/client'
+import PQueue from 'p-queue'
 import {
   Collection,
   Product,
@@ -20,6 +20,7 @@ import { createLogger, Logger } from './logger'
 import { createShopifyClient, shopifyUtils } from './shopify'
 import { sanityUtils } from './sanity'
 import { definitely } from './utils'
+import { migrateSanityConfig } from './migrations'
 
 /**
  * This is the main 'entry point' for the sync utils client.
@@ -63,11 +64,11 @@ export const syncUtils = (
     syncRelationships,
     fetchRelatedDocs,
     documentByShopifyId,
-    fetchSecrets,
+    // fetchSecrets,
     archiveSanityDocument,
     saveSecrets: saveSecretsToSanity,
     clearSecrets: clearSecretsFromSanity,
-  } = sanityUtils(sanityClient)
+  } = sanityUtils(sanityClient, shopifyClient)
 
   /**
    * State Management
@@ -182,6 +183,8 @@ export const syncUtils = (
     // Find all sanity products that do not have corresponding Shopify products
     const productsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
+        sanityDocument.sourceData.shopName &&
+        sanityDocument.sourceData.shopName === shopifyClient.shopName &&
         sanityDocument.archived !== true &&
         !Boolean(
           products.find(
@@ -211,6 +214,8 @@ export const syncUtils = (
 
     const collectionsToArchive = allSanityProducts.filter(
       (sanityDocument) =>
+        sanityDocument.sourceData.shopName &&
+        sanityDocument.sourceData.shopName === shopifyClient.shopName &&
         sanityDocument.archived !== true &&
         !Boolean(
           collections.find(
@@ -240,10 +245,9 @@ export const syncUtils = (
    */
 
   /* Initializes the syncState */
-  const initialize = async () => {
-    const secrets = await fetchSecrets()
+  const initialize = async (secrets: ShopifySecrets) => {
+    await migrateSanityConfig(sanityClient)
     const { isError } = await testSecrets(secrets)
-
     init(!isError, secrets.shopName)
   }
 
@@ -259,8 +263,8 @@ export const syncUtils = (
     onSavedSecrets(secrets.shopName)
   }
 
-  const clearSecrets = async () => {
-    await clearSecretsFromSanity()
+  const clearSecrets = async (secrets: ShopifySecrets) => {
+    await clearSecretsFromSanity(secrets)
     onClearedSecrets()
   }
 
@@ -462,25 +466,21 @@ export const syncUtils = (
     onComplete()
   }
 
-  const deleteArchivedDocuments = async () => {
-    const query = '*[_type == "shopifyProduct" || _type == "shopifyCollection"]'
-    await sanityClient
-      .patch({ query })
-      .unset(['products', 'collections'])
-      .commit()
-    const deletequery = '*[defined(archived) && archived == true]'
-
-    await sanityClient.delete(
-      { query: deletequery },
-      { returnFirst: false, returnDocuments: true }
-    )
-  }
-
-  // @ts-ignore
-  if (typeof window !== 'undefined') {
-    // @ts-ignore
-    window.deleteArchivedDocuments = deleteArchivedDocuments
-  }
+  // TODO: Uncomment and expose this to the API
+  //  + add docs
+  // const deleteArchivedDocuments = async () => {
+  //   const query = '*[_type == "shopifyProduct" || _type == "shopifyCollection"]'
+  //   await sanityClient
+  //     .patch({ query })
+  //     .unset(['products', 'collections'])
+  //     .commit()
+  //   const deletequery = '*[defined(archived) && archived == true]'
+  //
+  //   await sanityClient.delete(
+  //     { query: deletequery },
+  //     { returnFirst: false, returnDocuments: true }
+  //   )
+  // }
 
   return {
     initialize,

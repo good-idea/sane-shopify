@@ -6,6 +6,7 @@ export type Variables = { [key: string]: any }
 export interface ShopifyItem {
   id: string
   updatedAt: string
+  shopName: string
 }
 
 export interface ShopifyClient {
@@ -13,9 +14,11 @@ export interface ShopifyClient {
     query: string | DocumentNode,
     variables?: Variables
   ) => Promise<ResponseType>
+  shopName: string
 }
 
 export interface ShopifySecrets {
+  _id: string
   shopName: string
   accessToken: string
 }
@@ -141,4 +144,7 @@ export interface ShopifyUtils {
     onProgress: ProgressHandler<Collection>
   ) => Promise<Collection[]>
   testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
+}
+export interface SaneShopifyContext {
+  shopName: string
 }

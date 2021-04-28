@@ -133,8 +133,7 @@ export interface SanityUtils {
     doc: SanityShopifyDocument
   ) => Promise<SanityShopifyDocument>
   saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: () => Promise<void>
-  fetchSecrets: () => Promise<ShopifySecrets>
+  clearSecrets: (secrets: ShopifySecrets) => Promise<void>
 }
 
 // TODO: This kept coming up as undefined in the test store..
