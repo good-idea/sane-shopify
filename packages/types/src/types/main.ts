@@ -9,6 +9,10 @@ import {
 } from './shopify'
 import { SyncMachineState } from './syncState'
 
+export interface SaneShopifyConfigDocument extends ShopifySecrets {
+  _type: string
+}
+
 export interface Secrets {
   sanity: SanityClientConfig
   shopify: ShopifySecrets
