@@ -12,11 +12,7 @@ import {
 } from './syncRelationships'
 import { createArchiveSanityDocument } from './archive'
 import { createFetchAll } from './fetchAll'
-import {
-  // createFetchSecrets,
-  createSaveSecrets,
-  createClearSecrets,
-} from './secrets'
+import { createSaveConfig, createClearConfig } from './config'
 
 interface StringCache<NodeType> {
   [key: string]: NodeType | null
@@ -94,8 +90,8 @@ export const sanityUtils = (
   const syncRelationships = createSyncRelationships(client)
   const removeRelationships = createRemoveRelationships(client)
   const archiveSanityDocument = createArchiveSanityDocument(client)
-  const clearSecrets = createClearSecrets(client)
-  const saveSecrets = createSaveSecrets(client)
+  const clearConfig = createClearConfig(client)
+  const saveConfig = createSaveConfig(client)
   // const fetchSecrets = createFetchSecrets(client)
 
   const documentByShopifyId = async (shopifyId: string) => {
@@ -159,8 +155,8 @@ export const sanityUtils = (
     documentByShopifyId,
     documentByHandle,
     archiveSanityDocument,
-    clearSecrets,
-    saveSecrets,
+    clearConfig,
+    saveConfig,
     // fetchSecrets,
   }
 }

@@ -10,8 +10,14 @@ import {
 import { SyncMachineState } from './syncState'
 
 export interface SaneShopifyConfigDocument extends ShopifySecrets {
+  _id: string
   _type: string
 }
+
+export type UpdateConfigDocumentArgs = Omit<
+  SaneShopifyConfigDocument,
+  '_id' | '_type'
+>
 
 export interface Secrets {
   sanity: SanityClientConfig
@@ -44,9 +50,12 @@ export interface SyncUtils {
   /* Syncs a collection or product by storefront id */
   syncItemByID: (id: string, cbs?: SubscriptionCallbacks) => Promise<void>
   /* Manage Secrets */
-  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: (secrets: ShopifySecrets) => Promise<void>
-  testSecrets: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
+  saveConfig: (
+    shopName: string,
+    config: UpdateConfigDocumentArgs
+  ) => Promise<void>
+  testConfig: (secrets: ShopifySecrets) => Promise<TestSecretsResponse>
+  clearConfig: (shopName: string) => Promise<void>
 }
 
 export interface SyncOperation {

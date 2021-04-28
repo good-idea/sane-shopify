@@ -21,9 +21,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
   public keyInputId = uniqueId('storefrontKeyInput')
 
   public state = {
-    _id: this.props?.secrets?._id || '',
-    shopName: this.props?.secrets?.shopName || '',
-    accessToken: this.props?.secrets?.accessToken || '',
+    _id: this.props?.config?._id || '',
+    shopName: this.props?.config?.shopName || '',
+    accessToken: this.props?.config?.accessToken || '',
     loading: false,
     success: false,
     error: false,
@@ -38,18 +38,18 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
 
   public clear = (): void => {
     this.setState({
-      _id: this.props?.secrets?._id || '',
-      shopName: this.props?.secrets?.shopName || '',
-      accessToken: this.props?.secrets?.accessToken || '',
+      _id: this.props?.config?._id || '',
+      shopName: this.props?.config?.shopName || '',
+      accessToken: this.props?.config?.accessToken || '',
       error: false,
     })
   }
 
   public handleSubmit = async (): Promise<void> => {
     this.setState({ loading: true })
-    const { saveSecrets } = this.props
-    const { _id, shopName, accessToken } = this.state
-    await saveSecrets({ _id, shopName, accessToken })
+    const { saveConfig } = this.props
+    const { shopName, accessToken } = this.state
+    await saveConfig({ shopName, accessToken })
     this.setState({ loading: false })
   }
 
@@ -60,8 +60,9 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
       )
     ) {
       this.setState({ loading: true })
-      if (this.props.syncingClient)
-        await this.props.syncingClient.clearSecrets(this.props.secrets)
+      if (this.props.syncingClient && this.props.config) {
+        await this.props.syncingClient.clearConfig(this.props.config?.shopName)
+      }
       this.setState({ loading: false })
     }
   }

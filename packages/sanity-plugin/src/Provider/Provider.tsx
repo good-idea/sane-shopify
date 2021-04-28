@@ -1,9 +1,10 @@
 import { SanityClient } from '@sanity/client'
 import {
   ShopifyClient,
-  ShopifySecrets,
   SyncUtils,
   SyncMachineState,
+  UpdateConfigDocumentArgs,
+  SaneShopifyConfigDocument,
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
@@ -32,12 +33,12 @@ export const useSaneContext = () => {
  */
 
 interface SecretUtils {
-  saveSecrets: (secrets: ShopifySecrets) => Promise<void>
-  clearSecrets: () => Promise<void>
+  saveConfig: (config: UpdateConfigDocumentArgs) => Promise<void>
+  clearConfig: () => Promise<void>
 }
 
 export interface ClientContextValue extends SecretUtils {
-  secrets: ShopifySecrets
+  config?: SaneShopifyConfigDocument
   syncState: SyncMachineState
   syncingClient: SyncUtils
   shopifyClient: ShopifyClient
@@ -50,7 +51,7 @@ interface ClientContextProps {
 }
 
 interface ClientContextState {
-  secrets?: ShopifySecrets
+  config?: SaneShopifyConfigDocument
   syncState?: SyncMachineState
 }
 
@@ -65,7 +66,7 @@ export class Provider extends React.Component<
   ClientContextState
 > {
   public state: ClientContextState = {
-    secrets: undefined,
+    config: undefined,
     syncState: undefined,
   }
 
@@ -81,12 +82,11 @@ export class Provider extends React.Component<
   }
 
   private initializeSyncingClient() {
-    this?.syncingClient?.initialize(this.state.secrets || emptySecrets)
+    this?.syncingClient?.initialize(this.state.config || emptySecrets)
   }
 
-  private async createSyncingClient(secrets?: ShopifySecrets) {
-    // @ts-ignore
-    const shopifyClient = createShopifyClient(secrets)
+  private async createSyncingClient(config?: SaneShopifyConfigDocument) {
+    const shopifyClient = createShopifyClient(config)
     this.shopifyClient = shopifyClient
     this.syncingClient = syncUtils(
       shopifyClient,
@@ -94,15 +94,9 @@ export class Provider extends React.Component<
       this.handleStateChange
     )
 
-    const { _id, shopName, accessToken } = secrets || emptySecrets
-
     this.setState(
       {
-        secrets: {
-          _id,
-          shopName,
-          accessToken,
-        },
+        config,
         syncState: this?.syncingClient?.initialState,
       },
       this.initializeSyncingClient
@@ -115,10 +109,12 @@ export class Provider extends React.Component<
     })
   }
 
-  public fetchSecrets = async (): Promise<ShopifySecrets | undefined> => {
+  public fetchSecrets = async (): Promise<
+    SaneShopifyConfigDocument | undefined
+  > => {
     if (!this.props.shopName) return undefined
 
-    const results: ShopifySecrets[] = await this.sanityClient.fetch(
+    const results: SaneShopifyConfigDocument[] = await this.sanityClient.fetch(
       `*[_type == $type && shopName == $shopName]`,
       { type: CONFIG_DOC_TYPE, shopName: this.props.shopName }
     )
@@ -131,47 +127,47 @@ export class Provider extends React.Component<
    * Returns true on success, false otherwise
    */
 
-  public saveSecrets = async (secrets: ShopifySecrets): Promise<void> => {
-    if (this.syncingClient) await this.syncingClient.saveSecrets(secrets)
+  public saveConfig = async (
+    config: UpdateConfigDocumentArgs
+  ): Promise<void> => {
+    if (this.syncingClient) {
+      await this.syncingClient.saveConfig(config.shopName, config)
+    }
     // update with a new client with valid secrets
-    this.createSyncingClient(secrets)
+    // @ts-ignore
+    this.createSyncingClient(config)
   }
 
-  public clearSecrets = async (): Promise<void> => {
-    if (this.syncingClient && this.state.secrets)
-      this.syncingClient.clearSecrets(this.state.secrets)
+  public clearConfig = async (): Promise<void> => {
+    if (this.syncingClient && this.state.config) {
+      this.syncingClient.clearConfig(this.state.config.shopName)
+    }
   }
 
   public render() {
     const { children } = this.props
-    const { secrets, syncState } = this.state
+    const { config, syncState } = this.state
 
     const {
-      saveSecrets,
-      clearSecrets,
+      saveConfig,
+      clearConfig,
       syncingClient,
       shopifyClient,
       sanityClient,
     } = this
 
-    if (
-      !syncingClient ||
-      !shopifyClient ||
-      !sanityClient ||
-      !syncState ||
-      !secrets
-    ) {
+    if (!syncingClient || !shopifyClient || !sanityClient || !syncState) {
       return null
     }
 
     const value = {
-      saveSecrets,
-      clearSecrets,
+      saveConfig,
+      clearConfig,
+      config,
       syncingClient,
       shopifyClient,
       sanityClient,
       syncState,
-      secrets,
     }
 
     return (
