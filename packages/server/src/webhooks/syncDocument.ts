@@ -4,13 +4,14 @@ import {
   Collection,
   Product,
 } from '@sane-shopify/types'
-import { COLLECTION, PRODUCT } from './constants'
+import { NodeType, OperationType } from './constants'
 import { log, btoa } from './utils'
 
 interface SyncDocumentConfig {
   syncUtils: SyncUtils
-  type: typeof COLLECTION | typeof PRODUCT
+  type: typeof NodeType.Collection | typeof NodeType.Product
   onError: (err: Error) => void
+  operationType: OperationType
 }
 
 const sleep = (ms: number): Promise<void> =>
@@ -20,14 +21,20 @@ export const syncDocument = ({
   syncUtils,
   type,
   onError,
+  operationType,
 }: SyncDocumentConfig) => async ({
   id,
   updated_at,
 }: WebhookData): Promise<void> => {
   const docType =
-    type === COLLECTION ? 'Collection' : type === PRODUCT ? 'Product' : null
+    type === NodeType.Collection
+      ? 'Collection'
+      : type === NodeType.Product
+      ? 'Product'
+      : null
 
   const storefrontId = btoa(`gid://shopify/${docType}/${id}`)
+
   try {
     if (!docType) {
       throw new Error(`Cannot sync document of type ${type}`)
@@ -64,17 +71,20 @@ export const syncDocument = ({
       return item
     }
 
+    /**
+     * If we are deleting, then dont' try to fetch the up to date item
+     */
     const shopifyItem = await fetchUpToDateItem()
 
-    if (!shopifyItem) {
+    if (operationType === OperationType.Delete) {
       await syncUtils.syncItemByID(storefrontId)
     } else {
       await syncUtils.syncItem(storefrontId, shopifyItem)
     }
 
-    log(`Synced item ${storefrontId} (/${docType}/${id})`)
+    log(`[${operationType}] Synced item ${storefrontId} (/${docType}/${id})`)
   } catch (err) {
-    log(`Failed to sync item ${storefrontId} (/${docType}/${id})`)
+    log(`Failed to ${operationType} item ${storefrontId} (/${docType}/${id})`)
     log(err)
     onError(err)
   }
