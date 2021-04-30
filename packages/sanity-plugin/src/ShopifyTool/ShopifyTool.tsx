@@ -82,10 +82,14 @@ export class ShopifyTool extends React.Component<null, State> {
 
     const shopifyConfig = await this.sanityClient.fetch(query, params)
     this.updateConfig(shopifyConfig)
+    return shopifyConfig
   }
 
-  public componentDidMount() {
-    this.fetchConfig()
+  public async componentDidMount() {
+    const config = await this.fetchConfig()
+    if (config && config.length) {
+      this.setCurrent(config[0])
+    }
   }
 
   public componentWillUnmount() {
@@ -108,11 +112,14 @@ export class ShopifyTool extends React.Component<null, State> {
     })
   }
 
-  private setCurrent = (shopName: string | undefined) => () => {
-    const currentConfig = shopName ? this.state.config.get(shopName) : undefined
+  private setCurrent = (config: SaneShopifyConfigDocument | undefined) => {
     this.setState({
-      currentConfig: currentConfig,
+      currentConfig: config,
     })
+  }
+
+  private setCurrentByShopName = (shopName: string | undefined) => () => {
+    this.setCurrent(shopName ? this.state.config.get(shopName) : undefined)
   }
 
   public render(): React.ReactNode {
@@ -133,7 +140,7 @@ export class ShopifyTool extends React.Component<null, State> {
                   id={`${shopName}-tab`}
                   aria-controls={`${shopName}-panel`}
                   key={configDoc._id}
-                  onClick={this.setCurrent(shopName)}
+                  onClick={this.setCurrentByShopName(shopName)}
                   style={{
                     ...buttonStyles,
                     backgroundColor: !this.isCurrentConfig(configDoc)
@@ -157,7 +164,7 @@ export class ShopifyTool extends React.Component<null, State> {
               <button
                 id={`add-tab`}
                 aria-controls={`add-panel`}
-                onClick={this.setCurrent(undefined)}
+                onClick={this.setCurrentByShopName(undefined)}
                 style={{
                   ...buttonStyles,
                   backgroundColor:
