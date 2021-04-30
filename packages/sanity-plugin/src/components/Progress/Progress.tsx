@@ -5,9 +5,9 @@ import { useSaneContext } from '../../Provider'
 
 import { StatusBar } from './StatusBar'
 
-const isProduct = (i: Product | Collection): boolean =>
+const isProduct = (i: Product | Collection): i is Product =>
   i.__typename === 'Product'
-const isCollection = (i: Product | Collection): boolean =>
+const isCollection = (i: Product | Collection): i is Collection =>
   i.__typename === 'Collection'
 
 export const Progress = () => {
@@ -21,7 +21,6 @@ export const Progress = () => {
     syncOperations,
   } = context
 
-  // @ts-ignore
   if (value !== 'COMPLETE' && value !== 'SYNCING') return null
 
   const productsFetched = documentsFetched.filter(isProduct)
