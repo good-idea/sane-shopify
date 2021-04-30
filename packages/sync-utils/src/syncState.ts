@@ -83,6 +83,7 @@ const syncMachine = Machine<SyncContext, SyncEvent>(
           },
           [E.DocumentsSynced]: {
             internal: true,
+            actions: ['onDocumentsSynced'],
           },
           [E.DocumentsLinked]: {
             internal: true,
