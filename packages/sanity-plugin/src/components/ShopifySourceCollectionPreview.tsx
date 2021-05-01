@@ -78,7 +78,7 @@ const ShopifySourceCollectionPreviewInner = ({
 
 export class ShopifySourceCollectionPreview extends React.Component<ShopifySourceCollectionPreviewProps> {
   render() {
-    const { shopName } = this.props.value
+    const shopName = this.props.value?.shopName
 
     return (
       <ThemeProvider theme={studioTheme}>
