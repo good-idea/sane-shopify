@@ -1,12 +1,12 @@
 {
   "extends": "../../tsconfig.json",
+  "include": ["src"],
   "compilerOptions": {
-    "composite": true,
+    "outDir": "dist",
     "rootDir": "src",
-    "jsx": "react",
-    "inlineSourceMap": false,
-    "sourceMap": true,
-    "baseUrl": "."
-  },
-  "include": ["./src/types"]
+    "baseUrl": ".",
+    "paths": {
+      "@sane-shopify/*": ["../*/src"]
+    }
+  }
 }

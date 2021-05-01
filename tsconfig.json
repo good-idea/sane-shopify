@@ -24,5 +24,6 @@
     "types": ["jest", "node"],
     "typeRoots": ["node_modules/@types"]
   },
-  "exclude": ["test-frontend", "node_modules", "**/*.spec.ts"]
+  "exclude": ["test-frontend", "node_modules", "**/*.spec.ts"],
+  "include": ["./node_modules/@sanity/base/types/**/*.ts"]
 }

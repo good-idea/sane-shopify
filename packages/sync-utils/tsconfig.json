@@ -1,5 +1,12 @@
 {
   "extends": "../../tsconfig.json",
-  "references": [{ "path": "../types" }],
-  "include": ["src"]
+  "include": ["src"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@sane-shopify/*": ["../*/src"]
+    }
+  }
 }
