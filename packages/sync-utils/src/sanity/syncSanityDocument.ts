@@ -41,6 +41,7 @@ const mergeExistingFields = (
     const options = docInfo.options || []
     const doc: SanityShopifyProductDocumentPartial = {
       ...merged,
+      _id: existingDoc._id,
       sourceData: {
         ...docInfo.sourceData,
         collections: {
