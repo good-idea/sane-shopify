@@ -182,11 +182,12 @@ export const prepareDocument = <T extends Product | Collection>(
 
     const productDocInfo: SanityShopifyProductDocumentPartial = {
       _type,
+      shopifyId: item.id,
+      _id: item.id.replace(/=/g, ''),
       archived: false,
       minVariantPrice,
       maxVariantPrice,
       title: item.title,
-      shopifyId: item.id,
       handle: item.handle,
       sourceData: {
         ...sourceData,
