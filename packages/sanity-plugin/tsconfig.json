@@ -3,7 +3,6 @@
   "include": ["../../node_modules/@sanity/base/types/**/*.ts", "src"],
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
     "baseUrl": ".",
     "paths": {
       "@sane-shopify/*": ["../*/src"],

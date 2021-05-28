@@ -38,11 +38,11 @@ export type SanityShopifyDocumentPartial =
 
 export type SanityShopifyProductDocumentPartial = Omit<
   SanityShopifyProductDocument,
-  '_id' | 'collections'
+  'collections'
 >
 export type SanityShopifyCollectionDocumentPartial = Omit<
   SanityShopifyCollectionDocument,
-  '_id' | 'products'
+  'products'
 >
 
 export interface SanityShopifyProductOptionValue {
