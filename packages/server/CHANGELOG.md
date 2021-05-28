@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.21.2 (2021-05-28)
+
+
+### Bug Fixes
+
+* **sanity-plugin:** fix progress display ([#167](https://github.com/good-idea/sane-shopify/issues/167)) ([b63ca00](https://github.com/good-idea/sane-shopify/commit/b63ca0058bbb6bdb73699ab712325438e3e225a3))
+
+
+
+
+
 ## 0.21.1 (2021-04-28)
 
 
