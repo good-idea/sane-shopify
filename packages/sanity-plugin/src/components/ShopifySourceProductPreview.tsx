@@ -29,9 +29,8 @@ const ShopifySourceProductPreviewInner = ({
   const { value: syncStateValue } = syncState
   if (!value) return null
 
-  const syncItemByID = syncingClient
-    ? syncingClient.syncItemByID
-    : () => undefined
+  const syncItemByID = syncingClient.syncItemByID
+
   const {
     title,
     id,

@@ -1,2 +1,10 @@
-export const COLLECTION = 'COLLECTION'
-export const PRODUCT = 'PRODUCT'
+export enum NodeType {
+  Collection = 'COLLECTION',
+  Product = 'PRODUCT',
+}
+
+export enum OperationType {
+  Create = 'CREATE',
+  Update = 'UPDATE',
+  Delete = 'DELETE',
+}

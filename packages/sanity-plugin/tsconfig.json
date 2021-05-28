@@ -1,12 +1,11 @@
 {
   "extends": "../../tsconfig.json",
+  "include": ["../../node_modules/@sanity/base/types/**/*.ts", "src"],
   "compilerOptions": {
-    "jsx": "react",
-    "declaration": true,
-    "outDir": "./lib",
-    "rootDir": "src",
-    "baseUrl": "./src",
+    "outDir": "dist",
+    "baseUrl": ".",
     "paths": {
+      "@sane-shopify/*": ["../*/src"],
       "part:@sanity/form-builder/patch-event": [
         "../../../node_modules/@sanity/form-builder/lib/PatchEvent.js"
       ],
@@ -32,6 +31,5 @@
         "../../../node_modules/@sanity/components/lib/badges/DefaultBadge.js"
       ]
     }
-  },
-  "include": ["../../node_modules/@sanity/base/types/**/*.ts", "src"]
+  }
 }

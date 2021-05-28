@@ -186,7 +186,9 @@ export const createSyncSanityDocument = (
 
     /* Create a new document if none exists */
     if (!existingDoc) {
-      const newDoc = await client.create<SanityShopifyDocumentPartial>(docInfo)
+      const newDoc = await client.createIfNotExists<SanityShopifyDocumentPartial>(
+        docInfo
+      )
       const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
       if (!refetchedDoc) {
         throw new Error(
