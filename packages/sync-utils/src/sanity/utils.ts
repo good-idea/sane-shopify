@@ -11,7 +11,7 @@ import {
   SanityShopifyCollectionDocumentPartial,
 } from '@sane-shopify/types'
 import { isMatch as lodashIsMatch, pick } from 'lodash'
-import { slugify, definitely, createId } from '../utils'
+import { slugify, definitely } from '../utils'
 import { isShopifyProduct, isShopifyCollection } from '../typeGuards'
 
 export const sleep = (ms: number): Promise<void> =>
@@ -181,7 +181,6 @@ export const prepareDocument = <T extends Product | Collection>(
     const variants = createProductVariantObjects(item)
 
     const productDocInfo: SanityShopifyProductDocumentPartial = {
-      _id: createId(item.id),
       _type,
       archived: false,
       minVariantPrice,
@@ -200,7 +199,6 @@ export const prepareDocument = <T extends Product | Collection>(
   if (isShopifyCollection(item)) {
     const sourceData = prepareSourceData<Collection>(item)
     const docInfo: SanityShopifyCollectionDocumentPartial = {
-      _id: createId(item.id),
       _type,
       archived: false,
       title: item.title,

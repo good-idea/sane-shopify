@@ -1,6 +1,4 @@
 import { SanityClient } from '@sanity/client'
-// @ts-ignore // for some reason importing as { v5 as uuidv5 } does not work?
-import uuidv5 from 'uuid/v5'
 import { Paginated, unwindEdges } from '@good-idea/unwind-edges'
 import {
   SanityShopifyProductDocument,
@@ -132,7 +130,3 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
   }
   throw new Error('prepareImages can only be used for Products and Collections')
 }
-
-const NAMESPACE = '82943efe-bffe-11eb-8529-0242ac130003'
-
-export const createId = (source: string): string => uuidv5(source, NAMESPACE)
