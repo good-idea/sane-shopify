@@ -8,6 +8,7 @@ import {
   SanityShopifyDocument,
 } from '@sane-shopify/types'
 import { definitely } from '../utils'
+import { SanityCache } from './sanityUtils'
 import { isSanityProduct, isSanityCollection } from '../typeGuards'
 // import { log } from '../logger'
 
@@ -28,7 +29,8 @@ const getRelatedKeys = (doc: SanityShopifyDocument): SanityReference[] => {
 }
 
 export const createRemoveRelationships = (
-  client: SanityClient
+  client: SanityClient,
+  cache: SanityCache
 ): SanityUtils['removeRelationships'] => async (
   from: SanityShopifyDocument,
   toRemove: SanityShopifyDocument | SanityShopifyDocument[]
@@ -48,13 +50,20 @@ export const createRemoveRelationships = (
     )
     .filter(Boolean)
 
-  if (relationshipsToRemove.length === 0) return null
-  await client.patch(from._id).unset(relationshipsToRemove).commit()
+  if (relationshipsToRemove.length === 0) {
+    return null
+  }
+  const updatedDoc = await client
+    .patch(from._id)
+    .unset(relationshipsToRemove)
+    .commit<SanityShopifyDocument>({ returnDocuments: true })
+  cache.set(updatedDoc)
   return null
 }
 
 export const createSyncRelationships = (
-  client: SanityClient
+  client: SanityClient,
+  cache: SanityCache
 ): SanityUtils['syncRelationships'] => async (
   from: SanityShopifyDocument,
   to: SanityShopifyDocument | SanityShopifyDocument[]
@@ -74,7 +83,7 @@ export const createSyncRelationships = (
     toDocs.every((toDoc, index) =>
       Boolean(
         existingRelationships[index] &&
-          existingRelationships[index].shopifyId === toDoc.shopifyId
+          existingRelationships[index]._ref === toDoc._id
       )
     )
 
@@ -85,9 +94,10 @@ export const createSyncRelationships = (
     }
     /* Find all toDocs that do not have a relation to the from doc */
     return !toDoc[bToAKey].some(
-      (related: SanityShopifyDocument) => related.shopifyId === from.shopifyId
+      (related: SanityShopifyDocument) => related._ref === from._id
     )
   })
+
   if (alreadyLinked && relationsToLink.length === 0) {
     return {
       type: 'link',
@@ -111,10 +121,12 @@ export const createSyncRelationships = (
   const aToBPatchKey =
     from._type === 'shopifyProduct' ? 'collections' : 'products'
 
-  await client
+  const updatedDoc = await client
     .patch(from._id)
     .set({ [aToBPatchKey]: aToBRelationships })
-    .commit()
+    .commit<SanityShopifyDocument>({ returnDocuments: true })
+
+  cache.set(updatedDoc)
 
   const relationshipsToRemove = existingRelationships.filter((item) => {
     if (item.archived || item.shopifyId === null) return false
@@ -123,7 +135,7 @@ export const createSyncRelationships = (
   }, [])
 
   if (relationshipsToRemove.length) {
-    const removeRelationships = createRemoveRelationships(client)
+    const removeRelationships = createRemoveRelationships(client, cache)
     const removeQueue = new PQueue({ concurrency: 1 })
     await removeQueue.addAll(
       relationshipsToRemove.map((relatedDoc) => async () => {

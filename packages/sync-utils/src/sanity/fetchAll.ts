@@ -18,6 +18,7 @@ export const createFetchAll = (
   const allDocs = await client.fetch<SanityShopifyDocument[]>(`
   *[
     shopifyId != null &&
+    !(_id in path('drafts.**')) &&
     (${typesFilter})
    ]{
       products[]->{
