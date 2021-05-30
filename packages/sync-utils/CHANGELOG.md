@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.21.3 (2021-05-30)
+
+
+### Bug Fixes
+
+* **sync-utils:** fix duplicate product references in collections ([#168](https://github.com/good-idea/sane-shopify/issues/168)) ([066ff18](https://github.com/good-idea/sane-shopify/commit/066ff18d8202c28a1475a8455ae18de511100f13))
+
+
+
+
+
 ## 0.21.2 (2021-05-28)
 
 
