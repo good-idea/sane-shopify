@@ -29,12 +29,13 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     error: false,
   }
 
-  public handleInputChange = (field: 'shopName' | 'accessToken') => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    if (field === 'shopName') this.setState({ shopName: e.target.value })
-    if (field === 'accessToken') this.setState({ accessToken: e.target.value })
-  }
+  public handleInputChange =
+    (field: 'shopName' | 'accessToken') =>
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      if (field === 'shopName') this.setState({ shopName: e.target.value })
+      if (field === 'accessToken')
+        this.setState({ accessToken: e.target.value })
+    }
 
   public clear = (): void => {
     this.setState({

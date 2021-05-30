@@ -13,13 +13,8 @@ const isCollection = (i: Product | Collection): i is Collection =>
 export const Progress = () => {
   const { syncState } = useSaneContext()
   const { value, context } = syncState
-  const {
-    toSync,
-    toLink,
-    documentsFetched,
-    linkOperations,
-    syncOperations,
-  } = context
+  const { toSync, toLink, documentsFetched, linkOperations, syncOperations } =
+    context
 
   if (value !== 'COMPLETE' && value !== 'SYNCING') return null
 

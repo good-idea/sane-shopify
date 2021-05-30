@@ -208,6 +208,7 @@ export const prepareDocument = <T extends Product | Collection>(
     }
     return docInfo
   }
+  // @ts-ignore
   throw new Error(`Could not prepare document with type "${item.__typename}"`)
 }
 

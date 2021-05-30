@@ -23,22 +23,22 @@ export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
 
   try {
     const webhooks = createWebhooks(config)
-    const createNextWebhook = (
-      webhook: WebhookHandler
-    ): NextHandler<WebhookData> => async (req, res) => {
-      await webhook(req.body).catch((err) => {
-        if (onError) {
-          onError(err)
-        } else {
-          console.error(err)
-        }
-        res.status(500)
-        res.send('error')
-        throw new Error(err.message)
-      })
-      res.status(200)
-      res.send('success')
-    }
+    const createNextWebhook =
+      (webhook: WebhookHandler): NextHandler<WebhookData> =>
+      async (req, res) => {
+        await webhook(req.body).catch((err) => {
+          if (onError) {
+            onError(err)
+          } else {
+            console.error(err)
+          }
+          res.status(500)
+          res.send('error')
+          throw new Error(err.message)
+        })
+        res.status(200)
+        res.send('success')
+      }
 
     const nextWebhooks = {
       onCollectionCreate: createNextWebhook(webhooks.onCollectionCreate),

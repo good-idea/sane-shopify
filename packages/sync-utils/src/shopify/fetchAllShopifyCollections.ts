@@ -49,59 +49,58 @@ interface QueryResult {
 
 const noop = () => undefined
 
-export const createFetchAllShopifyCollections = (
-  query: ShopifyClient['query'],
-  cache: ShopifyCache
-) => async (
-  onProgress: ProgressHandler<Collection> = noop
-): Promise<Collection[]> => {
-  const allStartTimer = new Date()
-
-  const fetchCollections = async (
-    prevPage?: Paginated<Collection>
+export const createFetchAllShopifyCollections =
+  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  async (
+    onProgress: ProgressHandler<Collection> = noop
   ): Promise<Collection[]> => {
-    const after = prevPage ? getLastCursor(prevPage) : undefined
+    const allStartTimer = new Date()
 
-    const now = new Date()
-    const result = await query<QueryResult>(COLLECTIONS_QUERY, {
-      first: 10,
-      after,
-    })
+    const fetchCollections = async (
+      prevPage?: Paginated<Collection>
+    ): Promise<Collection[]> => {
+      const after = prevPage ? getLastCursor(prevPage) : undefined
 
-    const duration = new Date().getTime() - now.getTime()
-    log(`Fetched page of Shopify Collections in ${duration / 1000}s`, result)
-    const fetchedCollections = result.data.collections
-    const [batch] = unwindEdges(fetchedCollections)
-    onProgress(batch)
+      const now = new Date()
+      const result = await query<QueryResult>(COLLECTIONS_QUERY, {
+        first: 10,
+        after,
+      })
 
-    const mergedCollections = prevPage
-      ? mergePaginatedResults(prevPage, fetchedCollections)
-      : fetchedCollections
-    if (!mergedCollections.pageInfo) {
-      throw new Error('Pagination info was not fetched')
+      const duration = new Date().getTime() - now.getTime()
+      log(`Fetched page of Shopify Collections in ${duration / 1000}s`, result)
+      const fetchedCollections = result.data.collections
+      const [batch] = unwindEdges(fetchedCollections)
+      onProgress(batch)
+
+      const mergedCollections = prevPage
+        ? mergePaginatedResults(prevPage, fetchedCollections)
+        : fetchedCollections
+      if (!mergedCollections.pageInfo) {
+        throw new Error('Pagination info was not fetched')
+      }
+      if (mergedCollections.pageInfo.hasNextPage)
+        return fetchCollections(mergedCollections)
+      const [unwound] = unwindEdges(mergedCollections)
+      unwound.forEach((collection) => cache.set(collection))
+      return unwound
     }
-    if (mergedCollections.pageInfo.hasNextPage)
-      return fetchCollections(mergedCollections)
-    const [unwound] = unwindEdges(mergedCollections)
-    unwound.forEach((collection) => cache.set(collection))
-    return unwound
-  }
 
-  const allCollections = await fetchCollections()
-  const allDuration = new Date().getTime() - allStartTimer.getTime()
-  log(
-    `Fetched all Shopify Collections in ${allDuration / 1000}s`,
-    allCollections
-  )
-
-  const queue = new PQueue({ concurrency: 1 })
-  const results = await queue.addAll(
-    allCollections.map((collection) => () =>
-      fetchAllCollectionProducts(query, collection)
+    const allCollections = await fetchCollections()
+    const allDuration = new Date().getTime() - allStartTimer.getTime()
+    log(
+      `Fetched all Shopify Collections in ${allDuration / 1000}s`,
+      allCollections
     )
-  )
 
-  log(`Fetched all Shopify Collections in ${allDuration / 1000}s`, results)
+    const queue = new PQueue({ concurrency: 1 })
+    const results = await queue.addAll(
+      allCollections.map(
+        (collection) => () => fetchAllCollectionProducts(query, collection)
+      )
+    )
 
-  return results
-}
+    log(`Fetched all Shopify Collections in ${allDuration / 1000}s`, results)
+
+    return results
+  }

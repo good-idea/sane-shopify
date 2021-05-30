@@ -14,31 +14,30 @@ export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
   const { onError } = config
 
   try {
-    const createAWSWebhook = (webhook: WebhookHandler) => async (
-      event: APIGatewayEvent
-    ) => {
-      try {
-        if (!event.body) {
-          throw new Error('No body received from webhook event')
-        }
+    const createAWSWebhook =
+      (webhook: WebhookHandler) => async (event: APIGatewayEvent) => {
+        try {
+          if (!event.body) {
+            throw new Error('No body received from webhook event')
+          }
 
-        const nodeInfo: WebhookData = JSON.parse(event.body)
-        await webhook(nodeInfo)
+          const nodeInfo: WebhookData = JSON.parse(event.body)
+          await webhook(nodeInfo)
 
-        return {
-          statusCode: 200,
-          body: '',
-        }
-      } catch (error) {
-        if (onError) {
-          onError(error)
-        }
-        return {
-          statusCode: 500,
-          body: error.message,
+          return {
+            statusCode: 200,
+            body: '',
+          }
+        } catch (error) {
+          if (onError) {
+            onError(error)
+          }
+          return {
+            statusCode: 500,
+            body: error.message,
+          }
         }
       }
-    }
 
     const AWSWebhooks = {
       onCollectionCreate: createAWSWebhook(webhooks.onCollectionCreate),
