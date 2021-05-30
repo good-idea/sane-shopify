@@ -34,7 +34,7 @@ export const createClearConfig = (
   client: SanityClient
 ): SanityUtils['clearConfig'] => async (shopName: string) => {
   const configDoc = await client.fetch<SaneShopifyConfigDocument>(
-    `[_type == $type && shopName == $shopName]`,
+    `*[_type == $type && shopName == $shopName][0]`,
     { type: CONFIG_DOC_TYPE, shopName }
   )
   if (!configDoc) {

@@ -77,7 +77,7 @@ export const buildProductReferences = async (
 ): Promise<ProductRef[]> => {
   const [productNodes] = unwindEdges(products)
   const productIds = productNodes.map((node) => node.id)
-  const query = '*[_type == "shopifyProduct" && shopifyId in $productIds]'
+  const query = `*[_type == "shopifyProduct" && shopifyId in $productIds && !(_id in path('drafts.**'))]`
   const productDocuments = await sanityClient.fetch<
     SanityShopifyProductDocument[]
   >(query, { productIds })

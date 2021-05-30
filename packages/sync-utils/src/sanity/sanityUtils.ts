@@ -87,8 +87,8 @@ export const sanityUtils = (
     shopifyClient
   )
   const fetchRelatedDocs = createFetchRelatedDocs(client, cache)
-  const syncRelationships = createSyncRelationships(client)
-  const removeRelationships = createRemoveRelationships(client)
+  const syncRelationships = createSyncRelationships(client, cache)
+  const removeRelationships = createRemoveRelationships(client, cache)
   const archiveSanityDocument = createArchiveSanityDocument(client)
   const clearConfig = createClearConfig(client)
   const saveConfig = createSaveConfig(client)
@@ -99,7 +99,7 @@ export const sanityUtils = (
     if (cached) return cached
 
     const doc = await client.fetch<SanityShopifyDocument>(
-      `*[shopifyId == $shopifyId && defined(archived) && archived != true]{
+      `*[shopifyId == $shopifyId && defined(archived) && archived != true && !(_id in path('drafts.**'))]{
         products[]->{
           "collectionRefs": collections[],
           ...
@@ -125,7 +125,7 @@ export const sanityUtils = (
     if (cached) return cached
 
     const doc = await client.fetch<SanityShopifyDocument>(
-      `*[handle == $handle && defined(archived) && archived != true]{
+      `*[handle == $handle && defined(archived) && archived != true && !(_id in path('drafts.**'))]{
         products[]->{
           "collectionRefs": collections[],
           ...
