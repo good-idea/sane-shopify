@@ -20,7 +20,7 @@
     "test": "run-s test:tsc test:lint test:unit",
     "test:tsc": "tsc --noEmit",
     "test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
-    "test:unit": "jest",
+		"test:unit": "jest --passWithNoTests",
     "test:coverage": "jest --collectCoverage",
     "test:watch": "jest --watch",
     "test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",

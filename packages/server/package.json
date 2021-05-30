@@ -19,7 +19,7 @@
 		"test": "run-s test:tsc test:lint test:unit",
 		"test:tsc": "tsc --noEmit",
 		"test:lint": "eslint ./src/**/*.ts && prettier \"src/**/*.ts\" --list-different",
-		"test:unit": "jest",
+		"test:unit": "jest --passWithNoTests",
 		"build": "tsdx build",
 		"start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
 		"prepublishOnly": "yarn build"
