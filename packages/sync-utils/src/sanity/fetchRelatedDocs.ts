@@ -41,6 +41,7 @@ export const createFetchRelatedDocs =
       ? await client.fetch<SanityShopifyDocument[]>(
           `
     *[shopifyId in $relatedIds && defined(archived) && archived != true && !(_id in path('drafts.**'))]{
+      ...,
       products[]->{
         "collectionRefs": collections[],
         ...
@@ -51,7 +52,6 @@ export const createFetchRelatedDocs =
       },
       "collectionRefs": collections[],
       "productRefs": products[],
-      ...
      }`,
           { relatedIds: idsNotInCache }
         )

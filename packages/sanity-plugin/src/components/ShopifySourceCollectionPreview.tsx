@@ -13,7 +13,7 @@ import { Progress } from './Progress'
 import { Provider, useSaneContext } from '../Provider'
 
 interface ShopifySourceCollectionPreviewProps {
-  value: Collection
+  value?: Collection
 }
 
 const spacing = {
@@ -79,6 +79,7 @@ const ShopifySourceCollectionPreviewInner = ({
 export class ShopifySourceCollectionPreview extends React.Component<ShopifySourceCollectionPreviewProps> {
   render() {
     const shopName = this.props.value?.shopName
+    if (!shopName) return null
 
     return (
       <ThemeProvider theme={studioTheme}>

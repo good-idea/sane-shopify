@@ -324,9 +324,6 @@ export const syncUtils = (
   const syncItemByID = async (id: string, cbs: SubscriptionCallbacks = {}) => {
     startSync()
     const shopifyItem = await fetchItemById(id, true)
-    // if (!shopifyItem) {
-    //   throw new Error(`Could not fetch item with ID "${id}"`)
-    // }
 
     return syncItem(id, shopifyItem, cbs)
   }

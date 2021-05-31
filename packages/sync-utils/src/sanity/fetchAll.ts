@@ -20,6 +20,7 @@ export const createFetchAll =
     !(_id in path('drafts.**')) &&
     (${typesFilter})
    ]{
+      ...,
       products[]->{
         "collectionRefs": collections[],
         ...
@@ -30,7 +31,6 @@ export const createFetchAll =
       },
       "collectionRefs": collections[],
       "productRefs": products[],
-      ...
    }
   `)
     allDocs.forEach((doc) => cache.set(doc))

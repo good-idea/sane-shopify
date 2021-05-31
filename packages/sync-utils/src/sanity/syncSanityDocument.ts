@@ -132,6 +132,7 @@ export const createSyncSanityDocument =
       const doc = await client.fetch<SanityShopifyDocument>(
         `
       *[shopifyId == $shopifyId]{
+        ...,
         products[]->{
           "collectionRefs": collections[],
           ...
@@ -142,7 +143,6 @@ export const createSyncSanityDocument =
         },
         "collectionRefs": collections[],
         "productRefs": products[],
-        ...
       }[0]`,
         {
           shopifyId,
