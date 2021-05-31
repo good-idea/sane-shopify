@@ -24,35 +24,35 @@ const getRelationshipsToRemove = (
   throw new Error('Could not get relationships for this document')
 }
 
-export const createArchiveSanityDocument =
-  (client: SanityClient) =>
-  async (doc: SanityShopifyDocument): Promise<SanityShopifyDocument> => {
-    const relationshipsKey =
-      doc.sourceData.__typename === 'Collection' ? 'products' : 'collections'
+export const createArchiveSanityDocument = (client: SanityClient) => async (
+  doc: SanityShopifyDocument
+): Promise<SanityShopifyDocument> => {
+  const relationshipsKey =
+    doc.sourceData.__typename === 'Collection' ? 'products' : 'collections'
 
-    const removeRelationships = async (relatedDoc: SanityShopifyDocument) => {
-      const relationshipsToRemove = getRelationshipsToRemove(doc, relatedDoc)
-      if (!relationshipsToRemove) return
-      await client.patch(relatedDoc._id).unset(relationshipsToRemove).commit()
-    }
-
-    const relationships = isSanityProduct(doc)
-      ? doc.collections
-      : isSanityCollection(doc)
-      ? doc.products
-      : undefined
-
-    if (relationships) {
-      // @ts-ignore
-      await Promise.all(relationships.map((r) => removeRelationships(r)))
-    }
-    try {
-      await client.delete(doc._id)
-    } catch (err) {
-      await client
-        .patch(doc._id)
-        .set({ archived: true, shopifyId: null, [relationshipsKey]: [] })
-        .commit()
-    }
-    return doc
+  const removeRelationships = async (relatedDoc: SanityShopifyDocument) => {
+    const relationshipsToRemove = getRelationshipsToRemove(doc, relatedDoc)
+    if (!relationshipsToRemove) return
+    await client.patch(relatedDoc._id).unset(relationshipsToRemove).commit()
   }
+
+  const relationships = isSanityProduct(doc)
+    ? doc.collections
+    : isSanityCollection(doc)
+    ? doc.products
+    : undefined
+
+  if (relationships) {
+    // @ts-ignore
+    await Promise.all(relationships.map((r) => removeRelationships(r)))
+  }
+  try {
+    await client.delete(doc._id)
+  } catch (err) {
+    await client
+      .patch(doc._id)
+      .set({ archived: true, shopifyId: null, [relationshipsKey]: [] })
+      .commit()
+  }
+  return doc
+}

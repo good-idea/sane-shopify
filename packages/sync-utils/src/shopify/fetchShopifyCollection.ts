@@ -146,35 +146,33 @@ export const fetchAllCollectionProducts = async (
  * Fetches a collection from Shopify, with the IDs of all related products
  */
 
-export const createFetchShopifyCollection =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
-  async (params: ShopifyItemParams): Promise<Collection | null> => {
-    const { id, handle } = params
-    if (!id && !handle) {
-      throw new Error('You must provide either an id or handle')
-    }
-
-    const cachedCollection = id
-      ? cache.getCollectionById(id)
-      : handle
-      ? cache.getCollectionByHandle(handle)
-      : null
-
-    if (cachedCollection) {
-      return fetchAllCollectionProducts(query, cachedCollection)
-    }
-
-    const fetchedCollection = id
-      ? await getById(query, id)
-      : handle
-      ? await getByHandle(query, handle)
-      : null
-    if (!fetchedCollection) return null
-
-    const collection = await fetchAllCollectionProducts(
-      query,
-      fetchedCollection
-    )
-    cache.set(collection)
-    return collection
+export const createFetchShopifyCollection = (
+  query: ShopifyClient['query'],
+  cache: ShopifyCache
+) => async (params: ShopifyItemParams): Promise<Collection | null> => {
+  const { id, handle } = params
+  if (!id && !handle) {
+    throw new Error('You must provide either an id or handle')
   }
+
+  const cachedCollection = id
+    ? cache.getCollectionById(id)
+    : handle
+    ? cache.getCollectionByHandle(handle)
+    : null
+
+  if (cachedCollection) {
+    return fetchAllCollectionProducts(query, cachedCollection)
+  }
+
+  const fetchedCollection = id
+    ? await getById(query, id)
+    : handle
+    ? await getByHandle(query, handle)
+    : null
+  if (!fetchedCollection) return null
+
+  const collection = await fetchAllCollectionProducts(query, fetchedCollection)
+  cache.set(collection)
+  return collection
+}

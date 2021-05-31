@@ -14,7 +14,7 @@ import { Progress } from './Progress'
 import { Provider, useSaneContext } from '../Provider'
 
 interface ShopifySourceProductPreviewProps {
-  value: Product
+  value?: Product
 }
 
 const spacing = {
@@ -116,14 +116,13 @@ const ShopifySourceProductPreviewInner = ({
 
 export class ShopifySourceProductPreview extends React.Component<ShopifySourceProductPreviewProps> {
   render() {
-    const { shopName } = this.props.value
+    const shopName = this.props.value?.shopName
+    if (!shopName) return null
 
     return (
       <Provider shopName={shopName}>
         <ThemeProvider theme={studioTheme}>
-          {shopName ? (
-            <ShopifySourceProductPreviewInner {...this.props} />
-          ) : null}
+          <ShopifySourceProductPreviewInner {...this.props} />
         </ThemeProvider>
       </Provider>
     )
