@@ -6,16 +6,15 @@ const defaultParams = {
   types: ['shopifyCollection', 'shopifyProduct'],
 }
 
-export const createFetchAll = (
-  client: SanityClient,
-  cache: SanityCache
-) => async (params?: SanityFetchParams): Promise<SanityShopifyDocument[]> => {
-  // const p = params ?? defaultParams
-  // const types = p.types ?? defaultParams.types
-  const types = params && params.types ? params.types : defaultParams.types
-  const typesFilter = types.map((type) => `_type == '${type}'`).join(' || ')
+export const createFetchAll =
+  (client: SanityClient, cache: SanityCache) =>
+  async (params?: SanityFetchParams): Promise<SanityShopifyDocument[]> => {
+    // const p = params ?? defaultParams
+    // const types = p.types ?? defaultParams.types
+    const types = params && params.types ? params.types : defaultParams.types
+    const typesFilter = types.map((type) => `_type == '${type}'`).join(' || ')
 
-  const allDocs = await client.fetch<SanityShopifyDocument[]>(`
+    const allDocs = await client.fetch<SanityShopifyDocument[]>(`
   *[
     shopifyId != null &&
     !(_id in path('drafts.**')) &&
@@ -34,6 +33,6 @@ export const createFetchAll = (
       "productRefs": products[],
    }
   `)
-  allDocs.forEach((doc) => cache.set(doc))
-  return allDocs
-}
+    allDocs.forEach((doc) => cache.set(doc))
+    return allDocs
+  }

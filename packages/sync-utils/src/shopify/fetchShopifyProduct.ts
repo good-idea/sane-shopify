@@ -146,32 +146,31 @@ export const fetchAllProductCollections = async (
  * Fetches a product from Shopify, with the IDs of all related collections
  */
 
-export const createFetchShopifyProduct = (
-  query: ShopifyClient['query'],
-  cache: ShopifyCache
-) => async (params: ShopifyItemParams): Promise<Product | null> => {
-  const { id, handle } = params
-  if (!id && !handle) {
-    debugger
-    throw new Error('You must provide either an id or handle')
+export const createFetchShopifyProduct =
+  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  async (params: ShopifyItemParams): Promise<Product | null> => {
+    const { id, handle } = params
+    if (!id && !handle) {
+      debugger
+      throw new Error('You must provide either an id or handle')
+    }
+
+    const cachedProduct = id
+      ? cache.getProductById(id)
+      : handle
+      ? cache.getProductByHandle(handle)
+      : null
+
+    if (cachedProduct) return fetchAllProductCollections(query, cachedProduct)
+
+    const fetchedProduct = id
+      ? await getById(query, id)
+      : handle
+      ? await getByHandle(query, handle)
+      : null
+    if (!fetchedProduct) return null
+
+    const product = await fetchAllProductCollections(query, fetchedProduct)
+    cache.set(product)
+    return product
   }
-
-  const cachedProduct = id
-    ? cache.getProductById(id)
-    : handle
-    ? cache.getProductByHandle(handle)
-    : null
-
-  if (cachedProduct) return fetchAllProductCollections(query, cachedProduct)
-
-  const fetchedProduct = id
-    ? await getById(query, id)
-    : handle
-    ? await getByHandle(query, handle)
-    : null
-  if (!fetchedProduct) return null
-
-  const product = await fetchAllProductCollections(query, fetchedProduct)
-  cache.set(product)
-  return product
-}
