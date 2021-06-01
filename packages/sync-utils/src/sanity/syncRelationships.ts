@@ -87,7 +87,7 @@ export const createSyncRelationships =
       toDocs.every((toDoc, index) =>
         Boolean(
           existingRelationships[index] &&
-            existingRelationships[index]._ref === toDoc._id
+            existingRelationships[index]._id === toDoc._id
         )
       )
 
@@ -98,7 +98,8 @@ export const createSyncRelationships =
       }
       /* Find all toDocs that do not have a relation to the from doc */
       return !toDoc[bToAKey].some(
-        (related: SanityShopifyDocument) => related._ref === from._id
+        (related: SanityShopifyDocument) =>
+          related._ref || related._id === from._id
       )
     })
 
@@ -159,7 +160,7 @@ export const createSyncRelationships =
         }
 
         const relationshipExists: boolean = toDoc[bToAKey].some(
-          (r: SanityReference) => r._ref === from._id
+          (r: SanityShopifyDocument) => r._id === from._id
         )
 
         if (!relationshipExists) {
