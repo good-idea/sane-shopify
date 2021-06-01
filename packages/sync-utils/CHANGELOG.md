@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.21.5 (2021-05-31)
+
+
+### Bug Fixes
+
+* **sanity-plugin:** fix crash for deleted products ([#169](https://github.com/good-idea/sane-shopify/issues/169)) ([fcd3d68](https://github.com/good-idea/sane-shopify/commit/fcd3d68677e557f9a8c208dcd1061dbc33b726e8))
+
+
+
+
+
 ## 0.21.4 (2021-05-30)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
