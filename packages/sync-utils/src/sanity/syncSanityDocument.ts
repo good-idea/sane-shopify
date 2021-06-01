@@ -114,23 +114,21 @@ const mergeExistingFields = (
   )
 }
 
-export const createSyncSanityDocument =
-  (
-    client: SanityClient,
-    cache: SanityCache,
-    shopifyClient: SaneShopifyContext
-  ) =>
-  async (item: Product | Collection): Promise<SyncOperation> => {
-    const { shopName } = shopifyClient
+export const createSyncSanityDocument = (
+  client: SanityClient,
+  cache: SanityCache,
+  shopifyClient: SaneShopifyContext
+) => async (item: Product | Collection): Promise<SyncOperation> => {
+  const { shopName } = shopifyClient
 
-    const getSanityDocByShopifyId = async (
-      shopifyId: string
-    ): Promise<SanityShopifyDocument | void> => {
-      const cached = cache.getByShopifyId(shopifyId)
-      if (cached) return cached
+  const getSanityDocByShopifyId = async (
+    shopifyId: string
+  ): Promise<SanityShopifyDocument | void> => {
+    const cached = cache.getByShopifyId(shopifyId)
+    if (cached) return cached
 
-      const doc = await client.fetch<SanityShopifyDocument>(
-        `
+    const doc = await client.fetch<SanityShopifyDocument>(
+      `
       *[shopifyId == $shopifyId]{
         ...,
         products[]->{
@@ -144,98 +142,96 @@ export const createSyncSanityDocument =
         "collectionRefs": collections[],
         "productRefs": products[],
       }[0]`,
-        {
-          shopifyId,
-        }
-      )
-      if (doc) cache.set(doc)
-      return doc
-    }
-
-    const syncItem = async (
-      item: Product | Collection,
-      shopName: string
-    ): Promise<SyncOperation> => {
-      const docInfo = prepareDocument({ ...item, shopName })
-      const existingDoc = await getSanityDocByShopifyId(item.id)
-
-      /* If the document exists and is up to date, skip */
-      if (
-        existingDoc &&
-        isMatch(docInfo, existingDoc, {
-          keys: [
-            '_type',
-            'handle',
-            'shopifyId',
-            'title',
-            'minVariantPrice',
-            'maxVariantPrice',
-            'sourceData',
-            'options',
-            'variants',
-          ],
-        })
-      ) {
-        return {
-          type: 'skip' as const,
-          sanityDocument: existingDoc,
-          shopifySource: item,
-        }
+      {
+        shopifyId,
       }
+    )
+    if (doc) cache.set(doc)
+    return doc
+  }
 
-      /* Rate limit */
-      await sleep(201)
+  const syncItem = async (
+    item: Product | Collection,
+    shopName: string
+  ): Promise<SyncOperation> => {
+    const docInfo = prepareDocument({ ...item, shopName })
+    const existingDoc = await getSanityDocByShopifyId(item.id)
 
-      /* Create a new document if none exists */
-      if (!existingDoc) {
-        const newDoc = await client.create<SanityShopifyDocumentPartial>(
-          docInfo
-        )
-        const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
-        if (!refetchedDoc) {
-          throw new Error(
-            `Could not fetch updated document with shopifyId ${newDoc.shopifyId}`
-          )
-        }
-
-        cache.set(refetchedDoc)
-        return {
-          type: 'create' as const,
-          // @ts-ignore
-          sanityDocument: newDoc,
-          shopifySource: item,
-        }
-      }
-
-      /* Otherwise, update the existing doc */
-
-      const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
-        'products',
-        'collections',
-        'productRefs',
-        'collectionRefs',
-      ])
-
-      const updatedDoc = await client
-        .patch(existingDoc._id)
-        .set(patchData)
-        .commit()
-
-      const refetchedDoc = await getSanityDocByShopifyId(updatedDoc.shopifyId)
-      if (!refetchedDoc) {
-        throw new Error(
-          `Could not fetch updated document with shopifyId ${updatedDoc.shopifyId}`
-        )
-      }
-
-      cache.set(refetchedDoc)
-
+    /* If the document exists and is up to date, skip */
+    if (
+      existingDoc &&
+      isMatch(docInfo, existingDoc, {
+        keys: [
+          '_type',
+          'handle',
+          'shopifyId',
+          'title',
+          'minVariantPrice',
+          'maxVariantPrice',
+          'sourceData',
+          'options',
+          'variants',
+        ],
+      })
+    ) {
       return {
-        type: 'update' as const,
-        sanityDocument: refetchedDoc,
+        type: 'skip' as const,
+        sanityDocument: existingDoc,
         shopifySource: item,
       }
     }
 
-    return syncItem(item, shopName)
+    /* Rate limit */
+    await sleep(201)
+
+    /* Create a new document if none exists */
+    if (!existingDoc) {
+      const newDoc = await client.create<SanityShopifyDocumentPartial>(docInfo)
+      const refetchedDoc = await getSanityDocByShopifyId(newDoc.shopifyId)
+      if (!refetchedDoc) {
+        throw new Error(
+          `Could not fetch updated document with shopifyId ${newDoc.shopifyId}`
+        )
+      }
+
+      cache.set(refetchedDoc)
+      return {
+        type: 'create' as const,
+        // @ts-ignore
+        sanityDocument: newDoc,
+        shopifySource: item,
+      }
+    }
+
+    /* Otherwise, update the existing doc */
+
+    const patchData = omit(mergeExistingFields(docInfo, existingDoc), [
+      'products',
+      'collections',
+      'productRefs',
+      'collectionRefs',
+    ])
+
+    const updatedDoc = await client
+      .patch(existingDoc._id)
+      .set(patchData)
+      .commit()
+
+    const refetchedDoc = await getSanityDocByShopifyId(updatedDoc.shopifyId)
+    if (!refetchedDoc) {
+      throw new Error(
+        `Could not fetch updated document with shopifyId ${updatedDoc.shopifyId}`
+      )
+    }
+
+    cache.set(refetchedDoc)
+
+    return {
+      type: 'update' as const,
+      sanityDocument: refetchedDoc,
+      shopifySource: item,
+    }
   }
+
+  return syncItem(item, shopName)
+}
