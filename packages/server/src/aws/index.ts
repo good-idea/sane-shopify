@@ -15,7 +15,7 @@ export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
 
   try {
     const createAWSWebhook =
-      (webhook: WebhookHandler) => async (event: APIGatewayEvent) => {
+      (webhook: WebhookHandler<any>) => async (event: APIGatewayEvent) => {
         try {
           if (!event.body) {
             throw new Error('No body received from webhook event')
@@ -46,6 +46,7 @@ export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
       onProductCreate: createAWSWebhook(webhooks.onProductCreate),
       onProductUpdate: createAWSWebhook(webhooks.onProductUpdate),
       onProductDelete: createAWSWebhook(webhooks.onProductDelete),
+      onOrderCreate: createAWSWebhook(webhooks.onOrderCreate),
     }
 
     return AWSWebhooks

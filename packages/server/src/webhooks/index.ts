@@ -1,6 +1,7 @@
 import { Webhooks, WebhooksConfig } from '@sane-shopify/types'
 import { createSyncingClient } from '@sane-shopify/sync-utils'
 import { syncDocument } from './syncDocument'
+import { syncOrder } from './syncOrder'
 import { NodeType, OperationType } from './constants'
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
@@ -52,6 +53,12 @@ export const createWebhooks = (config: WebhooksConfig): Webhooks => {
     operationType: OperationType.Delete,
   })
 
+  const onOrderCreate = syncOrder({
+    syncUtils,
+    operationType: OperationType.Update,
+    onError,
+  })
+
   return {
     onCollectionCreate,
     onCollectionUpdate,
@@ -59,5 +66,6 @@ export const createWebhooks = (config: WebhooksConfig): Webhooks => {
     onProductCreate,
     onProductUpdate,
     onProductDelete,
+    onOrderCreate,
   }
 }
