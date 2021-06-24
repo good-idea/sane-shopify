@@ -1,6 +1,14 @@
 import { SaneShopifyConfig } from './index'
+import { CheckoutLineItem } from './shopify'
 
-export interface WebhookData {
+/**
+ * Only relevant types have been included
+ *
+ * See full response in the shopify docs:
+ * https://shopify.dev/docs/admin-api/rest/reference/events/webhook
+ */
+
+export interface ProductOrCollectionWebhookData {
   id: string
   title: string
   body_html: string | null
@@ -11,26 +19,26 @@ export interface WebhookData {
   published_scope: string
   tags: string
   admin_graphql_api_id: string
-
-  // The response also includes:
-  //
-  // variants
-  // options
-  // images
-  // image
-  //
-  // but we don't need them here so they have been left untyped
 }
 
-export type WebhookHandler = (data: WebhookData) => Promise<void>
+export interface OrderWebhookData {
+  id: string
+  updated_at: string
+  line_items: CheckoutLineItem[]
+}
+
+export type WebhookData = OrderWebhookData | ProductOrCollectionWebhookData
+
+export type WebhookHandler<T> = (data: T) => Promise<void>
 
 export interface Webhooks {
-  onCollectionUpdate: WebhookHandler
-  onCollectionDelete: WebhookHandler
-  onCollectionCreate: WebhookHandler
-  onProductUpdate: WebhookHandler
-  onProductDelete: WebhookHandler
-  onProductCreate: WebhookHandler
+  onCollectionUpdate: WebhookHandler<ProductOrCollectionWebhookData>
+  onCollectionDelete: WebhookHandler<ProductOrCollectionWebhookData>
+  onCollectionCreate: WebhookHandler<ProductOrCollectionWebhookData>
+  onProductUpdate: WebhookHandler<ProductOrCollectionWebhookData>
+  onProductDelete: WebhookHandler<ProductOrCollectionWebhookData>
+  onProductCreate: WebhookHandler<ProductOrCollectionWebhookData>
+  onOrderCreate: WebhookHandler<OrderWebhookData>
 }
 
 export interface WebhooksConfig extends SaneShopifyConfig {

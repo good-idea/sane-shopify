@@ -147,3 +147,15 @@ export interface ShopifyUtils {
 export interface SaneShopifyContext {
   shopName: string
 }
+
+/**
+ * Only relevant types have been included
+ *
+ * See full response in the shopify docs:
+ * https://shopify.dev/docs/admin-api/rest/reference/events/webhook
+ */
+
+export interface CheckoutLineItem {
+  id: number
+  variant_id: number
+}
