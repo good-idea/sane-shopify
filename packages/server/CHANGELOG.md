@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.22.0 (2021-06-24)
+
+
+### Features
+
+* **types:** add types for onOrderCreate webhook ([#172](https://github.com/good-idea/sane-shopify/issues/172)) ([436fd4f](https://github.com/good-idea/sane-shopify/commit/436fd4f3f71950058dd7e2c00528147b0344509b))
+
+
+
+
+
 ## 0.21.6 (2021-06-01)
 
 
