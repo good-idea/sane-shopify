@@ -1,11 +1,11 @@
 import {
   SyncUtils,
-  WebhookData,
+  ProductOrCollectionWebhookData,
   Collection,
   Product,
 } from '@sane-shopify/types'
 import { NodeType, OperationType } from './constants'
-import { log, btoa } from './utils'
+import { log, getStorefrontId } from './utils'
 
 interface SyncDocumentConfig {
   syncUtils: SyncUtils
@@ -19,23 +19,22 @@ const sleep = (ms: number): Promise<void> =>
 
 export const syncDocument =
   ({ syncUtils, type, onError, operationType }: SyncDocumentConfig) =>
-  async ({ id, updated_at }: WebhookData): Promise<void> => {
+  async ({ id, updated_at }: ProductOrCollectionWebhookData): Promise<void> => {
     const docType =
       type === NodeType.Collection
         ? 'Collection'
         : type === NodeType.Product
         ? 'Product'
         : null
+    if (!docType) {
+      throw new Error(`Cannot sync document of type ${type}`)
+    }
+    if (!id) {
+      throw new Error('You must supply an ID')
+    }
 
-    const storefrontId = btoa(`gid://shopify/${docType}/${id}`)
-
+    const storefrontId = getStorefrontId(id, docType)
     try {
-      if (!docType) {
-        throw new Error(`Cannot sync document of type ${type}`)
-      }
-      if (!id) {
-        throw new Error('You must supply an ID')
-      }
       /* Let the GraphQL Response catch up before we try to fetch the latest info */
       await sleep(4000)
       /**
@@ -68,11 +67,11 @@ export const syncDocument =
       /**
        * If we are deleting, then dont' try to fetch the up to date item
        */
-      const shopifyItem = await fetchUpToDateItem()
 
       if (operationType === OperationType.Delete) {
         await syncUtils.syncItemByID(storefrontId)
       } else {
+        const shopifyItem = await fetchUpToDateItem()
         await syncUtils.syncItem(storefrontId, shopifyItem)
       }
 

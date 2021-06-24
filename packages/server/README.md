@@ -100,6 +100,7 @@ You'll need to create 4 API endpoints in your project. Within your `pages`, crea
 - `onCollectionDelete.js`
 - `onProductUpdate.js`
 - `onProductDelete.js`
+- `onOrderCreate.js`
 
 Within each of those, import the `webhooks` you created and export the appropriate method:
 
@@ -135,23 +136,34 @@ import { webhooks } from '../src/webhooks'
 export default webhooks.onProductDelete
 ```
 
-Your site now has 4 new endpoints:
+`onOrderCreate.js`
+
+```js
+import { webhooks } from '../src/webhooks'
+
+export default webhooks.onOrderCreate
+```
+
+
+Your site now has 5 new endpoints:
 
 - `https://www.your-site.com/api/onCollectionUpdate`
 - `https://www.your-site.com/api/onCollectionDelete`
 - `https://www.your-site.com/api/onProductUpdate`
 - `https://www.your-site.com/api/onProductDelete`
+- `https://www.your-site.com/api/onOrderCreate`
 
 Add these to your Shopify settings (see [Shopify Setup](#Shopify-Setup) below)
 
 ### Lambdas (AWS, Netlify, etc)
 
-Create 4 lamba files, i.e.:
+Create 5 lamba files, i.e.:
 
 - `/lambdas/onCollectionUpdate`
 - `/lambdas/onCollectionDelete`
 - `/lambdas/onProductUpdate`
 - `/lambdas/onProductDelete`
+- `/lambdas/onOrderCreate`
 
 Within these files, import the `webhooks` you created and export them as `exports.handler`
 
@@ -187,11 +199,23 @@ import { webhooks } from '../src/webhooks'
 exports.handler = webhooks.onProductDelete
 ```
 
+`onOrderCreate.js`
+
+```js
+import { webhooks } from '../src/webhooks'
+
+exports.handler = webhooks.onOrderCreate
+```
+
 Deploy your webhooks and add their URLs to your Shopify settings (see [Shopify Setup](#Shopify-Setup) below).
 
 ### Roll your own
 
-If you are using another service to create the endpoints, you can use `createWebhooks` to generate simple functions to handle the syncing: `onCollectionUpdate`, `onCollectionDelete`, `onProductUpdate` and `onProductDelete`. Each of these functions accepts a single object with an `id` parameter, which is provided in the body sent by Shopify.
+If you are using another service to create the endpoints, you can use `createWebhooks` to generate simple functions to handle the syncing.
+
+`onCollectionUpdate`, `onCollectionDelete`, `onProductUpdate` and `onProductDelete` each accept a single object with an `id` property, which is provided in the body sent by Shopify.
+
+`onOrderCreate` accepts a single object with an `updated_at` property (the date that the order was created/updated) and `line_items`, an array of line items in the checkout: `{ updated_at: number, line_items: CheckoutLineItem[] }`
 
 An example express.js route might be:
 
@@ -212,3 +236,5 @@ To log messages to your console, set the environment variable `DEBUG=sane-shopif
 ## Shopify Setup
 
 You'll need to create 4 webhooks pointing to the endpionts you just created. Within your Shopify settings, go to _Notifications_, and add new webhooks for the appropriate events. Note that you do not need to create a Collection Created or Product Created webhook - shopify will call the Update webhook for both of these when a collection or product is created.
+
+**⚠️ Warning**: It is recommended that you set up an error monitoring service like Sentry to alert you of issues with your webhooks. If shopify receives a non-200 status code on a webhook, it will try it several more times, and if it is still receiving an error, removes it from your settings (without sending you a notification!) These webhooks will sent a `200` response right away, before processing the webhook data - but server timeouts or other problems may result in your webhooks being removed.

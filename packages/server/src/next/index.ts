@@ -24,7 +24,7 @@ export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
   try {
     const webhooks = createWebhooks(config)
     const createNextWebhook =
-      (webhook: WebhookHandler): NextHandler<WebhookData> =>
+      (webhook: WebhookHandler<any>): NextHandler<WebhookData> =>
       async (req, res) => {
         await webhook(req.body).catch((err) => {
           if (onError) {
@@ -47,6 +47,7 @@ export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
       onProductCreate: createNextWebhook(webhooks.onProductCreate),
       onProductUpdate: createNextWebhook(webhooks.onProductUpdate),
       onProductDelete: createNextWebhook(webhooks.onProductDelete),
+      onOrderCreate: createNextWebhook(webhooks.onOrderCreate),
     }
 
     return nextWebhooks
