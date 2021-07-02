@@ -51,6 +51,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "agonsgd",
+      "name": "agonsgd",
+      "avatar_url": "https://avatars.githubusercontent.com/u/80262375?v=4",
+      "profile": "https://github.com/agonsgd",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
