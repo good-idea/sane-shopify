@@ -51,6 +51,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "synim-sogody",
+      "name": "Synim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79842197?v=4",
+      "profile": "https://github.com/synim-sogody",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,

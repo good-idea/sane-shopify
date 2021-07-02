@@ -1,9 +1,7 @@
 # Sane Shopify
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- toc -->
@@ -305,6 +303,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://homerjam.es"><img src="https://avatars.githubusercontent.com/u/1055769?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Homer</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=homerjam" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/nrgnrg"><img src="https://avatars.githubusercontent.com/u/25795402?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Richard Cooke</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=nrgnrg" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.loregirardi.it"><img src="https://avatars.githubusercontent.com/u/12168237?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lorenzo Girardi</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=liqueflies" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/synim-sogody"><img src="https://avatars.githubusercontent.com/u/79842197?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Synim</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/issues?q=author%3Asynim-sogody" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
