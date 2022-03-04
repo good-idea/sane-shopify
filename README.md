@@ -25,7 +25,7 @@
 
 <!-- tocstop -->
 
-🚨 very alpha! in active development. 🚨
+🚨 Heads up! This project is no longer in active development. See the [official Sanity Connect for Shopify](https://www.sanity.io/docs/sanity-connect-for-shopify) plugin instead! 🚨
 
 All minor version changes (`0.X.0`) are likely to have breaking changes. If you are updating and have issues, see the [alpha changelog](#alpha-changelog) below.
 
