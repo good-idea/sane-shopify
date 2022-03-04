@@ -7,7 +7,9 @@ export interface SanityPair {
 }
 
 export type WithMetaFields<T> = T & {
-  [key: string]: any
+  key: string
+  namespace: string
+  value: string
 }
 
 /**
