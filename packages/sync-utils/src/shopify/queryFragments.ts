@@ -88,6 +88,16 @@ export const productVariantFragment = gql`
         }
       }
     }
+    metafields(first: 100) {
+      edges {
+        cursor
+        node {
+          namespace
+          key
+          value
+        }
+      }
+    }
     requiresShipping
     sku
     title
