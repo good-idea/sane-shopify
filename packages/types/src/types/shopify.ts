@@ -9,6 +9,16 @@ export interface ShopifyItem {
   shopName: string
 }
 
+interface Metafield {
+  key: string
+  namespace: string
+  value: string
+}
+
+interface WithMetaFields {
+  metafields?: Paginated<Metafield>
+}
+
 export interface ShopifyClient {
   query: <ResponseType>(
     query: string | DocumentNode,
@@ -63,7 +73,7 @@ export interface SelectedOption {
   value: string
 }
 
-export interface Variant {
+export interface Variant extends WithMetaFields {
   id: string
   availableForSale: boolean
   image: ShopifyImage
@@ -81,7 +91,7 @@ export interface ProductPriceRange {
   maxVariantPrice: MoneyV2
 }
 
-export interface Collection extends ShopifyItem {
+export interface Collection extends ShopifyItem, WithMetaFields {
   __typename: 'Collection'
   handle: string
   title: string
@@ -96,7 +106,7 @@ export interface ProductOption {
   values: string[]
 }
 
-export interface Product extends ShopifyItem {
+export interface Product extends ShopifyItem, WithMetaFields {
   handle: string
   title: string
   description: string
