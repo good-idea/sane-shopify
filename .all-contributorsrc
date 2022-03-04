@@ -1,5 +1,7 @@
 {
-  "files": ["README.md"],
+  "files": [
+    "README.md"
+  ],
   "imageSize": 100,
   "commit": false,
   "contributors": [
@@ -8,49 +10,74 @@
       "name": "Joseph Thomas",
       "avatar_url": "https://avatars.githubusercontent.com/u/11514928?v=4",
       "profile": "https://www.good-idea.studio",
-      "contributions": ["doc", "code", "test"]
+      "contributions": [
+        "doc",
+        "code",
+        "test"
+      ]
     },
     {
       "login": "GLips",
       "name": "Graham Lipsman",
       "avatar_url": "https://avatars.githubusercontent.com/u/842883?v=4",
       "profile": "http://branchlabs.com",
-      "contributions": ["code"]
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "homerjam",
       "name": "James Homer",
       "avatar_url": "https://avatars.githubusercontent.com/u/1055769?v=4",
       "profile": "https://homerjam.es",
-      "contributions": ["code"]
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "nrgnrg",
       "name": "Richard Cooke",
       "avatar_url": "https://avatars.githubusercontent.com/u/25795402?v=4",
       "profile": "https://github.com/nrgnrg",
-      "contributions": ["doc"]
+      "contributions": [
+        "doc"
+      ]
     },
     {
       "login": "liqueflies",
       "name": "Lorenzo Girardi",
       "avatar_url": "https://avatars.githubusercontent.com/u/12168237?v=4",
       "profile": "https://www.loregirardi.it",
-      "contributions": ["code"]
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "agonsgd",
       "name": "agonsgd",
       "avatar_url": "https://avatars.githubusercontent.com/u/80262375?v=4",
       "profile": "https://github.com/agonsgd",
-      "contributions": ["bug"]
+      "contributions": [
+        "bug"
+      ]
     },
     {
       "login": "synim-sogody",
       "name": "Synim",
       "avatar_url": "https://avatars.githubusercontent.com/u/79842197?v=4",
       "profile": "https://github.com/synim-sogody",
-      "contributions": ["bug"]
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "beelaineo",
+      "name": "blaine oneill",
+      "avatar_url": "https://avatars.githubusercontent.com/u/222873?v=4",
+      "profile": "http://blaine.xxx",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
