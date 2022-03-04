@@ -1,7 +1,7 @@
 # Sane Shopify
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- toc -->
@@ -305,6 +305,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://www.loregirardi.it"><img src="https://avatars.githubusercontent.com/u/12168237?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lorenzo Girardi</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=liqueflies" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/agonsgd"><img src="https://avatars.githubusercontent.com/u/80262375?v=4?s=100" width="100px;" alt=""/><br /><sub><b>agonsgd</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/issues?q=author%3Aagonsgd" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/synim-sogody"><img src="https://avatars.githubusercontent.com/u/79842197?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Synim</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/issues?q=author%3Asynim-sogody" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://blaine.xxx"><img src="https://avatars.githubusercontent.com/u/222873?v=4?s=100" width="100px;" alt=""/><br /><sub><b>blaine oneill</b></sub></a><br /><a href="https://github.com/good-idea/sane-shopify/commits?author=beelaineo" title="Code">💻</a></td>
   </tr>
 </table>
 
