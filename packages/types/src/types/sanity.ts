@@ -6,12 +6,6 @@ export interface SanityPair {
   to: SanityShopifyDocument
 }
 
-export type WithMetaFields<T> = T & {
-  key: string
-  namespace: string
-  value: string
-}
-
 /**
  * Types that are shared between the plugin, the hooks server, and the syncing client.
  *
@@ -65,7 +59,7 @@ export interface SanityShopifyProductOption {
 export interface SanityShopifyProductVariant {
   shopifyVariantID: string
   title: string
-  sourceData: WithMetaFields<Variant>
+  sourceData: Variant
 }
 
 export interface SanityShopifyProductDocument {
@@ -80,7 +74,7 @@ export interface SanityShopifyProductDocument {
   archived?: boolean
   minVariantPrice?: number
   maxVariantPrice?: number
-  sourceData: WithMetaFields<Product>
+  sourceData: Product
   collections: SanityShopifyCollectionDocument[]
   collectionRefs?: SanityReference[]
   options: SanityArray<SanityShopifyProductOption>
@@ -97,7 +91,7 @@ export interface SanityShopifyCollectionDocument {
   title: string
   handle: string
   archived?: boolean
-  sourceData: WithMetaFields<Collection>
+  sourceData: Collection
   products: SanityShopifyProductDocument[]
   productRefs?: SanityReference[]
 }
