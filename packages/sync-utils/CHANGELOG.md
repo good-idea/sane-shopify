@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.23.0](https://github.com/good-idea/sane-shopify/compare/v0.22.2...v0.23.0) (2022-03-04)
+
+
+### Features
+
+* **sync-utils:** add metafields to variant query ([#180](https://github.com/good-idea/sane-shopify/issues/180)) ([81da953](https://github.com/good-idea/sane-shopify/commit/81da953dc4c1c3382c8f1bb18e8998163592aef1)), closes [#179](https://github.com/good-idea/sane-shopify/issues/179) [#176](https://github.com/good-idea/sane-shopify/issues/176)
+
+
+
+
+
 ## 0.22.2 (2021-07-02)
 
 **Note:** Version bump only for package @sane-shopify/sync-utils
