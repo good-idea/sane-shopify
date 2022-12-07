@@ -19,4 +19,4 @@
  *
  */
 
-export const STOREFRONT_API_VERSION = '2020-01'
+export const STOREFRONT_API_VERSION = '2022-10'
