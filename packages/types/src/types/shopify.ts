@@ -9,13 +9,13 @@ export interface ShopifyItem {
   shopName: string
 }
 
-interface Metafield {
+export interface Metafield {
   key: string
   namespace: string
   value: string
 }
 
-interface WithMetaFields {
+export interface WithMetaFields {
   metafields?: Paginated<Metafield>
 }
 
