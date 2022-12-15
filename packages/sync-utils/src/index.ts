@@ -1,4 +1,5 @@
 export * from './syncingClient'
 export * from './shopify'
 export * from './constants'
+export * from './typeGuards'
 export { definitely } from './utils'

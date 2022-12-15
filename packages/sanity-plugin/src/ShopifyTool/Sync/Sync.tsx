@@ -1,14 +1,22 @@
-import { SyncUtils, Operation } from '@sane-shopify/types'
 import * as React from 'react'
+import {
+  SyncUtils,
+  Operation,
+  Product,
+  Collection,
+  SanityShopifyDocument,
+} from '@sane-shopify/types'
+import { isShopifyCollection, isShopifyProduct } from '@sane-shopify/sync-utils'
 import { ClientContextValue, SaneConsumer } from '../../Provider'
 import { uniqueBy } from './utils'
 
 interface State {
   syncState: 'ready' | 'syncing' | 'complete'
-  fetchedProducts: any[]
-  productsSynced: any[]
-  fetchedCollections: any[]
-  collectionsSynced: any[]
+  fetchedProducts: Product[]
+  productsSynced: SanityShopifyDocument[]
+  fetchedCollections: Collection[]
+  collectionsSynced: SanityShopifyDocument[]
+  error?: Error
 }
 
 export interface SyncRenderProps extends State {
@@ -43,10 +51,8 @@ class SyncBase extends React.Component<Props, State> {
   _handleProgress = (op: Operation) => {
     if (op.type === 'fetched') {
       const docs = op.shopifyDocuments
-      const fetchedProducts = docs.filter((d) => d.__typename === 'Product')
-      const fetchedCollections = docs.filter(
-        (d) => d.__typename === 'Collection'
-      )
+      const fetchedProducts = docs.filter(isShopifyProduct)
+      const fetchedCollections = docs.filter(isShopifyCollection)
       this.setState((initialState) => ({
         fetchedProducts: uniqueBy('id', [
           ...initialState.fetchedProducts,
@@ -74,21 +80,30 @@ class SyncBase extends React.Component<Props, State> {
   }
 
   _syncProducts = async () => {
-    await this.props.syncingClient.syncProducts({
+    return this.props.syncingClient.syncProducts({
       onProgress: this._handleProgress,
     })
   }
 
   _syncCollections = async () => {
-    await this.props.syncingClient.syncCollections({
+    return this.props.syncingClient.syncCollections({
       onProgress: this._handleProgress,
     })
   }
 
   _syncAll = async () => {
-    await this.props.syncingClient.syncAll({
+    return this.props.syncingClient.syncAll({
       onProgress: this._handleProgress,
     })
+  }
+
+  _handleError = (err: any) => {
+    const error =
+      err instanceof Error
+        ? err
+        : new Error(err?.message || `An unknown error occurred: ${err}`)
+    console.error(error)
+    this.setState({ error })
   }
 
   /** Public Methods */
@@ -96,29 +111,42 @@ class SyncBase extends React.Component<Props, State> {
   public syncItemByID = async (id: string) => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
-    this.props.syncingClient.syncItemByID(id)
-    this.setState({ syncState: 'complete' as 'complete' })
+    this.props.syncingClient
+      .syncItemByID(id)
+      .catch(this._handleError)
+      .then(() => {
+        this.setState({ syncState: 'complete' as 'complete' })
+      })
   }
 
   public syncProducts = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
     await this._syncProducts()
-    this.setState({ syncState: 'complete' as 'complete' })
+      .catch(this._handleError)
+      .then(() => {
+        this.setState({ syncState: 'complete' as 'complete' })
+      })
   }
 
   public syncCollections = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
     await this._syncCollections()
-    this.setState({ syncState: 'complete' as 'complete' })
+      .catch(this._handleError)
+      .then(() => {
+        this.setState({ syncState: 'complete' as 'complete' })
+      })
   }
 
   public syncAll = async () => {
     await this.reset()
     this.setState({ syncState: 'syncing' as 'syncing' })
     await this._syncAll()
-    this.setState({ syncState: 'complete' as 'complete' })
+      .catch(this._handleError)
+      .then(() => {
+        this.setState({ syncState: 'complete' as 'complete' })
+      })
   }
 
   public render() {
