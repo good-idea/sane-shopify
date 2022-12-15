@@ -1,14 +1,13 @@
 import gql from 'graphql-tag'
 import PQueue from 'p-queue'
-import Debug from 'debug'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
 import { ProgressHandler, ShopifyClient, Product } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { productFragment } from './queryFragments'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
 import { ShopifyCache } from './shopifyUtils'
-
-const log = Debug('sane-shopify:fetching')
+import { QueryResultRejected } from './types'
+import { log, hasTimeoutErrors } from './fetchUtils'
 
 export const PRODUCTS_QUERY = gql`
   query ProductsQuery($first: Int!, $after: String) {
@@ -41,11 +40,13 @@ export const PRODUCTS_QUERY = gql`
   ${productFragment}
 `
 
-interface QueryResult {
+interface QueryResultFulfilled {
   data: {
     products: Paginated<Product>
   }
 }
+
+type ProductsQueryResult = QueryResultFulfilled | QueryResultRejected
 
 const noop = () => undefined
 
@@ -54,14 +55,37 @@ export const createFetchAllShopifyProducts =
   async (onProgress: ProgressHandler<Product> = noop): Promise<Product[]> => {
     const allStartTimer = new Date()
     const fetchProducts = async (
+      pageSize = 30,
       prevPage?: Paginated<Product>
     ): Promise<Product[]> => {
       const after = prevPage ? getLastCursor(prevPage) : undefined
       const now = new Date()
-      const result = await query<QueryResult>(PRODUCTS_QUERY, {
-        first: 10,
+      log(
+        `Fetching products - page size: ${pageSize}, previous results: ${
+          prevPage?.edges.length || 0
+        }`
+      )
+      const result = await query<ProductsQueryResult>(PRODUCTS_QUERY, {
+        first: pageSize,
         after,
       })
+      if ('errors' in result) {
+        if (hasTimeoutErrors(result)) {
+          if (pageSize === 1) {
+            throw new Error('Product query timed out with a page size of 1.')
+          }
+          const newPageSize = Math.round(pageSize / 2)
+          log(
+            `Product query timed out. Falling back to smaller page size (${newPageSize})`
+          )
+          return fetchProducts(newPageSize, prevPage)
+        }
+        log(`Product request failed: ${result.errors}`)
+        const errorMessage = `Product request failed: ${result.errors
+          .map((e) => e.message)
+          .join(' | ')}`
+        throw new Error(errorMessage)
+      }
       const duration = new Date().getTime() - now.getTime()
       log(`Fetched page of Shopify Products in ${duration / 1000}s`, result)
       const fetchedProducts = result.data.products
@@ -73,7 +97,8 @@ export const createFetchAllShopifyProducts =
       if (!products.pageInfo) {
         throw new Error('Products page info was not fetched')
       }
-      if (products.pageInfo.hasNextPage) return fetchProducts(products)
+      if (products.pageInfo.hasNextPage)
+        return fetchProducts(pageSize, products)
       const [unwound] = unwindEdges(products)
       unwound.forEach((product) => cache.set(product))
       return unwound

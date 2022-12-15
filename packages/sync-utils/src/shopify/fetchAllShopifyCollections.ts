@@ -1,14 +1,13 @@
 import gql from 'graphql-tag'
 import PQueue from 'p-queue'
-import Debug from 'debug'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
 import { ProgressHandler, ShopifyClient, Collection } from '@sane-shopify/types'
 import { ShopifyCache } from './shopifyUtils'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { collectionFragment } from './queryFragments'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
-
-const log = Debug('sane-shopify:fetching')
+import { QueryResultRejected } from './types'
+import { log, hasTimeoutErrors } from './fetchUtils'
 
 export const COLLECTIONS_QUERY = gql`
   query CollectionsQuery($first: Int!, $after: String) {
@@ -40,12 +39,13 @@ export const COLLECTIONS_QUERY = gql`
   }
   ${collectionFragment}
 `
-
-interface QueryResult {
+interface QueryResultFulfilled {
   data: {
     collections: Paginated<Collection>
   }
 }
+
+type CollectionsQueryResult = QueryResultFulfilled | QueryResultRejected
 
 const noop = () => undefined
 
@@ -57,15 +57,36 @@ export const createFetchAllShopifyCollections =
     const allStartTimer = new Date()
 
     const fetchCollections = async (
+      pageSize = 30,
       prevPage?: Paginated<Collection>
     ): Promise<Collection[]> => {
       const after = prevPage ? getLastCursor(prevPage) : undefined
 
       const now = new Date()
-      const result = await query<QueryResult>(COLLECTIONS_QUERY, {
-        first: 10,
+      const result = await query<CollectionsQueryResult>(COLLECTIONS_QUERY, {
+        first: pageSize,
         after,
       })
+
+      if ('errors' in result) {
+        if (hasTimeoutErrors(result)) {
+          if (pageSize === 1) {
+            throw new Error(
+              'Collections query timed out with a page size of 1.'
+            )
+          }
+          const newPageSize = Math.round(pageSize / 2)
+          log(
+            `Collections query timed out. Falling back to smaller page size (${newPageSize})`
+          )
+          return fetchCollections(newPageSize, prevPage)
+        }
+        log(`Collections request failed: ${result.errors}`)
+        const errorMessage = `Collections request failed: ${result.errors
+          .map((e) => e.message)
+          .join(' | ')}`
+        throw new Error(errorMessage)
+      }
 
       const duration = new Date().getTime() - now.getTime()
       log(`Fetched page of Shopify Collections in ${duration / 1000}s`, result)
@@ -79,8 +100,9 @@ export const createFetchAllShopifyCollections =
       if (!mergedCollections.pageInfo) {
         throw new Error('Pagination info was not fetched')
       }
-      if (mergedCollections.pageInfo.hasNextPage)
-        return fetchCollections(mergedCollections)
+      if (mergedCollections.pageInfo.hasNextPage) {
+        return fetchCollections(pageSize, mergedCollections)
+      }
       const [unwound] = unwindEdges(mergedCollections)
       unwound.forEach((collection) => cache.set(collection))
       return unwound
