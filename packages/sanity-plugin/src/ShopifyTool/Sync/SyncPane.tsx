@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { Button, Text, Box } from '@sanity/ui'
+import { Stack, Button, Text, Box } from '@sanity/ui'
 import { Sync, SyncRenderProps } from './Sync'
 import { Progress } from '../../components/Progress'
 
-const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
+const SyncPaneBase = ({ error, syncState, syncAll }: SyncRenderProps) => {
   const handleSyncButton = () => syncAll()
+
   return (
     <Box marginBottom={[1, 2, 6]}>
       <Box marginBottom={[1, 2, 4]}>
@@ -19,7 +20,7 @@ const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
         padding={[2, 2, 4]}
         tone="primary"
         onClick={handleSyncButton}
-        disabled={syncState === 'complete'}
+        disabled={syncState === 'complete' || Boolean(error)}
         mode={syncState === 'syncing' ? 'bleed' : 'default'}
         text={
           syncState === 'syncing'
@@ -28,6 +29,15 @@ const SyncPaneBase = ({ syncState, syncAll }: SyncRenderProps) => {
         }
       />
       <Progress />
+      {error ? (
+        <Stack marginTop={4} space={4}>
+          <Text size={1}>Sorry, an error occurred.</Text>
+          <Text size={1} style={{ color: 'red' }}>
+            {error.message}
+          </Text>
+          <Text size={1}>Developers, check your console for more details.</Text>
+        </Stack>
+      ) : null}
     </Box>
   )
 }
