@@ -26,29 +26,31 @@ export const syncDocument =
         : type === NodeType.Product
         ? 'Product'
         : null
-    if (!docType) {
-      throw new Error(`Cannot sync document of type ${type}`)
-    }
     if (!id) {
       throw new Error('You must supply an ID')
+    }
+    if (!docType) {
+      throw new Error(`Cannot sync document ${id} of type ${type}`)
     }
 
     const storefrontId = getStorefrontId(id, docType)
     try {
-      /* Let the GraphQL Response catch up before we try to fetch the latest info */
-      await sleep(4000)
       /**
-       * Sometimes the graphql response is stale.
+       * Sometimes the graphql response is stale and does not reflect the changes
+       * that triggered the webhook.
        * If the GraphQL item has an updatedAt that is less
        * recent than updated_at from the webhook body,
-       * wait a few seconds and try again.
+       * wait ten seconds and try again.
        */
 
+      await sleep(10000)
       const fetchUpToDateItem = async (
         retries = 0
       ): Promise<Collection | Product | null> => {
         if (retries >= 5) {
-          throw new Error('Could not fetch up to date item after 5 retries')
+          throw new Error(
+            `Could not fetch up to date item after 5 retries (shopifyId: ${id} storefrontId: ${storefrontId})`
+          )
         }
         const item = await syncUtils.fetchItemById(storefrontId, true)
         if (!item) return null
