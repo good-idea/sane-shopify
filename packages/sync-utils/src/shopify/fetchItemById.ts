@@ -67,7 +67,7 @@ export const createFetchItemById =
     const item = result?.data?.node
     if (result.errors) {
       const messages = result.errors.map(({ message }) => message).join(' | ')
-      throw new Error(messages)
+      throw new Error(`Could not fetch item ${id}: `.concat(messages))
     }
     if (!item) return null
     if (!fetchRelated) return item
@@ -77,6 +77,6 @@ export const createFetchItemById =
     if (item.__typename === 'Collection') {
       return fetchAllCollectionProducts(query, item)
     }
-    // @ts-ignore
-    throw new Error(`Cannot fetch item with typename ${item.__typename}`)
+    // @ts-expect-error
+    throw new Error(`Cannot fetch item ${id} with typename ${item.__typename}`)
   }
