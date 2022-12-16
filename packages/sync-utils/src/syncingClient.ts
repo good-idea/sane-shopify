@@ -446,7 +446,8 @@ export const syncUtils = (
             : item.__typename === 'Product'
             ? await syncProduct(item)
             : null
-        if (result === null) throw new Error('Could not sync item')
+        if (result === null)
+          throw new Error(`Could not sync ${item.__typename} ${item.id}`)
 
         onDocumentSynced(result.operation)
         logger.logSynced(result.operation)
