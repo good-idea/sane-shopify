@@ -6,6 +6,7 @@ import {
   ShopifyItem,
   TestSecretsResponse,
   ShopifyUtils,
+  ShopifyConfig,
 } from './shopify'
 import { SyncMachineState } from './syncState'
 
@@ -26,6 +27,7 @@ export interface Secrets {
 
 export interface SaneShopifyConfig {
   secrets: Secrets
+  shopifyConfig?: ShopifyConfig
   onStateChange?: (state: SyncMachineState) => void
 }
 

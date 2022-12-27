@@ -16,7 +16,24 @@ export interface Metafield {
 }
 
 export interface WithMetaFields {
-  metafields?: Paginated<Metafield>
+  metafields?: Metafield[]
+}
+
+export interface MetafieldConfig {
+  namespace: string
+  key: string
+}
+export interface ShopifyConfigProductsVariants {
+  metafields?: MetafieldConfig[]
+}
+
+export interface ShopifyConfigProducts {
+  metafields?: MetafieldConfig[]
+  variants?: ShopifyConfigProductsVariants
+}
+
+export interface ShopifyConfig {
+  products?: ShopifyConfigProducts
 }
 
 export interface ShopifyClient {
