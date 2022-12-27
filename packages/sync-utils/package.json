@@ -25,6 +25,8 @@
     "test:watch": "jest --watch",
     "test:coverage:open": "yarn test:unit && opn coverage/lcov-report/index.html",
     "test:coverage:send": "codecov",
+    "test-fetch": "ts-node ./src/scripts/test-fetch.ts",
+    "tsc-watch": "tsc-watch --noEmit",
     "build": "rimraf lib && tsdx build",
     "start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
     "prepublishOnly": "yarn build"
