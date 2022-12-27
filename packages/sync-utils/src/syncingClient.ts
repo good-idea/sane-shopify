@@ -256,12 +256,20 @@ export const syncUtils = (
 
   const saveConfig = async (
     storefront: string,
-    secrets: UpdateConfigDocumentArgs
+    config: UpdateConfigDocumentArgs
   ) => {
+    const { shopName, accessToken } = config
+    if (!shopName || !accessToken) {
+      throw new Error('Missing shopName')
+    }
+    if (!accessToken) {
+      throw new Error('Missing accessToken')
+    }
+    const secrets = { shopName, accessToken }
     const { isError, message } = await testSecrets(secrets)
     if (isError) {
       onSavedSecretsError(new Error(message))
-      return
+      throw new Error(message)
     }
     await saveConfigToSanity(storefront, secrets)
     onSavedSecrets(secrets.shopName)
@@ -492,6 +500,7 @@ export const syncUtils = (
     initialize,
     initialState,
     saveConfig,
+
     testConfig,
     clearConfig,
     syncProducts,

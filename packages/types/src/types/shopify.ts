@@ -19,6 +19,27 @@ export interface WithMetaFields {
   metafields?: Paginated<Metafield>
 }
 
+export interface MetafieldConfig {
+  namespace: string
+  key: string
+}
+
+export interface ShopifyConfigWithMetafields {
+  metafields?: MetafieldConfig[]
+}
+
+export type ShopifyConfigProductsVariants = ShopifyConfigWithMetafields
+
+export type ShopifyConfigProducts = ShopifyConfigWithMetafields
+
+export type ShopifyConfigCollections = ShopifyConfigWithMetafields
+
+export interface ShopifyConfig {
+  products?: ShopifyConfigProducts
+  variants?: ShopifyConfigProductsVariants
+  collections?: ShopifyConfigCollections
+}
+
 export interface ShopifyClient {
   query: <ResponseType>(
     query: string | DocumentNode,
@@ -74,6 +95,7 @@ export interface SelectedOption {
 }
 
 export interface Variant extends WithMetaFields {
+  __typename: 'ProductVariant'
   id: string
   availableForSale: boolean
   image: ShopifyImage
@@ -107,6 +129,7 @@ export interface ProductOption {
 }
 
 export interface Product extends ShopifyItem, WithMetaFields {
+  __typename: 'Product'
   handle: string
   title: string
   description: string
@@ -121,7 +144,6 @@ export interface Product extends ShopifyItem, WithMetaFields {
   media: Paginated<ShopifyMediaImage | ShopifyVideo>
   images: Paginated<ShopifyImage>
   variants: Paginated<Variant>
-  __typename: 'Product'
 }
 
 export interface ShopifyItemParams {
