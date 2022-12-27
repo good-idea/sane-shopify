@@ -1,15 +1,21 @@
 import gql from 'graphql-tag'
 import PQueue from 'p-queue'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
-import { ProgressHandler, ShopifyClient, Product } from '@sane-shopify/types'
+import {
+  ShopifyConfigProducts,
+  ProgressHandler,
+  ShopifyClient,
+  Product,
+  ShopifyConfig,
+} from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
-import { productFragment } from './queryFragments'
+import { createProductFragment } from './queryFragments'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
 import { ShopifyCache } from './shopifyUtils'
 import { QueryResultRejected } from './types'
 import { log, hasTimeoutErrors } from './fetchUtils'
 
-export const PRODUCTS_QUERY = gql`
+const createProductsQuery = (productConfig?: ShopifyConfigProducts) => gql`
   query ProductsQuery($first: Int!, $after: String) {
     products(first: $first, after: $after) {
       pageInfo {
@@ -37,7 +43,7 @@ export const PRODUCTS_QUERY = gql`
       }
     }
   }
-  ${productFragment}
+  ${createProductFragment(productConfig)}
 `
 
 interface QueryResultFulfilled {
@@ -51,8 +57,13 @@ type ProductsQueryResult = QueryResultFulfilled | QueryResultRejected
 const noop = () => undefined
 
 export const createFetchAllShopifyProducts =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  (
+    query: ShopifyClient['query'],
+    cache: ShopifyCache,
+    shopifyConfig?: ShopifyConfig
+  ) =>
   async (onProgress: ProgressHandler<Product> = noop): Promise<Product[]> => {
+    const PRODUCTS_QUERY = createProductsQuery(shopifyConfig?.products)
     const allStartTimer = new Date()
     const fetchProducts = async (
       pageSize = 30,

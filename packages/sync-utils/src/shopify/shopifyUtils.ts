@@ -1,4 +1,4 @@
-import { Collection, Product } from '@sane-shopify/types'
+import { Collection, Product, ShopifyConfig } from '@sane-shopify/types'
 import { ShopifyUtils, ShopifyClient } from '@sane-shopify/types'
 import { createFetchShopifyProduct } from './fetchShopifyProduct'
 import { createFetchShopifyCollection } from './fetchShopifyCollection'
@@ -64,16 +64,22 @@ const createCache = (): ShopifyCache => {
   }
 }
 
-export const shopifyUtils = (client: ShopifyClient): ShopifyUtils => {
-  // QUI QUI QUI
+export const shopifyUtils = (
+  client: ShopifyClient,
+  config?: ShopifyConfig
+): ShopifyUtils => {
   const { query } = client
   const cache = createCache()
   return {
     client,
-    fetchItemById: createFetchItemById(query, cache),
-    fetchShopifyProduct: createFetchShopifyProduct(query, cache),
+    fetchItemById: createFetchItemById(query, cache, config),
+    fetchShopifyProduct: createFetchShopifyProduct(query, cache, config),
     fetchShopifyCollection: createFetchShopifyCollection(query, cache),
-    fetchAllShopifyProducts: createFetchAllShopifyProducts(query, cache),
+    fetchAllShopifyProducts: createFetchAllShopifyProducts(
+      query,
+      cache,
+      config
+    ),
     fetchAllShopifyCollections: createFetchAllShopifyCollections(query, cache),
     testSecrets,
   }

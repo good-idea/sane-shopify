@@ -1,11 +1,19 @@
 import gql from 'graphql-tag'
-import { ShopifyClient, Product, Collection } from '@sane-shopify/types'
+import {
+  ShopifyConfigProducts,
+  ShopifyClient,
+  Product,
+  Collection,
+  ShopifyConfig,
+} from '@sane-shopify/types'
 import { ShopifyCache } from './shopifyUtils'
-import { productFragment, collectionFragment } from './queryFragments'
+import { createProductFragment, collectionFragment } from './queryFragments'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
 
-export const NODE_QUERY = gql`
+export const createNodeQuery = (
+  shopifyConfigProduct?: ShopifyConfigProducts
+) => gql`
   query NodeQuery($id: ID!) {
     node(id: $id) {
       ... on Product {
@@ -42,7 +50,7 @@ export const NODE_QUERY = gql`
       }
     }
   }
-  ${productFragment}
+  ${createProductFragment(shopifyConfigProduct)}
   ${collectionFragment}
 `
 
@@ -56,11 +64,16 @@ interface NodeResult {
 }
 
 export const createFetchItemById =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  (
+    query: ShopifyClient['query'],
+    cache: ShopifyCache,
+    shopifyConfig?: ShopifyConfig
+  ) =>
   async (
     id: string,
     fetchRelated: boolean
   ): Promise<Product | Collection | null> => {
+    const NODE_QUERY = createNodeQuery(shopifyConfig?.products)
     const cached = cache.getCollectionById(id) || cache.getProductById(id)
     if (cached) return cached
     const result = await query<NodeResult>(NODE_QUERY, { id })

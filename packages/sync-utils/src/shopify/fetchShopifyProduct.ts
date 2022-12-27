@@ -1,13 +1,20 @@
 import gql from 'graphql-tag'
+import { DocumentNode } from 'graphql'
 import Debug from 'debug'
-import { ShopifyClient, ShopifyItemParams, Product } from '@sane-shopify/types'
+import {
+  ShopifyClient,
+  ShopifyItemParams,
+  Product,
+  ShopifyConfigProducts,
+  ShopifyConfig,
+} from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { ShopifyCache } from './shopifyUtils'
-import { productFragment } from './queryFragments'
+import { createProductFragment } from './queryFragments'
 
 const log = Debug('sane-shopify:fetching')
 
-export const PRODUCT_BY_HANDLE = gql`
+const createProductByHandle = (productConfig?: ShopifyConfigProducts) => gql`
   query ProductQuery(
     $handle: String!
     $collectionsFirst: Int!
@@ -30,29 +37,10 @@ export const PRODUCT_BY_HANDLE = gql`
       }
     }
   }
-  ${productFragment}
+  ${createProductFragment(productConfig)}
 `
 
-interface ByHandleResult {
-  data?: {
-    productByHandle: Product
-  }
-}
-
-const getByHandle = async (
-  query: ShopifyClient['query'],
-  handle: string,
-  collectionsAfter?: string | number
-) => {
-  const result = await query<ByHandleResult>(PRODUCT_BY_HANDLE, {
-    handle,
-    collectionsFirst: 200,
-    collectionsAfter,
-  })
-  return result?.data?.productByHandle
-}
-
-const PRODUCT_BY_ID = gql`
+const createProductById = (productConfig?: ShopifyConfigProducts) => gql`
   query NodeQuery(
     $id: ID!
     $collectionsFirst: Int!
@@ -77,8 +65,33 @@ const PRODUCT_BY_ID = gql`
       }
     }
   }
-  ${productFragment}
+  ${createProductFragment(productConfig)}
 `
+
+const createQueries = (shopifyConfigProducts?: ShopifyConfigProducts) => ({
+  PRODUCT_BY_ID: createProductById(shopifyConfigProducts),
+  PRODUCT_BY_HANDLE: createProductByHandle(shopifyConfigProducts),
+})
+
+interface ByHandleResult {
+  data?: {
+    productByHandle: Product
+  }
+}
+
+const getByHandle = async (
+  query: ShopifyClient['query'],
+  queryString: DocumentNode,
+  handle: string,
+  collectionsAfter?: string | number
+) => {
+  const result = await query<ByHandleResult>(queryString, {
+    handle,
+    collectionsFirst: 200,
+    collectionsAfter,
+  })
+  return result?.data?.productByHandle
+}
 
 interface ByIdResult {
   data?: {
@@ -88,10 +101,11 @@ interface ByIdResult {
 
 const getById = async (
   query: ShopifyClient['query'],
+  queryString: DocumentNode,
   id: string,
   collectionsAfter?: string
 ) => {
-  const result = await query<ByIdResult>(PRODUCT_BY_ID, {
+  const result = await query<ByIdResult>(queryString, {
     id,
     collectionsFirst: 20,
     collectionsAfter,
@@ -101,7 +115,8 @@ const getById = async (
 
 export const fetchAllProductCollections = async (
   query: ShopifyClient['query'],
-  prevProduct: Product
+  prevProduct: Product,
+  shopifyConfig?: ShopifyConfig
 ): Promise<Product> => {
   if (!prevProduct.collections?.pageInfo?.hasNextPage) {
     log(
@@ -116,8 +131,11 @@ export const fetchAllProductCollections = async (
     prevProduct
   )
 
+  const { PRODUCT_BY_HANDLE } = createQueries(shopifyConfig?.products)
+
   const nextProduct = await getByHandle(
     query,
+    PRODUCT_BY_HANDLE,
     prevProduct.handle,
     collectionsAfter ? collectionsAfter : undefined
   )
@@ -147,13 +165,21 @@ export const fetchAllProductCollections = async (
  */
 
 export const createFetchShopifyProduct =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  (
+    query: ShopifyClient['query'],
+    cache: ShopifyCache,
+    shopifyConfig?: ShopifyConfig
+  ) =>
   async (params: ShopifyItemParams): Promise<Product | null> => {
     const { id, handle } = params
     if (!id && !handle) {
       debugger
       throw new Error('You must provide either an id or handle')
     }
+
+    const { PRODUCT_BY_ID, PRODUCT_BY_HANDLE } = createQueries(
+      shopifyConfig?.products
+    )
 
     const cachedProduct = id
       ? cache.getProductById(id)
@@ -164,9 +190,9 @@ export const createFetchShopifyProduct =
     if (cachedProduct) return fetchAllProductCollections(query, cachedProduct)
 
     const fetchedProduct = id
-      ? await getById(query, id)
+      ? await getById(query, PRODUCT_BY_ID, id)
       : handle
-      ? await getByHandle(query, handle)
+      ? await getByHandle(query, PRODUCT_BY_HANDLE, handle)
       : null
     if (!fetchedProduct) return null
 
