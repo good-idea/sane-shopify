@@ -28,7 +28,11 @@ export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
             statusCode: 200,
             body: '',
           }
-        } catch (error) {
+        } catch (err) {
+          const error =
+            err instanceof Error
+              ? err
+              : new Error('There was an error parsing this webhook event')
           if (onError) {
             onError(error)
           }
@@ -51,8 +55,12 @@ export const createAWSWebhooks = (config: WebhooksConfig): AWSWebhooks => {
 
     return AWSWebhooks
   } catch (err) {
+    const error =
+      err instanceof Error
+        ? err
+        : new Error('An error occurred creating webhooks')
     if (onError) {
-      onError(err)
+      onError(error)
       throw err
     } else {
       throw err

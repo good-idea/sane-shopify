@@ -79,8 +79,15 @@ export const syncDocument =
 
       log(`[${operationType}] Synced item ${storefrontId} (/${docType}/${id})`)
     } catch (err) {
+      const error =
+        err instanceof Error
+          ? err
+          : new Error(
+              `Failed to ${operationType} item ${storefrontId} (/${docType}/${id})`
+            )
+
       log(`Failed to ${operationType} item ${storefrontId} (/${docType}/${id})`)
-      log(err)
-      onError(err)
+      log(error)
+      onError(error)
     }
   }

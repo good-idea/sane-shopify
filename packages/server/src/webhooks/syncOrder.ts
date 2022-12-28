@@ -63,11 +63,17 @@ export const syncOrder =
             `[${operationType}] Synced item ${storefrontId} (/Product/${storefrontId})`
           )
         } catch (err) {
+          const error =
+            err instanceof Error
+              ? err
+              : new Error(
+                  `Failed to ${operationType} item ${storefrontId} (/Product/${storefrontId})`
+                )
           log(
             `Failed to ${operationType} item ${storefrontId} (/Product/${storefrontId})`
           )
-          log(err)
-          onError(err)
+          log(error)
+          onError(error)
         }
       })
     )
