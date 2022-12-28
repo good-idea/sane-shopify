@@ -5,7 +5,6 @@ import {
   ShopifyClient,
   ShopifyItemParams,
   Product,
-  ShopifyConfigProducts,
   ShopifyConfig,
 } from '@sane-shopify/types'
 import { remapMetafields } from './remapMetafields'
@@ -15,7 +14,7 @@ import { createProductFragment } from './queryFragments'
 
 const log = Debug('sane-shopify:fetching')
 
-const createProductByHandle = (productConfig?: ShopifyConfigProducts) => gql`
+const createProductByHandle = (shopifyConfig?: ShopifyConfig) => gql`
   query ProductQuery(
     $handle: String!
     $collectionsFirst: Int!
@@ -38,10 +37,10 @@ const createProductByHandle = (productConfig?: ShopifyConfigProducts) => gql`
       }
     }
   }
-  ${createProductFragment(productConfig)}
+  ${createProductFragment(shopifyConfig)}
 `
 
-const createProductById = (productConfig?: ShopifyConfigProducts) => gql`
+const createProductById = (shopifyConfig?: ShopifyConfig) => gql`
   query NodeQuery(
     $id: ID!
     $collectionsFirst: Int!
@@ -66,12 +65,12 @@ const createProductById = (productConfig?: ShopifyConfigProducts) => gql`
       }
     }
   }
-  ${createProductFragment(productConfig)}
+  ${createProductFragment(shopifyConfig)}
 `
 
-const createQueries = (shopifyConfigProducts?: ShopifyConfigProducts) => ({
-  PRODUCT_BY_ID: createProductById(shopifyConfigProducts),
-  PRODUCT_BY_HANDLE: createProductByHandle(shopifyConfigProducts),
+const createQueries = (shopifyConfig?: ShopifyConfig) => ({
+  PRODUCT_BY_ID: createProductById(shopifyConfig),
+  PRODUCT_BY_HANDLE: createProductByHandle(shopifyConfig),
 })
 
 interface ByHandleResult {
@@ -134,7 +133,7 @@ export const fetchAllProductCollections = async (
     prevProduct
   )
 
-  const { PRODUCT_BY_HANDLE } = createQueries(shopifyConfig?.products)
+  const { PRODUCT_BY_HANDLE } = createQueries(shopifyConfig)
 
   const nextProduct = await getByHandle(
     query,
@@ -180,9 +179,7 @@ export const createFetchShopifyProduct =
       throw new Error('You must provide either an id or handle')
     }
 
-    const { PRODUCT_BY_ID, PRODUCT_BY_HANDLE } = createQueries(
-      shopifyConfig?.products
-    )
+    const { PRODUCT_BY_ID, PRODUCT_BY_HANDLE } = createQueries(shopifyConfig)
 
     const cachedProduct = id
       ? cache.getProductById(id)

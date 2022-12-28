@@ -1,17 +1,19 @@
 import gql from 'graphql-tag'
+import { DocumentNode } from 'graphql'
 import Debug from 'debug'
 import {
   ShopifyClient,
   ShopifyItemParams,
   Collection,
+  ShopifyConfig,
 } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
-import { collectionFragment } from './queryFragments'
+import { createCollectionFragment } from './queryFragments'
 import { ShopifyCache } from './shopifyUtils'
 
 const log = Debug('sane-shopify:fetching')
 
-const COLLECTION_BY_HANDLE = gql`
+const createCollectionByHandle = (shopifyConfig?: ShopifyConfig) => gql`
   query CollectionQuery(
     $handle: String!
     $productsFirst: Int!
@@ -34,28 +36,10 @@ const COLLECTION_BY_HANDLE = gql`
       }
     }
   }
-  ${collectionFragment}
+  ${createCollectionFragment(shopifyConfig)}
 `
-interface ByHandleResult {
-  data?: {
-    collectionByHandle: Collection
-  }
-}
 
-const getByHandle = async (
-  query: ShopifyClient['query'],
-  handle: string,
-  productsAfter?: string | number
-) => {
-  const result = await query<ByHandleResult>(COLLECTION_BY_HANDLE, {
-    handle,
-    productsFirst: 50,
-    productsAfter,
-  })
-  return result?.data?.collectionByHandle
-}
-
-const COLLECTION_BY_ID = gql`
+const createCollectionById = (shopifyConfig?: ShopifyConfig) => gql`
   query NodeQuery($id: ID!, $productsFirst: Int!, $productsAfter: String) {
     node(id: $id) {
       ... on Collection {
@@ -76,8 +60,32 @@ const COLLECTION_BY_ID = gql`
       }
     }
   }
-  ${collectionFragment}
+  ${createCollectionFragment(shopifyConfig)}
 `
+interface ByHandleResult {
+  data?: {
+    collectionByHandle: Collection
+  }
+}
+
+const createQueries = (shopifyConfig?: ShopifyConfig) => ({
+  COLLECTION_BY_ID: createCollectionById(shopifyConfig),
+  COLLECTION_BY_HANDLE: createCollectionByHandle(shopifyConfig),
+})
+
+const getByHandle = async (
+  query: ShopifyClient['query'],
+  queryString: DocumentNode,
+  handle: string,
+  productsAfter?: string | number
+) => {
+  const result = await query<ByHandleResult>(queryString, {
+    handle,
+    productsFirst: 50,
+    productsAfter,
+  })
+  return result?.data?.collectionByHandle
+}
 
 interface ByIdResult {
   data?: {
@@ -87,10 +95,11 @@ interface ByIdResult {
 
 const getById = async (
   query: ShopifyClient['query'],
+  queryString: DocumentNode,
   id: string,
   productsAfter?: string
 ) => {
-  const result = await query<ByIdResult>(COLLECTION_BY_ID, {
+  const result = await query<ByIdResult>(queryString, {
     id,
     productsFirst: 200,
     productsAfter,
@@ -100,7 +109,8 @@ const getById = async (
 
 export const fetchAllCollectionProducts = async (
   query: ShopifyClient['query'],
-  prevCollection: Collection
+  prevCollection: Collection,
+  shopifyConfig?: ShopifyConfig
 ): Promise<Collection> => {
   if (!prevCollection.products?.pageInfo?.hasNextPage) {
     log(
@@ -116,8 +126,11 @@ export const fetchAllCollectionProducts = async (
     `Fetching further products for collection ${prevCollection.handle}`,
     prevCollection
   )
+  const { COLLECTION_BY_HANDLE } = createQueries(shopifyConfig)
+
   const nextCollection = await getByHandle(
     query,
+    COLLECTION_BY_HANDLE,
     prevCollection.handle,
     productsAfter ? productsAfter : undefined
   )
@@ -147,7 +160,11 @@ export const fetchAllCollectionProducts = async (
  */
 
 export const createFetchShopifyCollection =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  (
+    query: ShopifyClient['query'],
+    cache: ShopifyCache,
+    shopifyConfig?: ShopifyConfig
+  ) =>
   async (params: ShopifyItemParams): Promise<Collection | null> => {
     const { id, handle } = params
     if (!id && !handle) {
@@ -163,11 +180,13 @@ export const createFetchShopifyCollection =
     if (cachedCollection) {
       return fetchAllCollectionProducts(query, cachedCollection)
     }
+    const { COLLECTION_BY_ID, COLLECTION_BY_HANDLE } =
+      createQueries(shopifyConfig)
 
     const fetchedCollection = id
-      ? await getById(query, id)
+      ? await getById(query, COLLECTION_BY_ID, id)
       : handle
-      ? await getByHandle(query, handle)
+      ? await getByHandle(query, COLLECTION_BY_HANDLE, handle)
       : null
     if (!fetchedCollection) return null
 

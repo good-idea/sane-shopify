@@ -1,4 +1,4 @@
-import { MetafieldConfig, ShopifyConfigProducts } from '@sane-shopify/types'
+import { MetafieldConfig, ShopifyConfig } from '@sane-shopify/types'
 import gql from 'graphql-tag'
 
 /**
@@ -59,7 +59,7 @@ const imageFragment = /* GraphQL */ `
  */
 
 export const createProductVariantFragment = (
-  shopifyConfigProducts?: ShopifyConfigProducts
+  shopifyConfig?: ShopifyConfig
 ) => gql`
   fragment ProductVariantFragment on ProductVariant {
     __typename
@@ -79,7 +79,7 @@ export const createProductVariantFragment = (
       value
       name
     }
-    ${metafieldsToQuery(shopifyConfigProducts?.variants?.metafields)}
+    ${metafieldsToQuery(shopifyConfig?.variants?.metafields)}
     requiresShipping
     sku
     title
@@ -104,9 +104,7 @@ const metafieldsToQuery = (metafields?: MetafieldConfig[]) =>
       )
     : ''
 
-export const createProductFragment = (
-  shopifyConfigProducts?: ShopifyConfigProducts
-) => gql`
+export const createProductFragment = (shopifyConfig?: ShopifyConfig) => gql`
   fragment ProductFragment on Product {
     __typename
     id
@@ -138,7 +136,7 @@ export const createProductFragment = (
         }
       }
     }
-    ${metafieldsToQuery(shopifyConfigProducts?.metafields)}
+    ${metafieldsToQuery(shopifyConfig?.products?.metafields)}
     compareAtPriceRange {
       minVariantPrice {
         ...MoneyV2Fragment
@@ -177,22 +175,23 @@ export const createProductFragment = (
   ${mediaImageFragment}
   ${imageFragment}
   ${videoFragment}
-  ${createProductVariantFragment(shopifyConfigProducts)}
+  ${createProductVariantFragment(shopifyConfig)}
 `
 
 /**
  * Collection Queries
  */
 
-export const collectionFragment = gql`
+export const createCollectionFragment = (shopifyConfig?: ShopifyConfig) => gql`
   fragment CollectionFragment on Collection {
+    __typename
     id
     updatedAt
     handle
     title
     description
     descriptionHtml
-    __typename
+    ${metafieldsToQuery(shopifyConfig?.collections?.metafields)}
     image {
       ...ImageFragment
     }

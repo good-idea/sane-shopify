@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 import PQueue from 'p-queue'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
 import {
-  ShopifyConfigProducts,
   ProgressHandler,
   ShopifyClient,
   Product,
@@ -15,7 +14,7 @@ import { ShopifyCache } from './shopifyUtils'
 import { QueryResultRejected } from './types'
 import { log, hasTimeoutErrors } from './fetchUtils'
 
-const createProductsQuery = (productConfig?: ShopifyConfigProducts) => gql`
+const createProductsQuery = (shopifyConfig?: ShopifyConfig) => gql`
   query ProductsQuery($first: Int!, $after: String) {
     products(first: $first, after: $after) {
       pageInfo {
@@ -43,7 +42,7 @@ const createProductsQuery = (productConfig?: ShopifyConfigProducts) => gql`
       }
     }
   }
-  ${createProductFragment(productConfig)}
+  ${createProductFragment(shopifyConfig)}
 `
 
 interface QueryResultFulfilled {
@@ -63,7 +62,7 @@ export const createFetchAllShopifyProducts =
     shopifyConfig?: ShopifyConfig
   ) =>
   async (onProgress: ProgressHandler<Product> = noop): Promise<Product[]> => {
-    const PRODUCTS_QUERY = createProductsQuery(shopifyConfig?.products)
+    const PRODUCTS_QUERY = createProductsQuery(shopifyConfig)
     const allStartTimer = new Date()
     const fetchProducts = async (
       pageSize = 30,
