@@ -27,7 +27,7 @@
     "test:coverage:send": "codecov",
     "test-fetch": "ts-node ./src/scripts/test-fetch.ts",
     "tsc-watch": "tsc-watch --noEmit",
-    "build": "rimraf lib && tsdx build",
+    "build": "rimraf lib && tsc --noEmit && tsdx build --transpileOnly",
     "start": "tsdx watch --onSuccess 'yalc publish --push --no-scripts'",
     "prepublishOnly": "yarn build"
   },
