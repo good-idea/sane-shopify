@@ -1,7 +1,9 @@
 # Sane Shopify
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- toc -->
@@ -247,25 +249,31 @@ _Scopes_:
 
 ## Alpha Changelog
 
-*0.20.0*
+0.24.0 🚨 **BREAKING CHANGES**
 
-The config for `@sane-shopify/server` has changed. `onError` is now part of the main config object. Instead of `createWebhooks({ config, onError })`, do `createWebhooks(config)`. See the [`@sane-shopify/server` Readme](packages/server/README.md)
+Shopify is deprecating the `2020-10` GraphQL API, so some changes were made to use the latest version, `2022-10`. In previous versions of the API, were were able to query for _all_ metafields on products and variants. In the latest version, you must ask for them specifically, given their namespace and key.
+
+To configure this plugin to fetch metafields, a new `shopifyConfig` property has been added to the configuration. In the Sanity studio, use the configuration pane to add these values. For webhooks, see the [`@sane-shopify/server` README](./packages/server/README.md)
+
+_0.20.0_
+
+The config for `@sane-shopify/server` has changed. `onError` is now part of the main config object. Instead of `createWebhooks({ config, onError })`, do `createWebhooks(config)`. See the [`@sane-shopify/server` README](packages/server/README.md)
 
 Source data now includes shopify media. Thanks @liqueflies for adding this!
 
-*0.11.0*
+_0.11.0_
 
 `@sane-shopify/server` now exports functions that can be used to handle Shopify's webhooks.
 
-*0.10.1*
+_0.10.1_
 
 The plugin now marks products that are no longer in the Shopify catalogue as archived on their corresponding sanity documents. Relationships that no longer exist in Shopify are also removed.
 
-*0.9.0*
+_0.9.0_
 
 Fixes setup flow
 
-*0.8.0*
+_0.8.0_
 
 _This release contains several breaking changes._
 
@@ -279,7 +287,7 @@ New features:
 - Use `saneShopify(yourConfig)` instead of `createProductDocument`, `createCollectionDocument`, etc. See the updated documentation above.
 - Many of the internal object type names have been modified. After you re-sync, your documents will likely have many fields that need to be unset. If you would like to completely remove all shopify collections and documents from your dataset, you can use [this gist](https://gist.github.com/good-idea/1abc5429c0c2a0be760d3a318468c750)
 
-*0.7.0*
+_0.7.0_
 
 New features:
 
