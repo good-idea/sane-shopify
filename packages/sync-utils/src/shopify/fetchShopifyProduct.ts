@@ -8,6 +8,7 @@ import {
   ShopifyConfigProducts,
   ShopifyConfig,
 } from '@sane-shopify/types'
+import { remapMetafields } from './remapMetafields'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { ShopifyCache } from './shopifyUtils'
 import { createProductFragment } from './queryFragments'
@@ -90,7 +91,8 @@ const getByHandle = async (
     collectionsFirst: 200,
     collectionsAfter,
   })
-  return result?.data?.productByHandle
+  const product = result?.data?.productByHandle
+  return product ? remapMetafields(product) : undefined
 }
 
 interface ByIdResult {
@@ -110,7 +112,8 @@ const getById = async (
     collectionsFirst: 20,
     collectionsAfter,
   })
-  return result?.data?.node
+  const product = result?.data?.node
+  return product ? remapMetafields(product) : undefined
 }
 
 export const fetchAllProductCollections = async (

@@ -45,8 +45,9 @@ export const testSecrets = async (
     return {
       isError: true,
       message:
-        e.message ||
-        'There was an error connecting to Shopify. Check your console for more information.',
+        e instanceof Error
+          ? e.message
+          : 'There was an error connecting to Shopify. Check your console for more information.',
     }
   }
 }

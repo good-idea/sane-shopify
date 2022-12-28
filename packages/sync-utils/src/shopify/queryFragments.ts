@@ -62,6 +62,7 @@ export const createProductVariantFragment = (
   shopifyConfigProducts?: ShopifyConfigProducts
 ) => gql`
   fragment ProductVariantFragment on ProductVariant {
+    __typename
     availableForSale
     currentlyNotInStock
     id
