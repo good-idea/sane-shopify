@@ -1,5 +1,10 @@
 import { Product, Collection, ShopifyItem, Variant } from './shopify'
-import { LinkOperation, SyncOperation, UpdateConfigDocumentArgs } from './main'
+import {
+  LinkOperation,
+  SaneShopifyConfigDocument,
+  SyncOperation,
+  UpdateConfigDocumentArgs,
+} from './main'
 
 export interface SanityPair {
   from: SanityShopifyDocument
@@ -129,7 +134,7 @@ export interface SanityUtils {
   saveConfig: (
     storefront: string,
     config: UpdateConfigDocumentArgs
-  ) => Promise<void>
+  ) => Promise<SaneShopifyConfigDocument>
   clearConfig: (storefront: string) => Promise<void>
 }
 
