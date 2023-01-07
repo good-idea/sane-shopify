@@ -134,6 +134,9 @@ export class Provider extends React.Component<
   public saveConfig = async (
     config: UpdateConfigDocumentArgs
   ): Promise<void> => {
+    if (!config.shopName) {
+      throw new Error('No shopName provided')
+    }
     if (this.syncingClient) {
       await this.syncingClient.saveConfig(config.shopName, config)
     }

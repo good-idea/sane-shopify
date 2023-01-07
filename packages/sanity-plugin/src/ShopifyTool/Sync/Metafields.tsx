@@ -6,14 +6,19 @@ import { Flex, Box, Button, Label, Card, TextInput } from '@sanity/ui'
 import { definitely } from '@sane-shopify/sync-utils'
 import { Keyed, MetafieldConfig } from '@sane-shopify/types'
 
+import { SyncPaneSection } from '../../components/SyncPaneSection'
 import { useSaneContext } from '../../Provider'
 import { useState } from 'react'
 
 interface MetafieldInputProps {
   metafieldConfig: Keyed<MetafieldConfig>
+  customOnRemove?: (e: any) => void
 }
 
-const MetafieldInput: React.FC<MetafieldInputProps> = ({ metafieldConfig }) => {
+const MetafieldInput: React.FC<MetafieldInputProps> = ({
+  metafieldConfig,
+  customOnRemove,
+}) => {
   const context = useSaneContext()
 
   const [isPending, setIsPending] = useState(false)
@@ -87,7 +92,7 @@ const MetafieldInput: React.FC<MetafieldInputProps> = ({ metafieldConfig }) => {
           <Button
             icon={BiTrash}
             aria-label="Remove metafield"
-            onClick={handleRemove}
+            onClick={customOnRemove || handleRemove}
             mode="ghost"
             type="button"
           />
@@ -109,32 +114,33 @@ const NewMetafieldInput: React.FC = () => {
     key: '',
   }
 
-  if (isActive) {
-    return (
-      <>
-        <MetafieldInput metafieldConfig={newField} />
-        <Box marginTop={2}>
-          <Button text="Cancel" onClick={handleCancelClick} />
-        </Box>
-      </>
-    )
-  }
-
-  return <Button text="Add new metafield" onClick={handleAddClick} />
+  return isActive ? (
+    <MetafieldInput
+      metafieldConfig={newField}
+      customOnRemove={handleCancelClick}
+    />
+  ) : (
+    <Button text="Add new metafield" onClick={handleAddClick} />
+  )
 }
 
 export const Metafields: React.FC = () => {
   const context = useSaneContext()
   const metafields = definitely(context.config?.metafieldsConfig)
   return (
-    <Box key={context.config?._updatedAt} marginBottom={4}>
-      {metafields.map((metafieldConfig) => (
-        <MetafieldInput
-          key={metafieldConfig._key.concat(context.config?._updatedAt || '')}
-          metafieldConfig={metafieldConfig}
-        />
-      ))}
-      <NewMetafieldInput />
-    </Box>
+    <SyncPaneSection
+      title="Metafields"
+      description="Configure which metafields should be fetched from your Shopify data. This configuration will also be used in any webhooks."
+    >
+      <Box key={context.config?._updatedAt} marginBottom={4}>
+        {metafields.map((metafieldConfig) => (
+          <MetafieldInput
+            key={metafieldConfig._key.concat(context.config?._updatedAt || '')}
+            metafieldConfig={metafieldConfig}
+          />
+        ))}
+        <NewMetafieldInput />
+      </Box>
+    </SyncPaneSection>
   )
 }

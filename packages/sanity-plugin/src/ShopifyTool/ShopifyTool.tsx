@@ -196,7 +196,7 @@ export class ShopifyTool extends React.Component<null, State> {
             flex={[1, 2, 3]}
             paddingY={[2, 3, 4]}
             paddingX={[2, 3, 8]}
-            style={{ height: '100vh' }}
+            style={{ minHeight: '100vh' }}
           >
             {Array.from(this.state.config).map(([shopName, configDoc]) => (
               <TabPanel

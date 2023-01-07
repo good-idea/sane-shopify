@@ -1,18 +1,14 @@
 import * as React from 'react'
-import { Stack, Button, Text, Box } from '@sanity/ui'
+import { Stack, Button, Text } from '@sanity/ui'
 import { Sync, SyncRenderProps } from './Sync'
 import { Progress } from '../../components/Progress'
+import { SyncPaneSection } from '../../components/SyncPaneSection'
 
 const SyncPaneBase = ({ error, syncState, syncAll }: SyncRenderProps) => {
   const handleSyncButton = () => syncAll()
 
   return (
-    <Box marginBottom={[1, 2, 6]}>
-      <Box marginBottom={[1, 2, 4]}>
-        <Text size={1} weight="bold">
-          Sync
-        </Text>
-      </Box>
+    <SyncPaneSection title="Sync">
       <Button
         style={{ width: '100%' }}
         radius={0}
@@ -38,7 +34,7 @@ const SyncPaneBase = ({ error, syncState, syncAll }: SyncRenderProps) => {
           <Text size={1}>Developers, check your console for more details.</Text>
         </Stack>
       ) : null}
-    </Box>
+    </SyncPaneSection>
   )
 }
 
