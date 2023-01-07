@@ -9,7 +9,6 @@ import {
   studioTheme,
   ThemeProvider,
 } from '@sanity/ui'
-import { Tracker } from '@sanity/base/lib/change-indicators'
 import { Setup } from './Setup'
 import { SyncPane } from './Sync'
 import { Provider, useSaneContext } from '../Provider'
@@ -74,9 +73,13 @@ export class ShopifyTool extends React.Component<null, State> {
       .listen(query, params)
       .subscribe(async (update) => {
         await sleep(2000)
-        const updatedConfig = await this.sanityClient.fetch('[_id == $id]', {
-          id: update.documentId,
-        })
+        const updatedConfig =
+          await this.sanityClient.fetch<SaneShopifyConfigDocument>(
+            '*[_id == $id][0]',
+            {
+              id: update.documentId,
+            }
+          )
         this.updateConfig([updatedConfig])
       })
 
@@ -97,13 +100,14 @@ export class ShopifyTool extends React.Component<null, State> {
   }
 
   private isCurrentConfig(config: SaneShopifyConfigDocument): boolean {
-    return this.state.currentConfig === config
+    return this.state.currentConfig?.shopName === config.shopName
   }
 
   private updateConfig(config: SaneShopifyConfigDocument[]) {
     const updatedConfig = config.reduce<Map<string, SaneShopifyConfigDocument>>(
-      (prevMap, configDoc) =>
-        new Map(prevMap).set(configDoc.shopName, configDoc),
+      (prevMap, configDoc) => {
+        return new Map(prevMap).set(configDoc.shopName, configDoc)
+      },
       this.state.config
     )
 
@@ -202,13 +206,11 @@ export class ShopifyTool extends React.Component<null, State> {
                 hidden={!this.isCurrentConfig(configDoc)}
               >
                 <Provider shopName={shopName}>
-                  <Tracker>
-                    <Inner>
-                      <Box marginBottom={[1, 2, 6]}>
-                        <Text size={3}>{shopName}.myshopify.com</Text>
-                      </Box>
-                    </Inner>
-                  </Tracker>
+                  <Inner>
+                    <Box marginBottom={[1, 2, 6]}>
+                      <Text size={3}>{shopName}.myshopify.com</Text>
+                    </Box>
+                  </Inner>
                 </Provider>
               </TabPanel>
             ))}
@@ -219,13 +221,11 @@ export class ShopifyTool extends React.Component<null, State> {
               hidden={this.state.currentConfig !== undefined}
             >
               <Provider shopName={null}>
-                <Tracker>
-                  <Inner>
-                    <Box marginBottom={[1, 2, 6]}>
-                      <Text size={3}>Storefront Setup</Text>
-                    </Box>
-                  </Inner>
-                </Tracker>
+                <Inner>
+                  <Box marginBottom={[1, 2, 6]}>
+                    <Text size={3}>Storefront Setup</Text>
+                  </Box>
+                </Inner>
               </Provider>
             </TabPanel>
           </Card>

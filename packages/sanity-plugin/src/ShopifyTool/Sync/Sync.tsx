@@ -8,6 +8,7 @@ import {
 } from '@sane-shopify/types'
 import { isShopifyCollection, isShopifyProduct } from '@sane-shopify/sync-utils'
 import { ClientContextValue, SaneConsumer } from '../../Provider'
+import { Metafields } from './Metafields'
 import { uniqueBy } from './utils'
 
 interface State {
@@ -172,7 +173,12 @@ class SyncBase extends React.Component<Props, State> {
 export const Sync = (props: { children: React.ReactNode }) => (
   <SaneConsumer>
     {(providerProps) =>
-      providerProps ? <SyncBase {...props} {...providerProps} /> : null
+      providerProps ? (
+        <>
+          <SyncBase {...props} {...providerProps} />
+          <Metafields {...props} {...providerProps} />
+        </>
+      ) : null
     }
   </SaneConsumer>
 )
