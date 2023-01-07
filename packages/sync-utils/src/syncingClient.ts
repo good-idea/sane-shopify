@@ -271,8 +271,9 @@ export const syncUtils = (
       onSavedSecretsError(new Error(message))
       throw new Error(message)
     }
-    await saveConfigToSanity(storefront, secrets)
+    const result = await saveConfigToSanity(storefront, config)
     onSavedSecrets(secrets.shopName)
+    return result
   }
 
   const testConfig = async (secrets: ShopifySecrets) => {
@@ -500,7 +501,6 @@ export const syncUtils = (
     initialize,
     initialState,
     saveConfig,
-
     testConfig,
     clearConfig,
     syncProducts,

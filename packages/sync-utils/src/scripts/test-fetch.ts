@@ -16,7 +16,7 @@ if (!shopName || !accessToken) {
 
 const shopifyClient = createShopifyClient({ shopName, accessToken })
 const client = shopifyUtils(shopifyClient, {
-  products: {
+  variants: {
     metafields: [
       { namespace: 'filter', key: 'stone' },
       { namespace: 'filter', key: 'subcategory' },
