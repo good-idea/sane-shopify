@@ -1,10 +1,13 @@
 import { SanityClient } from '@sanity/client'
 import {
+  Keyed,
   ShopifyClient,
   SyncUtils,
   SyncMachineState,
   UpdateConfigDocumentArgs,
   SaneShopifyConfigDocument,
+  MetafieldConfig,
+  MetafieldConfigType,
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
@@ -13,6 +16,7 @@ import {
   syncUtils,
 } from '@sane-shopify/sync-utils'
 import { defaultSanityClient } from '../services/sanity'
+import { getMetafieldsConfigByType } from './utils'
 
 /**
  * Context Setup
@@ -32,12 +36,17 @@ export const useSaneContext = () => {
  * ClientProvider
  */
 
-interface SecretUtils {
+interface ConfigUtils {
   saveConfig: (config: UpdateConfigDocumentArgs) => Promise<void>
   clearConfig: () => Promise<void>
+  saveMetafield: (
+    type: MetafieldConfigType,
+    metafield: Keyed<MetafieldConfig>
+  ) => Promise<void>
+  clearMetafield: (type: MetafieldConfigType, key: string) => Promise<void>
 }
 
-export interface ClientContextValue extends SecretUtils {
+export interface ClientContextValue extends ConfigUtils {
   config?: SaneShopifyConfigDocument
   syncState: SyncMachineState
   syncingClient: SyncUtils
@@ -130,6 +139,9 @@ export class Provider extends React.Component<
   public saveConfig = async (
     config: UpdateConfigDocumentArgs
   ): Promise<void> => {
+    if (!config.shopName) {
+      throw new Error('No shopName provided')
+    }
     if (this.syncingClient) {
       await this.syncingClient.saveConfig(config.shopName, config)
     }
@@ -144,6 +156,84 @@ export class Provider extends React.Component<
     }
   }
 
+  public saveMetafield = async (
+    type: MetafieldConfigType,
+    metafield: Keyed<MetafieldConfig>
+  ) => {
+    const currentConfig = this.state.config
+    if (!this.props.shopName) {
+      throw new Error('prop "shopname" was not provided')
+    }
+    if (!this.syncingClient) {
+      throw new Error('Syncing client is not available')
+    }
+    if (!currentConfig) {
+      throw new Error('Current config is not available')
+    }
+    const currentMetafieldsConfig = getMetafieldsConfigByType(
+      type,
+      currentConfig
+    )
+    const updatedMetafieldsConfig = currentMetafieldsConfig.find(
+      (mf) => mf._key === metafield._key
+    )
+      ? // replace
+        currentMetafieldsConfig.map((mf) =>
+          mf._key === metafield._key ? metafield : mf
+        )
+      : // add
+        [...currentMetafieldsConfig, metafield]
+    const updatedConfig = {
+      ...currentConfig,
+      [type]: {
+        ...currentConfig[type],
+        metafields: updatedMetafieldsConfig,
+      },
+    }
+    const result = await this.syncingClient.saveConfig(
+      this.props.shopName,
+      updatedConfig
+    )
+    this.setState({ config: result })
+  }
+
+  public clearMetafield = async (
+    type: MetafieldConfigType,
+    keyToRemove: string
+  ): Promise<void> => {
+    const currentConfig = this.state.config
+    if (!this.props.shopName) {
+      throw new Error('prop "shopname" was not provided')
+    }
+    if (!this.syncingClient) {
+      throw new Error('Syncing client is not available')
+    }
+    if (!currentConfig) {
+      throw new Error('Current config is not available')
+    }
+
+    const currentMetafieldsConfig = getMetafieldsConfigByType(
+      type,
+      currentConfig
+    )
+
+    const updatedConfig = {
+      ...currentConfig,
+      [type]: {
+        ...currentConfig[type],
+        metafields: currentMetafieldsConfig.filter(
+          (mf) => mf._key !== keyToRemove
+        ),
+      },
+    }
+    const result = await this.syncingClient.saveConfig(
+      this.props.shopName,
+      updatedConfig
+    )
+
+    this.setState({ config: result })
+  }
+
   public render() {
     const { children } = this.props
     const { config, syncState } = this.state
@@ -154,6 +244,8 @@ export class Provider extends React.Component<
       syncingClient,
       shopifyClient,
       sanityClient,
+      saveMetafield,
+      clearMetafield,
     } = this
 
     if (!syncingClient || !shopifyClient || !sanityClient || !syncState) {
@@ -168,6 +260,8 @@ export class Provider extends React.Component<
       shopifyClient,
       sanityClient,
       syncState,
+      saveMetafield,
+      clearMetafield,
     }
 
     return (

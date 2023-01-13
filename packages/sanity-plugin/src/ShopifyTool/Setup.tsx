@@ -2,6 +2,7 @@ import { uniqueId } from 'lodash'
 import * as React from 'react'
 import { Stack, Button, Box, Text, TextInput } from '@sanity/ui'
 import { ClientContextValue, SaneConsumer } from '../Provider'
+import { SyncPaneSection } from '../components/SyncPaneSection'
 
 /* tslint:disable */
 const FormField = require('part:@sanity/components/formfields/default').default
@@ -76,12 +77,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
     if (!ready) return null
     if (valid) {
       return (
-        <Box marginBottom={[1, 2, 6]}>
-          <Box marginBottom={[1, 2, 4]}>
-            <Text size={1} weight="bold">
-              Unlink
-            </Text>
-          </Box>
+        <SyncPaneSection title="Unlink">
           <Box marginBottom={[1, 2, 4]}>
             <Button
               style={{ width: '100%' }}
@@ -99,7 +95,7 @@ export class SetupBase extends React.Component<ClientContextValue, State> {
             But, it may cause syncing issues if you add new credentials later.
             Be sure to back up your content before unlinking.
           </Text>
-        </Box>
+        </SyncPaneSection>
       )
     }
 

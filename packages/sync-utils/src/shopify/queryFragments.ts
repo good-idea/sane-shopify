@@ -1,3 +1,4 @@
+import { MetafieldConfig, ShopifyMetafieldsConfig } from '@sane-shopify/types'
 import gql from 'graphql-tag'
 
 /**
@@ -57,8 +58,11 @@ const imageFragment = /* GraphQL */ `
  * Product Queries
  */
 
-export const productVariantFragment = gql`
+export const createProductVariantFragment = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   fragment ProductVariantFragment on ProductVariant {
+    __typename
     availableForSale
     currentlyNotInStock
     id
@@ -75,29 +79,7 @@ export const productVariantFragment = gql`
       value
       name
     }
-    presentmentPrices(first: 100) {
-      edges {
-        cursor
-        node {
-          compareAtPrice {
-            ...MoneyV2Fragment
-          }
-          price {
-            ...MoneyV2Fragment
-          }
-        }
-      }
-    }
-    metafields(first: 100) {
-      edges {
-        cursor
-        node {
-          namespace
-          key
-          value
-        }
-      }
-    }
+    ${metafieldsToQuery(shopifyConfig?.variants?.metafields)}
     requiresShipping
     sku
     title
@@ -106,7 +88,25 @@ export const productVariantFragment = gql`
   }
 `
 
-export const productFragment = gql`
+/* Adds additional query config for each metafield supplied in the config.
+ * The field names are in the format `metafield_<namespace>_<key>`, i.e.
+ * metafield_filter_color */
+const metafieldsToQuery = (metafields?: MetafieldConfig[]) =>
+  metafields
+    ? metafields.map(
+        ({ namespace, key }) => `
+          metafield_${namespace}_${key}: metafield(namespace: "${namespace}", key: "${key}"){
+            namespace
+            key
+            value
+          }
+        `
+      )
+    : ''
+
+export const createProductFragment = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   fragment ProductFragment on Product {
     __typename
     id
@@ -138,26 +138,13 @@ export const productFragment = gql`
         }
       }
     }
-
+    ${metafieldsToQuery(shopifyConfig?.products?.metafields)}
     compareAtPriceRange {
       minVariantPrice {
         ...MoneyV2Fragment
       }
       maxVariantPrice {
         ...MoneyV2Fragment
-      }
-    }
-    presentmentPriceRanges(first: 100) {
-      edges {
-        cursor
-        node {
-          minVariantPrice {
-            ...MoneyV2Fragment
-          }
-          maxVariantPrice {
-            ...MoneyV2Fragment
-          }
-        }
       }
     }
     priceRange {
@@ -190,22 +177,25 @@ export const productFragment = gql`
   ${mediaImageFragment}
   ${imageFragment}
   ${videoFragment}
-  ${productVariantFragment}
+  ${createProductVariantFragment(shopifyConfig)}
 `
 
 /**
  * Collection Queries
  */
 
-export const collectionFragment = gql`
+export const createCollectionFragment = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   fragment CollectionFragment on Collection {
+    __typename
     id
     updatedAt
     handle
     title
     description
     descriptionHtml
-    __typename
+    ${metafieldsToQuery(shopifyConfig?.collections?.metafields)}
     image {
       ...ImageFragment
     }

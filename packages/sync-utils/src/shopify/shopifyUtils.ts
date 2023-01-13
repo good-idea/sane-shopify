@@ -1,4 +1,8 @@
-import { Collection, Product } from '@sane-shopify/types'
+import {
+  Collection,
+  Product,
+  ShopifyMetafieldsConfig,
+} from '@sane-shopify/types'
 import { ShopifyUtils, ShopifyClient } from '@sane-shopify/types'
 import { createFetchShopifyProduct } from './fetchShopifyProduct'
 import { createFetchShopifyCollection } from './fetchShopifyCollection'
@@ -64,17 +68,38 @@ const createCache = (): ShopifyCache => {
   }
 }
 
-export const shopifyUtils = (client: ShopifyClient): ShopifyUtils => {
-  // QUI QUI QUI
-  const { query } = client
+export const shopifyUtils = (
+  shopifyClient: ShopifyClient,
+  fetchMetafieldsConfig: () => Promise<ShopifyMetafieldsConfig>
+): ShopifyUtils => {
   const cache = createCache()
   return {
-    client,
-    fetchItemById: createFetchItemById(query, cache),
-    fetchShopifyProduct: createFetchShopifyProduct(query, cache),
-    fetchShopifyCollection: createFetchShopifyCollection(query, cache),
-    fetchAllShopifyProducts: createFetchAllShopifyProducts(query, cache),
-    fetchAllShopifyCollections: createFetchAllShopifyCollections(query, cache),
+    client: shopifyClient,
+    fetchItemById: createFetchItemById(
+      shopifyClient,
+      fetchMetafieldsConfig,
+      cache
+    ),
+    fetchShopifyProduct: createFetchShopifyProduct(
+      shopifyClient,
+      fetchMetafieldsConfig,
+      cache
+    ),
+    fetchShopifyCollection: createFetchShopifyCollection(
+      shopifyClient,
+      fetchMetafieldsConfig,
+      cache
+    ),
+    fetchAllShopifyProducts: createFetchAllShopifyProducts(
+      shopifyClient,
+      fetchMetafieldsConfig,
+      cache
+    ),
+    fetchAllShopifyCollections: createFetchAllShopifyCollections(
+      shopifyClient,
+      fetchMetafieldsConfig,
+      cache
+    ),
     testSecrets,
   }
 }

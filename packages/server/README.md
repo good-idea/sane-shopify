@@ -3,6 +3,7 @@ This package contains functions to use with Shopify's Webhooks.
 <!-- toc -->
 - [Setup](#setup)
 - [Usage](#usage)
+    - [Shopify config & Metafields](#shopify-config--metafields)
     - [Error Handling](#error-handling)
   - [Micro.js (Next.js)](#microjs-nextjs)
   - [Lambdas (AWS, Netlify, etc)](#lambdas-aws-netlify-etc)
@@ -78,7 +79,12 @@ const config = {
       accessToken,
     },
   },
+  /* Optional */
   onError: handleError
+  /* Optional, see more below */
+  shopify: {
+    // ...
+  }
 }
 
 export const webhooks = createNextWebhooks(config)
@@ -86,6 +92,27 @@ export const webhooks = createNextWebhooks(config)
 // export const webhooks = createAWSWebhooks(config)
 // or
 // export const webhooks = createWebhooks(config)
+```
+
+#### Shopify config & Metafields
+
+As of version 0.24.0, you must provide the namespace & key values of any metafields you would like to fetch. Metafield configuration is in the format of `{ namespace: string, key: string }` and should match what you have in shopify. You can define metafield configuration for collections, products, or their variants, like so:
+
+```ts
+const config = {
+  // ...
+  shopify: {
+    products: {
+      metafields: [{ namespace: 'foo', key: 'bar' }],
+    },
+    variants: {
+      metafields: [{ namespace: 'foo', key: 'baz' }],
+    },
+    collections: {
+      metafields: [{ namespace: 'foo', key: 'qux' }],
+    },
+  },
+}
 ```
 
 #### Error Handling
@@ -143,7 +170,6 @@ import { webhooks } from '../src/webhooks'
 
 export default webhooks.onOrderCreate
 ```
-
 
 Your site now has 5 new endpoints:
 

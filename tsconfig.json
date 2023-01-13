@@ -25,5 +25,10 @@
     "typeRoots": ["node_modules/@types"]
   },
   "exclude": ["test-frontend", "node_modules", "**/*.spec.ts"],
-  "include": ["./node_modules/@sanity/base/types/**/*.ts"]
+  "include": ["./node_modules/@sanity/base/types/**/*.ts"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

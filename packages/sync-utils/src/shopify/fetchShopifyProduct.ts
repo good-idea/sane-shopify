@@ -1,13 +1,20 @@
 import gql from 'graphql-tag'
+import { DocumentNode } from 'graphql'
 import Debug from 'debug'
-import { ShopifyClient, ShopifyItemParams, Product } from '@sane-shopify/types'
+import {
+  ShopifyClient,
+  ShopifyItemParams,
+  Product,
+  ShopifyMetafieldsConfig,
+} from '@sane-shopify/types'
+import { remapMetafields } from './remapMetafields'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { ShopifyCache } from './shopifyUtils'
-import { productFragment } from './queryFragments'
+import { createProductFragment } from './queryFragments'
 
 const log = Debug('sane-shopify:fetching')
 
-export const PRODUCT_BY_HANDLE = gql`
+const createProductByHandle = (shopifyConfig: ShopifyMetafieldsConfig) => gql`
   query ProductQuery(
     $handle: String!
     $collectionsFirst: Int!
@@ -30,29 +37,10 @@ export const PRODUCT_BY_HANDLE = gql`
       }
     }
   }
-  ${productFragment}
+  ${createProductFragment(shopifyConfig)}
 `
 
-interface ByHandleResult {
-  data?: {
-    productByHandle: Product
-  }
-}
-
-const getByHandle = async (
-  query: ShopifyClient['query'],
-  handle: string,
-  collectionsAfter?: string | number
-) => {
-  const result = await query<ByHandleResult>(PRODUCT_BY_HANDLE, {
-    handle,
-    collectionsFirst: 200,
-    collectionsAfter,
-  })
-  return result?.data?.productByHandle
-}
-
-const PRODUCT_BY_ID = gql`
+const createProductById = (shopifyConfig: ShopifyMetafieldsConfig) => gql`
   query NodeQuery(
     $id: ID!
     $collectionsFirst: Int!
@@ -77,8 +65,34 @@ const PRODUCT_BY_ID = gql`
       }
     }
   }
-  ${productFragment}
+  ${createProductFragment(shopifyConfig)}
 `
+
+const createQueries = (shopifyConfig: ShopifyMetafieldsConfig) => ({
+  PRODUCT_BY_ID: createProductById(shopifyConfig),
+  PRODUCT_BY_HANDLE: createProductByHandle(shopifyConfig),
+})
+
+interface ByHandleResult {
+  data?: {
+    productByHandle: Product
+  }
+}
+
+const getByHandle = async (
+  shopifyClient: ShopifyClient,
+  queryString: DocumentNode,
+  handle: string,
+  collectionsAfter?: string | number
+) => {
+  const result = await shopifyClient.query<ByHandleResult>(queryString, {
+    handle,
+    collectionsFirst: 200,
+    collectionsAfter,
+  })
+  const product = result?.data?.productByHandle
+  return product ? remapMetafields(product) : undefined
+}
 
 interface ByIdResult {
   data?: {
@@ -87,20 +101,23 @@ interface ByIdResult {
 }
 
 const getById = async (
-  query: ShopifyClient['query'],
+  shopifyClient: ShopifyClient,
+  queryString: DocumentNode,
   id: string,
   collectionsAfter?: string
 ) => {
-  const result = await query<ByIdResult>(PRODUCT_BY_ID, {
+  const result = await shopifyClient.query<ByIdResult>(queryString, {
     id,
     collectionsFirst: 20,
     collectionsAfter,
   })
-  return result?.data?.node
+  const product = result?.data?.node
+  return product ? remapMetafields(product) : undefined
 }
 
 export const fetchAllProductCollections = async (
-  query: ShopifyClient['query'],
+  shopifyClient: ShopifyClient,
+  metafieldsConfig: ShopifyMetafieldsConfig,
   prevProduct: Product
 ): Promise<Product> => {
   if (!prevProduct.collections?.pageInfo?.hasNextPage) {
@@ -116,8 +133,11 @@ export const fetchAllProductCollections = async (
     prevProduct
   )
 
+  const { PRODUCT_BY_HANDLE } = createQueries(metafieldsConfig)
+
   const nextProduct = await getByHandle(
-    query,
+    shopifyClient,
+    PRODUCT_BY_HANDLE,
     prevProduct.handle,
     collectionsAfter ? collectionsAfter : undefined
   )
@@ -135,7 +155,7 @@ export const fetchAllProductCollections = async (
     : prevProduct
 
   if (product?.collections?.pageInfo?.hasNextPage) {
-    return fetchAllProductCollections(query, product)
+    return fetchAllProductCollections(shopifyClient, metafieldsConfig, product)
   }
   log(`Fetched all collections for product ${prevProduct.handle}`, prevProduct)
 
@@ -147,13 +167,19 @@ export const fetchAllProductCollections = async (
  */
 
 export const createFetchShopifyProduct =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  (
+    shopifyClient: ShopifyClient,
+    fetchMetafieldsConfig: () => Promise<ShopifyMetafieldsConfig>,
+    cache: ShopifyCache
+  ) =>
   async (params: ShopifyItemParams): Promise<Product | null> => {
+    const metafieldsConfig = await fetchMetafieldsConfig()
     const { id, handle } = params
     if (!id && !handle) {
-      debugger
       throw new Error('You must provide either an id or handle')
     }
+
+    const { PRODUCT_BY_ID, PRODUCT_BY_HANDLE } = createQueries(metafieldsConfig)
 
     const cachedProduct = id
       ? cache.getProductById(id)
@@ -161,16 +187,25 @@ export const createFetchShopifyProduct =
       ? cache.getProductByHandle(handle)
       : null
 
-    if (cachedProduct) return fetchAllProductCollections(query, cachedProduct)
+    if (cachedProduct)
+      return fetchAllProductCollections(
+        shopifyClient,
+        metafieldsConfig,
+        cachedProduct
+      )
 
     const fetchedProduct = id
-      ? await getById(query, id)
+      ? await getById(shopifyClient, PRODUCT_BY_ID, id)
       : handle
-      ? await getByHandle(query, handle)
+      ? await getByHandle(shopifyClient, PRODUCT_BY_HANDLE, handle)
       : null
     if (!fetchedProduct) return null
 
-    const product = await fetchAllProductCollections(query, fetchedProduct)
+    const product = await fetchAllProductCollections(
+      shopifyClient,
+      metafieldsConfig,
+      fetchedProduct
+    )
     cache.set(product)
     return product
   }

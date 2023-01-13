@@ -1,5 +1,6 @@
 import { Paginated } from '@good-idea/unwind-edges'
 import { DocumentNode } from 'graphql'
+import { Keyed } from './main'
 
 export type Variables = { [key: string]: any }
 
@@ -17,6 +18,29 @@ export interface Metafield {
 
 export interface WithMetaFields {
   metafields?: Paginated<Metafield>
+}
+
+export type MetafieldConfigType = 'collections' | 'variants' | 'products'
+
+export interface MetafieldConfig {
+  namespace: string
+  key: string
+}
+
+export interface ShopifyConfigWithMetafields {
+  metafields?: Keyed<MetafieldConfig>[]
+}
+
+export type ShopifyConfigProductsVariants = ShopifyConfigWithMetafields
+
+export type ShopifyConfigProducts = ShopifyConfigWithMetafields
+
+export type ShopifyConfigCollections = ShopifyConfigWithMetafields
+
+export interface ShopifyMetafieldsConfig {
+  products?: ShopifyConfigProducts
+  variants?: ShopifyConfigProductsVariants
+  collections?: ShopifyConfigCollections
 }
 
 export interface ShopifyClient {
@@ -74,6 +98,7 @@ export interface SelectedOption {
 }
 
 export interface Variant extends WithMetaFields {
+  __typename: 'ProductVariant'
   id: string
   availableForSale: boolean
   image: ShopifyImage
@@ -107,6 +132,7 @@ export interface ProductOption {
 }
 
 export interface Product extends ShopifyItem, WithMetaFields {
+  __typename: 'Product'
   handle: string
   title: string
   description: string
@@ -121,7 +147,6 @@ export interface Product extends ShopifyItem, WithMetaFields {
   media: Paginated<ShopifyMediaImage | ShopifyVideo>
   images: Paginated<ShopifyImage>
   variants: Paginated<Variant>
-  __typename: 'Product'
 }
 
 export interface ShopifyItemParams {

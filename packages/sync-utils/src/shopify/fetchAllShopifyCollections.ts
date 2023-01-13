@@ -1,15 +1,23 @@
 import gql from 'graphql-tag'
 import PQueue from 'p-queue'
 import { unwindEdges, Paginated } from '@good-idea/unwind-edges'
-import { ProgressHandler, ShopifyClient, Collection } from '@sane-shopify/types'
+import {
+  ProgressHandler,
+  ShopifyClient,
+  Collection,
+  ShopifyMetafieldsConfig,
+} from '@sane-shopify/types'
 import { ShopifyCache } from './shopifyUtils'
 import { mergePaginatedResults, getLastCursor } from '../utils'
-import { collectionFragment } from './queryFragments'
+import { createCollectionFragment } from './queryFragments'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
 import { QueryResultRejected } from './types'
 import { log, hasTimeoutErrors } from './fetchUtils'
+import { remapMetafields } from './remapMetafields'
 
-export const COLLECTIONS_QUERY = gql`
+export const createCollectionsQuery = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   query CollectionsQuery($first: Int!, $after: String) {
     collections(first: $first, after: $after) {
       pageInfo {
@@ -37,7 +45,7 @@ export const COLLECTIONS_QUERY = gql`
       }
     }
   }
-  ${collectionFragment}
+  ${createCollectionFragment(shopifyConfig)}
 `
 interface QueryResultFulfilled {
   data: {
@@ -50,10 +58,16 @@ type CollectionsQueryResult = QueryResultFulfilled | QueryResultRejected
 const noop = () => undefined
 
 export const createFetchAllShopifyCollections =
-  (query: ShopifyClient['query'], cache: ShopifyCache) =>
+  (
+    shopifyClient: ShopifyClient,
+    fetchMetafieldsConfig: () => Promise<ShopifyMetafieldsConfig>,
+    cache: ShopifyCache
+  ) =>
   async (
     onProgress: ProgressHandler<Collection> = noop
   ): Promise<Collection[]> => {
+    const metafieldsConfig = await fetchMetafieldsConfig()
+    const COLLECTIONS_QUERY = createCollectionsQuery(metafieldsConfig)
     const allStartTimer = new Date()
 
     const fetchCollections = async (
@@ -63,10 +77,13 @@ export const createFetchAllShopifyCollections =
       const after = prevPage ? getLastCursor(prevPage) : undefined
 
       const now = new Date()
-      const result = await query<CollectionsQueryResult>(COLLECTIONS_QUERY, {
-        first: pageSize,
-        after,
-      })
+      const result = await shopifyClient.query<CollectionsQueryResult>(
+        COLLECTIONS_QUERY,
+        {
+          first: pageSize,
+          after,
+        }
+      )
 
       if ('errors' in result) {
         if (hasTimeoutErrors(result)) {
@@ -108,7 +125,8 @@ export const createFetchAllShopifyCollections =
       return unwound
     }
 
-    const allCollections = await fetchCollections()
+    const allCollectionsResult = await fetchCollections()
+    const allCollections = allCollectionsResult.map(remapMetafields)
     const allDuration = new Date().getTime() - allStartTimer.getTime()
     log(
       `Fetched all Shopify Collections in ${allDuration / 1000}s`,
@@ -118,7 +136,12 @@ export const createFetchAllShopifyCollections =
     const queue = new PQueue({ concurrency: 1 })
     const results = await queue.addAll(
       allCollections.map(
-        (collection) => () => fetchAllCollectionProducts(query, collection)
+        (collection) => () =>
+          fetchAllCollectionProducts(
+            shopifyClient,
+            metafieldsConfig,
+            collection
+          )
       )
     )
 

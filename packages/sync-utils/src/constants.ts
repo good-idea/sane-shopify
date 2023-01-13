@@ -21,4 +21,4 @@ export const CONFIG_DOC_ID_PREFIX = 'sane-shopify-storefront-config-'
  *    will have access.
  *
  */
-export const STOREFRONT_API_VERSION = '2020-10'
+export const STOREFRONT_API_VERSION = '2022-10'

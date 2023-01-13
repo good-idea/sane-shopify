@@ -12,10 +12,11 @@ import {
 } from '@sane-shopify/types'
 import deepMerge from 'deepmerge'
 import { omit } from 'lodash'
-import { definitely } from '../utils'
+import { definitely, toAdminApiId } from '../utils'
 import { prepareDocument, sleep, isMatch, uniqueObjects } from './utils'
 import { SanityCache } from './sanityUtils'
 import { isSanityProduct, isSanityCollection } from '../typeGuards'
+import { toStorefrontId } from '../utils'
 
 const mergeExistingFields = (
   docInfo: SanityShopifyDocumentPartial,
@@ -61,7 +62,11 @@ const mergeExistingFields = (
 
       options: options.map((updatedOption) => {
         const existingOption = existingDoc.options
-          ? existingDoc?.options.find((o) => o._key === updatedOption._key)
+          ? existingDoc?.options.find(
+              (o) =>
+                o._key === updatedOption._key ||
+                toAdminApiId(o._key) === updatedOption._key
+            )
           : undefined
 
         const existingOptionValues = existingOption ? existingOption.values : []
@@ -124,14 +129,17 @@ export const createSyncSanityDocument =
     const { shopName } = shopifyClient
 
     const getSanityDocByShopifyId = async (
-      shopifyId: string
+      id: string
     ): Promise<SanityShopifyDocument | void> => {
+      const shopifyId = toStorefrontId(id)
+      const adminApiId = toAdminApiId(id)
+
       const cached = cache.getByShopifyId(shopifyId)
       if (cached) return cached
 
       const doc = await client.fetch<SanityShopifyDocument>(
         `
-      *[shopifyId == $shopifyId]{
+      *[shopifyId == $shopifyId || shopifyId == $adminApiId]{
         ...,
         products[]->{
           "collectionRefs": collections[],
@@ -146,6 +154,7 @@ export const createSyncSanityDocument =
       }[0]`,
         {
           shopifyId,
+          adminApiId,
         }
       )
       if (doc) cache.set(doc)

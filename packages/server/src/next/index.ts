@@ -52,8 +52,12 @@ export const createNextWebhooks = (config: WebhooksConfig): NextWebhooks => {
 
     return nextWebhooks
   } catch (err) {
+    const error =
+      err instanceof Error
+        ? err
+        : new Error('An unknown error occured creating webhooks')
     if (onError) {
-      onError(err)
+      onError(error)
       throw err
     } else {
       throw err

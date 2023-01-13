@@ -130,3 +130,12 @@ export const prepareSourceData = <T extends Product | Collection>(item: T) => {
   }
   throw new Error('prepareImages can only be used for Products and Collections')
 }
+
+/**
+ * Converts gid://abc Admin API ids to Storefront API ids
+ */
+export const toStorefrontId = (id: string): string =>
+  id.startsWith('gid://') ? btoa(id) : id
+
+export const toAdminApiId = (id: string): string =>
+  id.startsWith('gid://') ? id : atob(id)
