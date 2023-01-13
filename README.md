@@ -253,7 +253,7 @@ _Scopes_:
 
 Shopify is deprecating the `2020-10` GraphQL API, so some changes were made to use the latest version, `2022-10`. In previous versions of the API, were were able to query for _all_ metafields on products and variants. In the latest version, you must ask for them specifically, given their namespace and key.
 
-To configure this plugin to fetch metafields, a new `shopifyConfig` property has been added to the configuration. In the Sanity studio, use the configuration pane to add these values. For webhooks, see the [`@sane-shopify/server` README](./packages/server/README.md)
+To configure this plugin to fetch metafields, a new `shopifyConfig` property has been added to the configuration. In the Sanity studio, use the configuration pane to add these values.
 
 _0.20.0_
 
