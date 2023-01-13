@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ['12.x', '14.x']
+        node: ['14.x', '16.x']
 
     steps:
       - name: Checkout repo
@@ -91,7 +91,7 @@ jobs:
       - name: Semantic Release
         if: ${{ env.CI_SKIP == 'false' }}
         run: |
-          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}" 
+          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
           yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
