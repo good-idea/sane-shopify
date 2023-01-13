@@ -6,19 +6,19 @@ import {
   ShopifyItem,
   TestSecretsResponse,
   ShopifyUtils,
-  ShopifyConfig,
-  MetafieldConfig,
+  ShopifyMetafieldsConfig,
 } from './shopify'
 import { SyncMachineState } from './syncState'
 
 export type Keyed<T> = T & { _key: string }
 
-export interface SaneShopifyConfigDocument extends ShopifySecrets {
+export interface SaneShopifyConfigDocument
+  extends ShopifySecrets,
+    ShopifyMetafieldsConfig {
   _id: string
   _type: string
   _updatedAt: string
   _createdAt: string
-  metafieldsConfig?: Keyed<MetafieldConfig>[]
 }
 
 export type UpdateConfigDocumentArgs = Partial<
@@ -32,7 +32,6 @@ export interface Secrets {
 
 export interface SaneShopifyConfig {
   secrets: Secrets
-  shopifyConfig?: ShopifyConfig
   onStateChange?: (state: SyncMachineState) => void
 }
 

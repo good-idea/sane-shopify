@@ -131,6 +131,7 @@ export interface SanityUtils {
   archiveSanityDocument: (
     doc: SanityShopifyDocument
   ) => Promise<SanityShopifyDocument>
+  fetchConfig: (storefront: string) => Promise<SaneShopifyConfigDocument>
   saveConfig: (
     storefront: string,
     config: UpdateConfigDocumentArgs

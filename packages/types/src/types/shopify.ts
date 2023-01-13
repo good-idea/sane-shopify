@@ -1,5 +1,6 @@
 import { Paginated } from '@good-idea/unwind-edges'
 import { DocumentNode } from 'graphql'
+import { Keyed } from './main'
 
 export type Variables = { [key: string]: any }
 
@@ -19,13 +20,15 @@ export interface WithMetaFields {
   metafields?: Paginated<Metafield>
 }
 
+export type MetafieldConfigType = 'collections' | 'variants' | 'products'
+
 export interface MetafieldConfig {
   namespace: string
   key: string
 }
 
 export interface ShopifyConfigWithMetafields {
-  metafields?: MetafieldConfig[]
+  metafields?: Keyed<MetafieldConfig>[]
 }
 
 export type ShopifyConfigProductsVariants = ShopifyConfigWithMetafields
@@ -34,7 +37,7 @@ export type ShopifyConfigProducts = ShopifyConfigWithMetafields
 
 export type ShopifyConfigCollections = ShopifyConfigWithMetafields
 
-export interface ShopifyConfig {
+export interface ShopifyMetafieldsConfig {
   products?: ShopifyConfigProducts
   variants?: ShopifyConfigProductsVariants
   collections?: ShopifyConfigCollections
