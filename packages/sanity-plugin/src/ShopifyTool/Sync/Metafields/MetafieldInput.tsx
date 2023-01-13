@@ -3,19 +3,23 @@ import { nanoid } from 'nanoid'
 import { BiTrash } from 'react-icons/bi'
 import { Flex, Box, Button, Label, Card, TextInput } from '@sanity/ui'
 
-import { definitely } from '@sane-shopify/sync-utils'
-import { Keyed, MetafieldConfig } from '@sane-shopify/types'
+import {
+  Keyed,
+  MetafieldConfig,
+  MetafieldConfigType,
+} from '@sane-shopify/types'
 
-import { SyncPaneSection } from '../../components/SyncPaneSection'
-import { useSaneContext } from '../../Provider'
+import { useSaneContext } from '../../../Provider'
 import { useState } from 'react'
 
 interface MetafieldInputProps {
   metafieldConfig: Keyed<MetafieldConfig>
+  type: MetafieldConfigType
   customOnRemove?: (e: any) => void
 }
 
-const MetafieldInput: React.FC<MetafieldInputProps> = ({
+export const MetafieldInput: React.FC<MetafieldInputProps> = ({
+  type,
   metafieldConfig,
   customOnRemove,
 }) => {
@@ -37,7 +41,7 @@ const MetafieldInput: React.FC<MetafieldInputProps> = ({
 
   const handleUpdate = async () => {
     setIsPending(true)
-    await context.saveMetafield({
+    await context.saveMetafield(type, {
       _key: metafieldConfig._key,
       namespace: namespaceValue,
       key: keyValue,
@@ -47,7 +51,7 @@ const MetafieldInput: React.FC<MetafieldInputProps> = ({
 
   const handleRemove = async () => {
     setIsPending(true)
-    await context.clearMetafield(metafieldConfig._key)
+    await context.clearMetafield(type, metafieldConfig._key)
     setIsPending(false)
   }
 
@@ -102,7 +106,11 @@ const MetafieldInput: React.FC<MetafieldInputProps> = ({
   )
 }
 
-const NewMetafieldInput: React.FC = () => {
+type NewMetafieldInputProps = Pick<MetafieldInputProps, 'type'>
+
+export const NewMetafieldInput: React.FC<NewMetafieldInputProps> = ({
+  type,
+}) => {
   const [isActive, setIsActive] = useState(false)
 
   const handleAddClick = () => setIsActive(true)
@@ -116,31 +124,11 @@ const NewMetafieldInput: React.FC = () => {
 
   return isActive ? (
     <MetafieldInput
+      type={type}
       metafieldConfig={newField}
       customOnRemove={handleCancelClick}
     />
   ) : (
     <Button text="Add new metafield" onClick={handleAddClick} />
-  )
-}
-
-export const Metafields: React.FC = () => {
-  const context = useSaneContext()
-  const metafields = definitely(context.config?.metafieldsConfig)
-  return (
-    <SyncPaneSection
-      title="Metafields"
-      description="Configure which metafields should be fetched from your Shopify data. This configuration will also be used in any webhooks."
-    >
-      <Box key={context.config?._updatedAt} marginBottom={4}>
-        {metafields.map((metafieldConfig) => (
-          <MetafieldInput
-            key={metafieldConfig._key.concat(context.config?._updatedAt || '')}
-            metafieldConfig={metafieldConfig}
-          />
-        ))}
-        <NewMetafieldInput />
-      </Box>
-    </SyncPaneSection>
   )
 }

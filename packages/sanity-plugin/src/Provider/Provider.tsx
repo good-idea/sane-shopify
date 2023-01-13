@@ -7,6 +7,7 @@ import {
   UpdateConfigDocumentArgs,
   SaneShopifyConfigDocument,
   MetafieldConfig,
+  MetafieldConfigType,
 } from '@sane-shopify/types'
 import * as React from 'react'
 import {
@@ -15,6 +16,7 @@ import {
   syncUtils,
 } from '@sane-shopify/sync-utils'
 import { defaultSanityClient } from '../services/sanity'
+import { getMetafieldsConfigByType } from './utils'
 
 /**
  * Context Setup
@@ -37,8 +39,11 @@ export const useSaneContext = () => {
 interface ConfigUtils {
   saveConfig: (config: UpdateConfigDocumentArgs) => Promise<void>
   clearConfig: () => Promise<void>
-  saveMetafield: (metafield: Keyed<MetafieldConfig>) => Promise<void>
-  clearMetafield: (key: string) => Promise<void>
+  saveMetafield: (
+    type: MetafieldConfigType,
+    metafield: Keyed<MetafieldConfig>
+  ) => Promise<void>
+  clearMetafield: (type: MetafieldConfigType, key: string) => Promise<void>
 }
 
 export interface ClientContextValue extends ConfigUtils {
@@ -151,7 +156,10 @@ export class Provider extends React.Component<
     }
   }
 
-  public saveMetafield = async (metafield: Keyed<MetafieldConfig>) => {
+  public saveMetafield = async (
+    type: MetafieldConfigType,
+    metafield: Keyed<MetafieldConfig>
+  ) => {
     const currentConfig = this.state.config
     if (!this.props.shopName) {
       throw new Error('prop "shopname" was not provided')
@@ -162,7 +170,10 @@ export class Provider extends React.Component<
     if (!currentConfig) {
       throw new Error('Current config is not available')
     }
-    const currentMetafieldsConfig = currentConfig.metafieldsConfig || []
+    const currentMetafieldsConfig = getMetafieldsConfigByType(
+      type,
+      currentConfig
+    )
     const updatedMetafieldsConfig = currentMetafieldsConfig.find(
       (mf) => mf._key === metafield._key
     )
@@ -174,7 +185,10 @@ export class Provider extends React.Component<
         [...currentMetafieldsConfig, metafield]
     const updatedConfig = {
       ...currentConfig,
-      metafieldsConfig: updatedMetafieldsConfig,
+      [type]: {
+        ...currentConfig[type],
+        metafields: updatedMetafieldsConfig,
+      },
     }
     const result = await this.syncingClient.saveConfig(
       this.props.shopName,
@@ -183,7 +197,10 @@ export class Provider extends React.Component<
     this.setState({ config: result })
   }
 
-  public clearMetafield = async (keyToRemove: string): Promise<void> => {
+  public clearMetafield = async (
+    type: MetafieldConfigType,
+    keyToRemove: string
+  ): Promise<void> => {
     const currentConfig = this.state.config
     if (!this.props.shopName) {
       throw new Error('prop "shopname" was not provided')
@@ -195,12 +212,19 @@ export class Provider extends React.Component<
       throw new Error('Current config is not available')
     }
 
-    const currentMetafieldsConfig = currentConfig.metafieldsConfig || []
+    const currentMetafieldsConfig = getMetafieldsConfigByType(
+      type,
+      currentConfig
+    )
+
     const updatedConfig = {
       ...currentConfig,
-      metafieldsConfig: currentMetafieldsConfig.filter(
-        (mf) => mf._key !== keyToRemove
-      ),
+      [type]: {
+        ...currentConfig[type],
+        metafields: currentMetafieldsConfig.filter(
+          (mf) => mf._key !== keyToRemove
+        ),
+      },
     }
     const result = await this.syncingClient.saveConfig(
       this.props.shopName,
