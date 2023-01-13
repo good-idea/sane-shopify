@@ -49,6 +49,8 @@
     "@good-idea/leaky-bucket": "^3.1.2",
     "@good-idea/unwind-edges": "^1.5.3",
     "@sane-shopify/types": "^0.23.2",
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
     "cross-fetch": "^3.1.4",
     "debug": "^4.3.1",
     "deepmerge": "^4.2.2",
@@ -64,6 +66,8 @@
   },
   "devDependencies": {
     "@sanity/client": "^2.7.0",
+    "@types/atob": "^2.1.2",
+    "@types/btoa": "^1.2.3",
     "@types/debug": "^4.1.5",
     "@types/isomorphic-fetch": "^0.0.35",
     "@types/uuid": "^8.3.0",

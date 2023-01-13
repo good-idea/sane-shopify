@@ -15,6 +15,7 @@ import {
   SyncUtils,
   SyncMachineState,
   UpdateConfigDocumentArgs,
+  ShopifyMetafieldsConfig,
 } from '@sane-shopify/types'
 import { syncStateMachine } from './syncState'
 import { createLogger, Logger } from './logger'
@@ -53,23 +54,44 @@ export const syncUtils = (
    * Client Setup
    */
   const {
-    fetchItemById,
-    fetchAllShopifyProducts,
-    fetchAllShopifyCollections,
-    testSecrets,
-  } = shopifyUtils(shopifyClient)
-
-  const {
     fetchAllSanityDocuments,
     syncSanityDocument,
     syncRelationships,
     fetchRelatedDocs,
     documentByShopifyId,
-    // fetchSecrets,
+    fetchConfig,
     archiveSanityDocument,
     saveConfig: saveConfigToSanity,
     clearConfig: clearConfigFromSanity,
   } = sanityUtils(sanityClient, shopifyClient)
+
+  const fetchMetafieldsConfig = async (): Promise<ShopifyMetafieldsConfig> => {
+    const config = await fetchConfig(shopifyClient.shopName)
+
+    /* Merge in existing values over default (empty) ones */
+    const metafields: ShopifyMetafieldsConfig = {
+      products: {
+        metafields: config?.products?.metafields || [],
+      },
+
+      variants: {
+        metafields: config?.variants?.metafields || [],
+      },
+
+      collections: {
+        metafields: config?.collections?.metafields || [],
+      },
+    }
+
+    return metafields
+  }
+
+  const {
+    fetchItemById,
+    fetchAllShopifyProducts,
+    fetchAllShopifyCollections,
+    testSecrets,
+  } = shopifyUtils(shopifyClient, fetchMetafieldsConfig)
 
   /**
    * State Management

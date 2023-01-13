@@ -1,6 +1,4 @@
-import { Variant, Metafield } from '@sane-shopify/types'
-
-type Product = Record<string, any>
+import { Variant, Metafield, Product, Collection } from '@sane-shopify/types'
 
 const isMetafield = (obj: Record<string, any>): obj is Metafield =>
   Boolean(obj && obj.value && obj.namespace && obj.key)
@@ -28,7 +26,9 @@ const omit = <T extends Record<string, any>>(obj: T, toOmit: string): T => {
  * the response by remapping these individual properties into a paginated
  * object.
  */
-export const remapMetafields = <T extends Product | Variant>(item: T): T => {
+export const remapMetafields = <T extends Product | Variant | Collection>(
+  item: T
+): T => {
   const itemWithEmptyMetafields = {
     ...item,
     metafields: {
@@ -41,13 +41,19 @@ export const remapMetafields = <T extends Product | Variant>(item: T): T => {
   }
   const remapped = Object.entries(item).reduce<T>((prev, [key, value]) => {
     const metafieldMatch = key.match(/metafield_/)
+    if (metafieldMatch?.input && value === null) {
+      /* If we get a "null" response from the metafield query,
+       * omit it from the remapped object */
+      return omit(prev, key)
+    }
     if (metafieldMatch?.input && isMetafield(value)) {
       const metafieldMatchName = metafieldMatch.input
       const prevWithoutMetafieldProperty = omit(prev, metafieldMatchName)
       const prevEdges = prev?.metafields?.edges || []
       const { value: metafieldValue, namespace, key } = value
       const newEdge = {
-        id: `${namespace}-${key}-${metafieldValue}`,
+        _key: `${namespace}-${key}-${metafieldValue}`,
+        cursor: `${namespace}-${key}-${metafieldValue}`,
         node: {
           namespace,
           key,

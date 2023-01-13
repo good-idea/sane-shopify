@@ -5,7 +5,7 @@ import {
   ShopifyClient,
   ShopifyItemParams,
   Collection,
-  ShopifyConfig,
+  ShopifyMetafieldsConfig,
 } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { createCollectionFragment } from './queryFragments'
@@ -13,7 +13,9 @@ import { ShopifyCache } from './shopifyUtils'
 
 const log = Debug('sane-shopify:fetching')
 
-const createCollectionByHandle = (shopifyConfig?: ShopifyConfig) => gql`
+const createCollectionByHandle = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   query CollectionQuery(
     $handle: String!
     $productsFirst: Int!
@@ -39,7 +41,7 @@ const createCollectionByHandle = (shopifyConfig?: ShopifyConfig) => gql`
   ${createCollectionFragment(shopifyConfig)}
 `
 
-const createCollectionById = (shopifyConfig?: ShopifyConfig) => gql`
+const createCollectionById = (shopifyConfig: ShopifyMetafieldsConfig) => gql`
   query NodeQuery($id: ID!, $productsFirst: Int!, $productsAfter: String) {
     node(id: $id) {
       ... on Collection {
@@ -68,18 +70,18 @@ interface ByHandleResult {
   }
 }
 
-const createQueries = (shopifyConfig?: ShopifyConfig) => ({
+const createQueries = (shopifyConfig: ShopifyMetafieldsConfig) => ({
   COLLECTION_BY_ID: createCollectionById(shopifyConfig),
   COLLECTION_BY_HANDLE: createCollectionByHandle(shopifyConfig),
 })
 
 const getByHandle = async (
-  query: ShopifyClient['query'],
+  shopifyClient: ShopifyClient,
   queryString: DocumentNode,
   handle: string,
   productsAfter?: string | number
 ) => {
-  const result = await query<ByHandleResult>(queryString, {
+  const result = await shopifyClient.query<ByHandleResult>(queryString, {
     handle,
     productsFirst: 50,
     productsAfter,
@@ -94,12 +96,12 @@ interface ByIdResult {
 }
 
 const getById = async (
-  query: ShopifyClient['query'],
+  shopifyClient: ShopifyClient,
   queryString: DocumentNode,
   id: string,
   productsAfter?: string
 ) => {
-  const result = await query<ByIdResult>(queryString, {
+  const result = await shopifyClient.query<ByIdResult>(queryString, {
     id,
     productsFirst: 200,
     productsAfter,
@@ -108,9 +110,9 @@ const getById = async (
 }
 
 export const fetchAllCollectionProducts = async (
-  query: ShopifyClient['query'],
-  prevCollection: Collection,
-  shopifyConfig?: ShopifyConfig
+  shopifyClient: ShopifyClient,
+  metafieldsConfig: ShopifyMetafieldsConfig,
+  prevCollection: Collection
 ): Promise<Collection> => {
   if (!prevCollection.products?.pageInfo?.hasNextPage) {
     log(
@@ -126,10 +128,10 @@ export const fetchAllCollectionProducts = async (
     `Fetching further products for collection ${prevCollection.handle}`,
     prevCollection
   )
-  const { COLLECTION_BY_HANDLE } = createQueries(shopifyConfig)
+  const { COLLECTION_BY_HANDLE } = createQueries(metafieldsConfig)
 
   const nextCollection = await getByHandle(
-    query,
+    shopifyClient,
     COLLECTION_BY_HANDLE,
     prevCollection.handle,
     productsAfter ? productsAfter : undefined
@@ -146,7 +148,11 @@ export const fetchAllCollectionProducts = async (
     : prevCollection
 
   if (collection?.products?.pageInfo?.hasNextPage) {
-    return fetchAllCollectionProducts(query, collection)
+    return fetchAllCollectionProducts(
+      shopifyClient,
+      metafieldsConfig,
+      collection
+    )
   }
   log(
     `Fetched all products for collection ${prevCollection.handle}`,
@@ -161,11 +167,12 @@ export const fetchAllCollectionProducts = async (
 
 export const createFetchShopifyCollection =
   (
-    query: ShopifyClient['query'],
-    cache: ShopifyCache,
-    shopifyConfig?: ShopifyConfig
+    shopifyClient: ShopifyClient,
+    fetchMetafieldsConfig: () => Promise<ShopifyMetafieldsConfig>,
+    cache: ShopifyCache
   ) =>
   async (params: ShopifyItemParams): Promise<Collection | null> => {
+    const metafieldsConfig = await fetchMetafieldsConfig()
     const { id, handle } = params
     if (!id && !handle) {
       throw new Error('You must provide either an id or handle')
@@ -178,20 +185,25 @@ export const createFetchShopifyCollection =
       : null
 
     if (cachedCollection) {
-      return fetchAllCollectionProducts(query, cachedCollection)
+      return fetchAllCollectionProducts(
+        shopifyClient,
+        metafieldsConfig,
+        cachedCollection
+      )
     }
     const { COLLECTION_BY_ID, COLLECTION_BY_HANDLE } =
-      createQueries(shopifyConfig)
+      createQueries(metafieldsConfig)
 
     const fetchedCollection = id
-      ? await getById(query, COLLECTION_BY_ID, id)
+      ? await getById(shopifyClient, COLLECTION_BY_ID, id)
       : handle
-      ? await getByHandle(query, COLLECTION_BY_HANDLE, handle)
+      ? await getByHandle(shopifyClient, COLLECTION_BY_HANDLE, handle)
       : null
     if (!fetchedCollection) return null
 
     const collection = await fetchAllCollectionProducts(
-      query,
+      shopifyClient,
+      metafieldsConfig,
       fetchedCollection
     )
     cache.set(collection)

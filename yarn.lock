@@ -3993,6 +3993,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/atob@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/atob/-/atob-2.1.2.tgz#157eb0cc46264a8c55f2273a836c7a1a644fb820"
+  integrity sha512-8GAYQ1jDRUQkSpHzJUqXwAkYFOxuWAOGLhIR4aPd/Y/yL12Q/9m7LsKpHKlfKdNE/362Hc9wPI1Yh6opDfxVJg==
+
 "@types/aws-lambda@^8.10.31", "@types/aws-lambda@^8.10.75":
   version "8.10.109"
   resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.109.tgz#2f434cbfafe083529e365fe9c114787827a169a8"
@@ -4042,6 +4047,13 @@
   integrity sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==
   dependencies:
     "@types/connect" "*"
+    "@types/node" "*"
+
+"@types/btoa@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@types/btoa/-/btoa-1.2.3.tgz#2c8e7093f902bf8f0e10992a731a4996aa1a5732"
+  integrity sha512-ANNCZICS/ofxhzUl8V1DniBJs+sFQ+Yg5am1ZwVEf/sxoKY/J2+h5Fuw3xUErlZ7eJLdgzukBjZwnsV6+/2Rmg==
+  dependencies:
     "@types/node" "*"
 
 "@types/connect@*":
@@ -6022,6 +6034,11 @@ bser@2.1.1:
   integrity sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==
   dependencies:
     node-int64 "^0.4.0"
+
+btoa@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/btoa/-/btoa-1.2.1.tgz#01a9909f8b2c93f6bf680ba26131eb30f7fa3d73"
+  integrity sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==
 
 buffer-alloc-unsafe@^1.1.0:
   version "1.1.0"

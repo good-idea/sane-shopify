@@ -1,4 +1,4 @@
-import { MetafieldConfig, ShopifyConfig } from '@sane-shopify/types'
+import { MetafieldConfig, ShopifyMetafieldsConfig } from '@sane-shopify/types'
 import gql from 'graphql-tag'
 
 /**
@@ -59,7 +59,7 @@ const imageFragment = /* GraphQL */ `
  */
 
 export const createProductVariantFragment = (
-  shopifyConfig?: ShopifyConfig
+  shopifyConfig: ShopifyMetafieldsConfig
 ) => gql`
   fragment ProductVariantFragment on ProductVariant {
     __typename
@@ -104,7 +104,9 @@ const metafieldsToQuery = (metafields?: MetafieldConfig[]) =>
       )
     : ''
 
-export const createProductFragment = (shopifyConfig?: ShopifyConfig) => gql`
+export const createProductFragment = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   fragment ProductFragment on Product {
     __typename
     id
@@ -182,7 +184,9 @@ export const createProductFragment = (shopifyConfig?: ShopifyConfig) => gql`
  * Collection Queries
  */
 
-export const createCollectionFragment = (shopifyConfig?: ShopifyConfig) => gql`
+export const createCollectionFragment = (
+  shopifyConfig: ShopifyMetafieldsConfig
+) => gql`
   fragment CollectionFragment on Collection {
     __typename
     id

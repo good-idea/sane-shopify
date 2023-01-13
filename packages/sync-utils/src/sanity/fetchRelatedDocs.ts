@@ -6,6 +6,7 @@ import {
   SanityUtils,
 } from '@sane-shopify/types'
 import { SanityCache } from './sanityUtils'
+import { toAdminApiId, toStorefrontId } from '../utils'
 
 interface CacheResults {
   cachedDocs: SanityShopifyDocument[]
@@ -37,6 +38,13 @@ export const createFetchRelatedDocs =
         { cachedDocs: [], idsNotInCache: [] }
       )
 
+    const relatedStorefrontIds = idsNotInCache.map(toStorefrontId)
+    const relatedAdminApiIds = idsNotInCache.map(toAdminApiId)
+    const allRelatedIdsNotInCache = [
+      ...relatedStorefrontIds,
+      ...relatedAdminApiIds,
+    ]
+
     const fetched = idsNotInCache.length
       ? await client.fetch<SanityShopifyDocument[]>(
           `
@@ -53,7 +61,7 @@ export const createFetchRelatedDocs =
       "collectionRefs": collections[],
       "productRefs": products[],
      }`,
-          { relatedIds: idsNotInCache }
+          { relatedIds: allRelatedIdsNotInCache }
         )
       : []
     fetched.forEach((doc) => cache.set(doc))
@@ -61,7 +69,11 @@ export const createFetchRelatedDocs =
     const pairs = relatedNodes.map((shopifyNode) => ({
       shopifyNode,
       sanityDocument:
-        relatedDocs.find((d) => d.shopifyId === shopifyNode.id) || null,
+        relatedDocs.find(
+          (d) =>
+            d.shopifyId === shopifyNode.id ||
+            toAdminApiId(d.shopifyId) === shopifyNode.id
+        ) || null,
     }))
     return pairs
   }

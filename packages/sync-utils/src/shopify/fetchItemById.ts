@@ -3,17 +3,19 @@ import {
   ShopifyClient,
   Product,
   Collection,
-  ShopifyConfig,
+  ShopifyMetafieldsConfig,
 } from '@sane-shopify/types'
 import { ShopifyCache } from './shopifyUtils'
 import {
   createProductFragment,
   createCollectionFragment,
 } from './queryFragments'
+import { remapMetafields } from './remapMetafields'
 import { fetchAllCollectionProducts } from './fetchShopifyCollection'
 import { fetchAllProductCollections } from './fetchShopifyProduct'
+import { toAdminApiId } from '../utils'
 
-export const createNodeQuery = (shopifyConfig?: ShopifyConfig) => gql`
+export const createNodeQuery = (shopifyConfig: ShopifyMetafieldsConfig) => gql`
   query NodeQuery($id: ID!) {
     node(id: $id) {
       ... on Product {
@@ -65,19 +67,25 @@ interface NodeResult {
 
 export const createFetchItemById =
   (
-    query: ShopifyClient['query'],
-    cache: ShopifyCache,
-    shopifyConfig?: ShopifyConfig
+    shopifyClient: ShopifyClient,
+    fetchMetafieldsConfig: () => Promise<ShopifyMetafieldsConfig>,
+    cache: ShopifyCache
   ) =>
   async (
     id: string,
     fetchRelated: boolean
   ): Promise<Product | Collection | null> => {
-    const NODE_QUERY = createNodeQuery(shopifyConfig)
+    const metafieldsConfig = await fetchMetafieldsConfig()
+    const NODE_QUERY = createNodeQuery(metafieldsConfig)
     const cached = cache.getCollectionById(id) || cache.getProductById(id)
     if (cached) return cached
-    const result = await query<NodeResult>(NODE_QUERY, { id })
+    const result = await shopifyClient.query<NodeResult>(NODE_QUERY, {
+      id: toAdminApiId(id),
+    })
     const item = result?.data?.node
+      ? remapMetafields(result.data.node)
+      : undefined
+
     if (result.errors) {
       const messages = result.errors.map(({ message }) => message).join(' | ')
       throw new Error(`Could not fetch item ${id}: `.concat(messages))
@@ -85,10 +93,15 @@ export const createFetchItemById =
     if (!item) return null
     if (!fetchRelated) return item
     if (item.__typename === 'Product') {
-      return fetchAllProductCollections(query, item)
+      const r = await fetchAllProductCollections(
+        shopifyClient,
+        metafieldsConfig,
+        item
+      )
+      return r
     }
     if (item.__typename === 'Collection') {
-      return fetchAllCollectionProducts(query, item)
+      return fetchAllCollectionProducts(shopifyClient, metafieldsConfig, item)
     }
     // @ts-expect-error
     throw new Error(`Cannot fetch item ${id} with typename ${item.__typename}`)

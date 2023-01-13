@@ -5,7 +5,7 @@ import {
   ProgressHandler,
   ShopifyClient,
   Product,
-  ShopifyConfig,
+  ShopifyMetafieldsConfig,
 } from '@sane-shopify/types'
 import { mergePaginatedResults, getLastCursor } from '../utils'
 import { createProductFragment } from './queryFragments'
@@ -13,8 +13,9 @@ import { fetchAllProductCollections } from './fetchShopifyProduct'
 import { ShopifyCache } from './shopifyUtils'
 import { QueryResultRejected } from './types'
 import { log, hasTimeoutErrors } from './fetchUtils'
+import { remapMetafields } from './remapMetafields'
 
-const createProductsQuery = (shopifyConfig?: ShopifyConfig) => gql`
+const createProductsQuery = (shopifyConfig: ShopifyMetafieldsConfig) => gql`
   query ProductsQuery($first: Int!, $after: String) {
     products(first: $first, after: $after) {
       pageInfo {
@@ -57,12 +58,13 @@ const noop = () => undefined
 
 export const createFetchAllShopifyProducts =
   (
-    query: ShopifyClient['query'],
-    cache: ShopifyCache,
-    shopifyConfig?: ShopifyConfig
+    shopifyClient: ShopifyClient,
+    fetchMetafieldsConfig: () => Promise<ShopifyMetafieldsConfig>,
+    cache: ShopifyCache
   ) =>
   async (onProgress: ProgressHandler<Product> = noop): Promise<Product[]> => {
-    const PRODUCTS_QUERY = createProductsQuery(shopifyConfig)
+    const metafieldsConfig = await fetchMetafieldsConfig()
+    const PRODUCTS_QUERY = createProductsQuery(metafieldsConfig)
     const allStartTimer = new Date()
     const fetchProducts = async (
       pageSize = 30,
@@ -75,10 +77,13 @@ export const createFetchAllShopifyProducts =
           prevPage?.edges.length || 0
         }`
       )
-      const result = await query<ProductsQueryResult>(PRODUCTS_QUERY, {
-        first: pageSize,
-        after,
-      })
+      const result = await shopifyClient.query<ProductsQueryResult>(
+        PRODUCTS_QUERY,
+        {
+          first: pageSize,
+          after,
+        }
+      )
       if ('errors' in result) {
         if (hasTimeoutErrors(result)) {
           if (pageSize === 1) {
@@ -114,12 +119,14 @@ export const createFetchAllShopifyProducts =
       return unwound
     }
 
-    const allProducts = await fetchProducts()
+    const allProductsResult = await fetchProducts()
+    const allProducts = allProductsResult.map(remapMetafields)
 
     const queue = new PQueue({ concurrency: 1 })
     const results = await queue.addAll(
       allProducts.map(
-        (product) => () => fetchAllProductCollections(query, product)
+        (product) => () =>
+          fetchAllProductCollections(shopifyClient, metafieldsConfig, product)
       )
     )
 
