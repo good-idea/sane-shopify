@@ -255,6 +255,12 @@ Shopify is deprecating the `2020-10` GraphQL API, so some changes were made to u
 
 To configure this plugin to fetch metafields, a new `shopifyConfig` property has been added to the configuration. In the Sanity studio, use the configuration pane to add these values.
 
+0.23.3
+
+Oops, this version was meant to be published as 0.24.0. Please use 0.23.2 or 0.24 instead
+
+Oops, this version was meant to be published as 0.24.0. Please use 0.23.2 or 0.24.0 instead.
+
 _0.20.0_
 
 The config for `@sane-shopify/server` has changed. `onError` is now part of the main config object. Instead of `createWebhooks({ config, onError })`, do `createWebhooks(config)`. See the [`@sane-shopify/server` README](packages/server/README.md)
